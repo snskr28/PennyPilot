@@ -1,8 +1,8 @@
-# 💼 SpendSmart - Expense & Income Tracker
+# 💼 PennyPilot - Expense & Income Tracker
 
 ## 📌 Project Overview
 
-SpendSmart is a full-stack web application designed to help users manage their personal finances by tracking both expenses and income. It provides a simple, user-friendly interface with insightful visualizations to help users understand their financial habits.
+PennyPilot is a full-stack web application designed to help users manage their personal finances by tracking both expenses and income. It provides a simple, user-friendly interface with insightful visualizations to help users understand their financial habits.
 
 **Tech Stack:**
 
@@ -183,5 +183,3 @@ SpendSmart is a full-stack web application designed to help users manage their p
 8. Test and polish user experience
 
 ---
-
-> 📂 You can version control this project using Git and deploy using Azure, Vercel, or Firebase Hosting.
