@@ -19,7 +19,7 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetActiveUsersAsync()
         {
             return await _context.Users
-                .Where(u => u.IsActive)
+                .Where(u => u.IsEnabled)
                 .ToListAsync();
         }
 
@@ -27,6 +27,12 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == username);
         }
     }
 }

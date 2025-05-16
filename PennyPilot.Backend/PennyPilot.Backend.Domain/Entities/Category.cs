@@ -3,23 +3,13 @@ using System.Collections.Generic;
 
 namespace PennyPilot.Backend.Domain.Entities;
 
-public partial class User
+public partial class Category
 {
-    public Guid UserId { get; set; }
+    public Guid CategoryId { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-    public string FirstName { get; set; } = null!;
-
-    public string? MiddleName { get; set; }
-
-    public string LastName { get; set; } = null!;
-
-    public string Email { get; set; } = null!;
-
-    public string PasswordHash { get; set; } = null!;
-
-    public DateTime? CreatedAt { get; set; }
+    public string? Type { get; set; }
 
     public bool IsEnabled { get; set; }
 

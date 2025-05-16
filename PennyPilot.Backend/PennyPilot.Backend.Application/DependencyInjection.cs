@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PennyPilot.Backend.Application.Interfaces;
 using PennyPilot.Backend.Application.Services;
+using PennyPilot.Backend.Domain.Interfaces;
+using PennyPilot.Backend.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace PennyPilot.Backend.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISecurityService, SecurityService>();
             return services;
         }
     }
