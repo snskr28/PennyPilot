@@ -2,7 +2,6 @@
 using PennyPilot.Backend.Application.Interfaces;
 using PennyPilot.Backend.Application.Services;
 using PennyPilot.Backend.Domain.Interfaces;
-using PennyPilot.Backend.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

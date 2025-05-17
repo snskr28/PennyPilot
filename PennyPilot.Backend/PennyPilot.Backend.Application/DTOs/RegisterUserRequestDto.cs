@@ -15,6 +15,7 @@ namespace PennyPilot.Backend.Application.DTOs
         public string? MiddleName { get; set; }
 
         public string LastName { get; set; } = null!;
+        public DateTime DOB { get; set; } 
 
         public string Email { get; set; } = null!;
 

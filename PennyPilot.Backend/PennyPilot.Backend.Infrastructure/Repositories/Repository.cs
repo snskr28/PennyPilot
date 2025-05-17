@@ -25,7 +25,7 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -33,14 +33,12 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         public async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -49,7 +47,6 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
             if (entity != null)
             {
                 _dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
             }
         }
     }

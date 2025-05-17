@@ -15,6 +15,8 @@ public partial class User
 
     public string LastName { get; set; } = null!;
 
+    public DateTime Dob { get; set; }
+
     public string Email { get; set; } = null!;
 
     public string PasswordHash { get; set; } = null!;

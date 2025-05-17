@@ -12,93 +12,18 @@ namespace PennyPilot.Backend.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ISecurityService _securityService;
-        public UserService(IUserRepository userRepository, ISecurityService securityService)
+        public UserService(IUnitOfWork unitOfWork, ISecurityService securityService)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _securityService = securityService;
         }
 
-        //public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
-        //{
-        //    var users = await _userRepository.GetAllAsync();
-        //    return users.Select(user => MapToDto(user));
-        //}
-
-        //public async Task<UserDto> GetUserByIdAsync(int id)
-        //{
-        //    var user = await _userRepository.GetByIdAsync(id);
-        //    return user == null ? null : MapToDto(user);
-        //}
-
-        //public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
-        //{
-        //    var user = new User
-        //    {
-        //        FirstName = createUserDto.FirstName,
-        //        LastName = createUserDto.LastName,
-        //        Email = createUserDto.Email,
-        //        DateOfBirth = createUserDto.DateOfBirth,
-        //        IsActive = true,
-        //        CreatedAt = DateTime.UtcNow
-        //    };
-
-        //    var createdUser = await _userRepository.AddAsync(user);
-        //    return MapToDto(createdUser);
-        //}
-
-        //public async Task UpdateUserAsync(int id, UpdateUserDto updateUserDto)
-        //{
-        //    var existingUser = await _userRepository.GetByIdAsync(id);
-
-        //    if (existingUser == null)
-        //        throw new KeyNotFoundException($"User with ID {id} not found");
-
-        //    existingUser.FirstName = updateUserDto.FirstName;
-        //    existingUser.LastName = updateUserDto.LastName;
-        //    existingUser.Email = updateUserDto.Email;
-        //    existingUser.DateOfBirth = updateUserDto.DateOfBirth;
-        //    existingUser.IsActive = updateUserDto.IsActive;
-
-        //    await _userRepository.UpdateAsync(existingUser);
-        //}
-
-        //public async Task DeleteUserAsync(int id)
-        //{
-        //    await _userRepository.DeleteAsync(id);
-        //}
-
-        //public async Task<IEnumerable<UserDto>> GetActiveUsersAsync()
-        //{
-        //    var users = await _userRepository.GetActiveUsersAsync();
-        //    return users.Select(user => MapToDto(user));
-        //}
-
-        //public async Task<UserDto> GetUserByEmailAsync(string email)
-        //{
-        //    var user = await _userRepository.GetUserByEmailAsync(email);
-        //    return user == null ? null : MapToDto(user);
-        //}
-
-        //private static UserDto MapToDto(User user)
-        //{
-        //    return new UserDto
-        //    {
-        //        Id = user.Id,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Email = user.Email,
-        //        DateOfBirth = user.DateOfBirth,
-        //        IsActive = user.IsActive,
-        //        CreatedAt = user.CreatedAt
-        //    };
-        //}
-
         public async Task<ServerResponse<UserDto>> RegisterUserAsync(RegisterUserRequestDto requestDto)
         {
-            var existingUserByEmail = await _userRepository.GetUserByEmailAsync(requestDto.Email);
-            var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(requestDto.Username);
+            var existingUserByEmail = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Email);
+            var existingUserByUsername = await _unitOfWork.Users.GetUserByUsernameAsync(requestDto.Username);
             if (existingUserByEmail != null)
             {
                 return new ServerResponse<UserDto>
@@ -123,6 +48,7 @@ namespace PennyPilot.Backend.Application.Services
                 FirstName = requestDto.FirstName,
                 MiddleName = requestDto.MiddleName,
                 LastName = requestDto.LastName,
+                Dob = requestDto.DOB,
                 Email = requestDto.Email,
                 PasswordHash = _securityService.HashPassword(requestDto.Password), 
                 CreatedAt = DateTime.UtcNow,
@@ -130,7 +56,8 @@ namespace PennyPilot.Backend.Application.Services
                 IsDeleted = false
             };
 
-            var createdUser = await _userRepository.AddAsync(newUser);
+            var createdUser = await _unitOfWork.Users.AddAsync(newUser);
+            await _unitOfWork.SaveChangesAsync();
 
             var userDto = new UserDto
             {
@@ -138,6 +65,7 @@ namespace PennyPilot.Backend.Application.Services
                 FirstName = createdUser.FirstName,
                 LastName = createdUser.LastName,
                 Email = createdUser.Email,
+                DOB = createdUser.Dob,
                 CreatedAt = createdUser.CreatedAt
             };
 
@@ -148,5 +76,70 @@ namespace PennyPilot.Backend.Application.Services
                 Data = userDto
             };
         }
+        public async Task<ServerResponse<LoginResponseDto>> LoginAsync(LoginRequestDto requestDto)
+        {
+            try
+            {
+                var user = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Identifier)
+                           ?? await _unitOfWork.Users.GetUserByUsernameAsync(requestDto.Identifier);
+
+                if (user == null || !_securityService.VerifyPassword(requestDto.Password, user.PasswordHash))
+                {
+                    return new ServerResponse<LoginResponseDto>
+                    {
+                        Success = false,
+                        Message = "Invalid credentials."
+                    };
+                }
+
+                var token = _securityService.GenerateJwtToken(user);
+
+                return new ServerResponse<LoginResponseDto>
+                {
+                    Success = true,
+                    Message = "Login successful.",
+                    Data = new LoginResponseDto
+                    {
+                        Token = token,
+                        Username = user.Username,
+                        Email = user.Email
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ServerResponse<UserDto>> GetCurrentUserProfileAsync(Guid userId)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return new ServerResponse<UserDto>
+                {
+                    Success = false,
+                    Message = "User not found."
+                };
+            }
+
+            var userProfile = new UserDto
+            {                
+                Username = user.Username,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DOB = user.Dob,
+                Email = user.Email
+            };
+
+            return new ServerResponse<UserDto>
+            {
+                Success = true,
+                Data = userProfile,
+                Message = "User profile fetched successfully."
+            };
+        }
+
     }
 }

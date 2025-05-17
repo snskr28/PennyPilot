@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PennyPilot.Backend.Api.Helpers;
 using PennyPilot.Backend.Application.DTOs;
 using PennyPilot.Backend.Application.Interfaces;
+using System.Security.Claims;
 
 namespace PennyPilot.Backend.Api.Controllers
 {
@@ -16,48 +19,6 @@ namespace PennyPilot.Backend.Api.Controllers
             _userService = userService;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
-        //{
-        //    var users = await _userService.GetAllUsersAsync();
-        //    return Ok(users);
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<UserDto>> GetUserById(int id)
-        //{
-        //    var user = await _userService.GetUserByIdAsync(id);
-
-        //    if (user == null)
-        //        return NotFound();
-
-        //    return Ok(user);
-        //}
-
-        //[HttpGet("active")]
-        //public async Task<ActionResult<IEnumerable<UserDto>>> GetActiveUsers()
-        //{
-        //    var users = await _userService.GetActiveUsersAsync();
-        //    return Ok(users);
-        //}
-
-        //[HttpGet("byemail")]
-        //public async Task<ActionResult<UserDto>> GetUserByEmail([FromQuery] string email)
-        //{
-        //    var user = await _userService.GetUserByEmailAsync(email);
-
-        //    if (user == null)
-        //        return NotFound();
-
-        //    return Ok(user);
-        //}
-
-        //[HttpPost]
-        //public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
-        //{
-        //    var createdUser = await _userService.CreateUserAsync(createUserDto);
-        //    return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
-        //}
 
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody] RegisterUserRequestDto registerUserRequestDto)
@@ -77,33 +38,48 @@ namespace PennyPilot.Backend.Api.Controllers
             }
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
-        //{
-        //    try
-        //    {
-        //        await _userService.UpdateUserAsync(id, updateUserDto);
-        //        return NoContent();
-        //    }
-        //    catch (KeyNotFoundException)
-        //    {
-        //        return NotFound();
-        //    }
-        //}
+        [HttpPost("login")]
+        public async Task<ActionResult> Login([FromBody] LoginRequestDto loginDto)
+        {
+            try
+            {
+                var response = await _userService.LoginAsync(loginDto);
+                if (!response.Success)
+                    return Unauthorized(response);
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUser(int id)
-        //{
-        //    try
-        //    {
-        //        await _userService.DeleteUserAsync(id);
-        //        return NoContent();
-        //    }
-        //    catch (KeyNotFoundException)
-        //    {
-        //        return NotFound();
-        //    }
-        //}
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ServerResponse<string>
+                {
+                    Success = false,
+                    Message = "Internal server error: " + ex.Message
+                });
+            }
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.GetUserId();
+
+            if (userId == Guid.Empty)
+                return Unauthorized(new ServerResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid user token."
+                });
+
+            var response = await _userService.GetCurrentUserProfileAsync(userId);
+
+            if (!response.Success)
+                return NotFound(response);
+
+            return Ok(response);
+        }
+
     }
 }
 

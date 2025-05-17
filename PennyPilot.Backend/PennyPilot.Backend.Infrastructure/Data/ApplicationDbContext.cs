@@ -29,15 +29,15 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=SANSKAR\\MSSQLEXPRESS2025;Integrated Security=true;Initial Catalog=PennyPilot;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=SANSKAR\\SQLEXPRESS;Integrated Security=true;Initial Catalog=PennyPilot;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0B40595EAE");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0B65C63C4A");
 
-            entity.HasIndex(e => e.Name, "UQ__Categori__737584F6B2A79EE0").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__Categori__737584F6386C8557").IsUnique();
 
             entity.Property(e => e.CategoryId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.IsEnabled).HasDefaultValue(true);
@@ -51,7 +51,7 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Expense>(entity =>
         {
-            entity.HasKey(e => e.ExpenseId).HasName("PK__Expenses__1445CFD35C0BC665");
+            entity.HasKey(e => e.ExpenseId).HasName("PK__Expenses__1445CFD38EBFA6BF");
 
             entity.Property(e => e.ExpenseId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
@@ -83,7 +83,7 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Income>(entity =>
         {
-            entity.HasKey(e => e.IncomeId).HasName("PK__Income__60DFC60CEC9953C4");
+            entity.HasKey(e => e.IncomeId).HasName("PK__Income__60DFC60CD782BCD4");
 
             entity.ToTable("Income");
 
@@ -111,14 +111,15 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C359736BE");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C04312A12");
 
-            entity.HasIndex(e => e.Username, "UQ__Users__536C85E410371E77").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__Users__536C85E45524C5FC").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D105345B9418E9").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D105349EB40F67").IsUnique();
 
             entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -140,7 +141,7 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<UserCategory>(entity =>
         {
-            entity.HasKey(e => e.UserCategoryId).HasName("PK__UserCate__2421C38438759AC9");
+            entity.HasKey(e => e.UserCategoryId).HasName("PK__UserCate__2421C38480E13F6B");
 
             entity.HasIndex(e => new { e.UserId, e.CategoryId }, "UQ_UserCategory").IsUnique();
 
