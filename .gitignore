@@ -5,11 +5,13 @@
 **/*.sqlite
 **/*.log
 **/*appsettings.*.json
+**/*appsettings.json
 
 # User secrets (if using)
 **/secrets.json
 
 # Configuration files (optional, may keep a sample)
+appsettings.json
 appsettings.Development.json
 appsettings.Production.json
 appsettings.Staging.json
