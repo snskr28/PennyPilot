@@ -12,6 +12,7 @@ namespace PennyPilot.Backend.Domain.Interfaces
         IExpenseRepository Expenses { get; }
         ICategoryRepository Categories { get; }
         IUserCategoryRepository UserCategories { get; }
+        IIncomeRepository Incomes { get; }
         IRepository<T> GetRepository<T>() where T : class;
         Task<int> SaveChangesAsync();
     }

@@ -27,6 +27,7 @@ namespace PennyPilot.Backend.Infrastructure
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IIncomeRepository, IncomeRepository>();
 
             return services;
         }

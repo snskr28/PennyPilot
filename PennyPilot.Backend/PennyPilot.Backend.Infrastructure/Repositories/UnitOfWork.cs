@@ -16,15 +16,17 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         public IExpenseRepository Expenses { get; }
         public ICategoryRepository Categories { get; }
         public IUserCategoryRepository UserCategories { get; }
+        public IIncomeRepository Incomes { get; }
 
         public UnitOfWork(ApplicationDbContext context, IUserRepository userRepository,
-            IExpenseRepository expenseRepo, ICategoryRepository categoryRepo, IUserCategoryRepository userCategoryRepo)
+            IExpenseRepository expenseRepo, ICategoryRepository categoryRepo, IUserCategoryRepository userCategoryRepo, IIncomeRepository income)
         {
             _context = context;
             Users = userRepository;
             Expenses = expenseRepo;
             Categories = categoryRepo;
             UserCategories = userCategoryRepo;
+            Incomes = income;
         }
 
         public IRepository<T> GetRepository<T>() where T : class
