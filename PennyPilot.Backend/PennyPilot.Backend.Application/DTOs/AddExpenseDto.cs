@@ -16,6 +16,6 @@ namespace PennyPilot.Backend.Application.DTOs
         public string? PaidBy { get; set; }
         public DateTime Date { get; set; }
         public byte[]? ReceiptImage { get; set; }
-        public string CategoryName { get; set; } = null!;
+        public string Category { get; set; } = null!;
     }
 }

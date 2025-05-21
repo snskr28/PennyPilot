@@ -22,7 +22,7 @@ namespace PennyPilot.Backend.Application.Services
 
         public async Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto dto)
         {
-            string formattedCategory = dto.CategoryName.ToPascalCase();
+            string formattedCategory = dto.Category.ToPascalCase();
             var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
 
             if (category == null)
@@ -31,6 +31,7 @@ namespace PennyPilot.Backend.Application.Services
                 {
                     CategoryId = Guid.NewGuid(),
                     Name = formattedCategory,
+                    Type = "Expense",
                     IsEnabled = true,
                     IsDeleted = false
                 };
@@ -78,10 +79,15 @@ namespace PennyPilot.Backend.Application.Services
             var expense = await _unitOfWork.Expenses.GetByIdAsync(dto.ExpenseId)
                 ?? throw new Exception("Expense not found");
 
+            if(expense.IsDeleted == true)
+            {
+                throw new Exception("Expense not found");
+            }
+
             if (expense.UserId != userId)
                 throw new UnauthorizedAccessException();
 
-            string formattedCategory = dto.CategoryName.ToPascalCase();
+            string formattedCategory = dto.Category.ToPascalCase();
             var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
             if (category == null)
             {
@@ -89,6 +95,7 @@ namespace PennyPilot.Backend.Application.Services
                 {
                     CategoryId = Guid.NewGuid(),
                     Name = formattedCategory,
+                    Type = "Expense",
                     IsEnabled = true,
                     IsDeleted = false
                 };
