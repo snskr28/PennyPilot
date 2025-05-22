@@ -163,7 +163,8 @@ namespace PennyPilot.Backend.Application.Services
             {
                 "title" => descending ? expenses.OrderByDescending(x => x.Title) : expenses.OrderBy(x => x.Title),
                 "amount" => descending ? expenses.OrderByDescending(x => x.Amount) : expenses.OrderBy(x => x.Amount),
-                "categoryname" => descending ? expenses.OrderByDescending(x => x.Category) : expenses.OrderBy(x => x.Category),
+                "category" => descending ? expenses.OrderByDescending(x => x.Category) : expenses.OrderBy(x => x.Category),
+                "description" => descending ? expenses.OrderByDescending(x => x.Description) : expenses.OrderBy(x => x.Description),
                 "paymentmode" => descending ? expenses.OrderByDescending(x => x.PaymentMode) : expenses.OrderBy(x => x.PaymentMode),
                 "paidby" => descending ? expenses.OrderByDescending(x => x.PaidBy) : expenses.OrderBy(x => x.PaidBy),
                 "date" => descending ? expenses.OrderByDescending(x => x.Date) : expenses.OrderBy(x => x.Date),

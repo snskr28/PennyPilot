@@ -103,16 +103,30 @@ namespace PennyPilot.Backend.Api.Controllers
         }
 
         [HttpPost("ExpenseTable")]
-        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto queryParameters)
+        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto requestDto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = new ServerResponse<TableResponseDto<ExpenseTableDto>>();
+            try
+            {
+                var userId = User.GetUserId();
+                if (userId == Guid.Empty)
+                {
+                    response.Success = false;
+                    response.Message = "Invalid user token.";
+                    return Unauthorized(response);
+                }
 
-            if (!Guid.TryParse(userIdClaim, out Guid userId))
-                return Unauthorized();
-
-            var result = await _expenseService.GetUserExpensesAsync(userId, queryParameters);
-
-            return Ok(result);
+                response.Data = await _expenseService.GetUserExpensesAsync(userId, requestDto);
+                response.Success = true;
+                response.Message = "Records fetched successfully.";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return StatusCode(500, response);
+            }
         }
     }
 }
