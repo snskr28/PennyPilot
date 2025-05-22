@@ -101,5 +101,18 @@ namespace PennyPilot.Backend.Api.Controllers
                 return StatusCode(500, response);
             }
         }
+
+        [HttpPost("ExpenseTable")]
+        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto queryParameters)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+                return Unauthorized();
+
+            var result = await _expenseService.GetUserExpensesAsync(userId, queryParameters);
+
+            return Ok(result);
+        }
     }
 }

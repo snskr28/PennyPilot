@@ -11,6 +11,8 @@ namespace PennyPilot.Backend.Application.Interfaces
     {
         Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto dto);
         Task UpdateExpenseAsync(Guid userId, UpdateExpenseDto dto);
-        Task DeleteExpenseAsync(Guid userId, Guid expenseId);
+        Task DeleteExpenseAsync(Guid userId, Guid expenseId);       
+        Task<TableResponseDto<ExpenseTableDto>> GetUserExpensesAsync(Guid userId, TableRequestDto request);
+    
     }
 }

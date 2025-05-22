@@ -20,9 +20,9 @@ namespace PennyPilot.Backend.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto dto)
+        public async Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto requestDto)
         {
-            string formattedCategory = dto.Category.ToPascalCase();
+            string formattedCategory = requestDto.Category.ToPascalCase();
             var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
 
             if (category == null)
@@ -56,13 +56,13 @@ namespace PennyPilot.Backend.Application.Services
                 ExpenseId = Guid.NewGuid(),
                 UserId = userId,
                 CategoryId = category.CategoryId,
-                Title = dto.Title,
-                Description = dto.Description,
-                Amount = dto.Amount,
-                PaymentMode = dto.PaymentMode,
-                PaidBy = dto.PaidBy,
-                Date = dto.Date,
-                ReceiptImage = dto.ReceiptImage,
+                Title = requestDto.Title,
+                Description = requestDto.Description,
+                Amount = requestDto.Amount,
+                PaymentMode = requestDto.PaymentMode,
+                PaidBy = requestDto.PaidBy,
+                Date = requestDto.Date,
+                ReceiptImage = requestDto.ReceiptImage,
                 CreatedAt = DateTime.UtcNow,
                 IsEnabled = true,
                 IsDeleted = false
@@ -74,9 +74,9 @@ namespace PennyPilot.Backend.Application.Services
             return expense.ExpenseId;
         }
 
-        public async Task UpdateExpenseAsync(Guid userId, UpdateExpenseDto dto)
+        public async Task UpdateExpenseAsync(Guid userId, UpdateExpenseDto requestDto)
         {
-            var expense = await _unitOfWork.Expenses.GetByIdAsync(dto.ExpenseId)
+            var expense = await _unitOfWork.Expenses.GetByIdAsync(requestDto.ExpenseId)
                 ?? throw new Exception("Expense not found");
 
             if(expense.IsDeleted == true)
@@ -87,7 +87,7 @@ namespace PennyPilot.Backend.Application.Services
             if (expense.UserId != userId)
                 throw new UnauthorizedAccessException();
 
-            string formattedCategory = dto.Category.ToPascalCase();
+            string formattedCategory = requestDto.Category.ToPascalCase();
             var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
             if (category == null)
             {
@@ -114,13 +114,13 @@ namespace PennyPilot.Backend.Application.Services
                 await _unitOfWork.UserCategories.AddAsync(userCategory);
             }
 
-            expense.Title = dto.Title;
-            expense.Description = dto.Description;
-            expense.Amount = dto.Amount;
-            expense.PaymentMode = dto.PaymentMode;
-            expense.PaidBy = dto.PaidBy;
-            expense.Date = dto.Date;
-            expense.ReceiptImage = dto.ReceiptImage;
+            expense.Title = requestDto.Title;
+            expense.Description = requestDto.Description;
+            expense.Amount = requestDto.Amount;
+            expense.PaymentMode = requestDto.PaymentMode;
+            expense.PaidBy = requestDto.PaidBy;
+            expense.Date = requestDto.Date;
+            expense.ReceiptImage = requestDto.ReceiptImage;
             expense.CategoryId = category.CategoryId;
             expense.UpdatedAt = DateTime.UtcNow;
 
@@ -140,6 +140,53 @@ namespace PennyPilot.Backend.Application.Services
             expense.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<TableResponseDto<ExpenseTableDto>> GetUserExpensesAsync(Guid userId, TableRequestDto requestDto)
+        {
+            var expenses = _unitOfWork.Expenses.AsQueryable()
+                           .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
+                           .Select(e => new ExpenseTableDto
+                           {
+                               Title = e.Title,
+                               Description = e.Description,
+                               Amount = e.Amount,
+                               Category = e.Category.Name,
+                               PaymentMode = e.PaymentMode,
+                               PaidBy = e.PaidBy ?? "N/A",
+                               Date = e.Date
+                           });
+
+            bool descending = requestDto.SortOrder?.ToLower() == "desc";
+
+            expenses = requestDto.SortBy?.ToLower() switch
+            {
+                "title" => descending ? expenses.OrderByDescending(x => x.Title) : expenses.OrderBy(x => x.Title),
+                "amount" => descending ? expenses.OrderByDescending(x => x.Amount) : expenses.OrderBy(x => x.Amount),
+                "categoryname" => descending ? expenses.OrderByDescending(x => x.Category) : expenses.OrderBy(x => x.Category),
+                "paymentmode" => descending ? expenses.OrderByDescending(x => x.PaymentMode) : expenses.OrderBy(x => x.PaymentMode),
+                "paidby" => descending ? expenses.OrderByDescending(x => x.PaidBy) : expenses.OrderBy(x => x.PaidBy),
+                "date" => descending ? expenses.OrderByDescending(x => x.Date) : expenses.OrderBy(x => x.Date),
+                _ => expenses.OrderBy(x => x.Date) // default sorting
+            };
+
+            var totalCount = expenses.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / requestDto.PageSize);
+
+            var paginatedData = expenses
+                                .Skip((requestDto.PageNumber - 1) * requestDto.PageSize)
+                                .Take(requestDto.PageSize);
+
+            var resultData = await Task.FromResult(paginatedData.ToList());
+
+            return new TableResponseDto<ExpenseTableDto>
+            {
+                Items = resultData,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageNumber = requestDto.PageNumber,
+                PageSize = requestDto.PageSize
+            };
         }
     }
 }

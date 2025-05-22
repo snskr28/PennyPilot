@@ -1,4 +1,5 @@
-﻿using PennyPilot.Backend.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using PennyPilot.Backend.Domain.Entities;
 using PennyPilot.Backend.Domain.Interfaces;
 using PennyPilot.Backend.Infrastructure.Data;
 using System;
@@ -12,5 +13,6 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
     public class ExpenseRepository : Repository<Expense>, IExpenseRepository
     {
         public ExpenseRepository(ApplicationDbContext context) : base(context) { }
+
     }
 }
