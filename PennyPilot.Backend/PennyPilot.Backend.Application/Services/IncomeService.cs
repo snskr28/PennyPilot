@@ -135,5 +135,49 @@ namespace PennyPilot.Backend.Application.Services
 
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task<TableResponseDto<IncomeTableDto>> GetUserIncomesAsync(Guid userId, TableRequestDto requestDto)
+        {
+            var incomes = _unitOfWork.Incomes.AsQueryable()
+                           .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
+                           .Select(e => new IncomeTableDto
+                           {
+                              Amount = e.Amount,
+                              Date = e.Date,
+                              Category = e.Category.Name,
+                              Description = e.Description,
+                              Source = e.Source,
+                           });
+
+            bool descending = requestDto.SortOrder?.ToLower() == "desc";
+
+            incomes = requestDto.SortBy?.ToLower() switch
+            {
+                "amount" => descending ? incomes.OrderByDescending(x => x.Amount) : incomes.OrderBy(x => x.Amount),
+                "category" => descending ? incomes.OrderByDescending(x => x.Category) : incomes.OrderBy(x => x.Category),
+                "description" => descending ? incomes.OrderByDescending(x => x.Description) : incomes.OrderBy(x => x.Description),
+                "source" => descending ? incomes.OrderByDescending(x => x.Source) : incomes.OrderBy(x => x.Source),
+                "date" => descending ? incomes.OrderByDescending(x => x.Date) : incomes.OrderBy(x => x.Date),
+                _ => incomes.OrderBy(x => x.Date) // default sorting
+            };
+
+            var totalCount = incomes.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / requestDto.PageSize);
+
+            var paginatedData = incomes
+                                .Skip((requestDto.PageNumber - 1) * requestDto.PageSize)
+                                .Take(requestDto.PageSize);
+
+            var resultData = await Task.FromResult(paginatedData.ToList());
+
+            return new TableResponseDto<IncomeTableDto>
+            {
+                Items = resultData,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageNumber = requestDto.PageNumber,
+                PageSize = requestDto.PageSize
+            };
+        }
     }
 }

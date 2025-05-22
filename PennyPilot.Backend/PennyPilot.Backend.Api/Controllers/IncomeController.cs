@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PennyPilot.Backend.Api.Helpers;
 using PennyPilot.Backend.Application.DTOs;
 using PennyPilot.Backend.Application.Interfaces;
+using PennyPilot.Backend.Application.Services;
 
 namespace PennyPilot.Backend.Api.Controllers
 {
@@ -92,6 +93,33 @@ namespace PennyPilot.Backend.Api.Controllers
                 await _incomeService.DeleteIncomeAsync(userId, incomeId);
                 response.Success = true;
                 response.Message = "Income deleted successfully.";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return StatusCode(500, response);
+            }
+        }
+
+        [HttpPost("IncomeTable")]
+        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto requestDto)
+        {
+            var response = new ServerResponse<TableResponseDto<IncomeTableDto>>();
+            try
+            {
+                var userId = User.GetUserId();
+                if (userId == Guid.Empty)
+                {
+                    response.Success = false;
+                    response.Message = "Invalid user token.";
+                    return Unauthorized(response);
+                }
+
+                response.Data = await _incomeService.GetUserIncomesAsync(userId, requestDto);
+                response.Success = true;
+                response.Message = "Records fetched successfully.";
                 return Ok(response);
             }
             catch (Exception ex)
