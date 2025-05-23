@@ -16,6 +16,8 @@ namespace PennyPilot.Backend.Application
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<IIncomeService, IncomeService>();
             return services;
         }
     }

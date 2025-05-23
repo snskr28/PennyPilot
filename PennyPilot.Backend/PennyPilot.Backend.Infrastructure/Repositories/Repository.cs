@@ -25,6 +25,16 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
+        public IQueryable<T> AsQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
+
+        public IEnumerable<T> AsEnumerable()
+        {
+            return _dbSet.AsEnumerable();
+        }
+
         public async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
