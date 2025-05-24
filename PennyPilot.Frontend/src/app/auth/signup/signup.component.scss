@@ -1,0 +1,31 @@
+
+.auth-card {
+  max-width: 80vh;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+
+  .full-width {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}
+/* Ensure no overlapping styles */
+.mat-form-field .mat-icon-button {
+  display: inline-block;
+  position: relative;
+}
+
+.mat-form-field input {
+  z-index: 1; /* Ensure input is above any button or icon */
+}
+
+.mat-form-field .mat-icon-button mat-icon {
+  visibility: hidden; /* Hide visibility icon by default */
+}
+
+.mat-form-field .mat-icon-button[aria-pressed="true"] mat-icon {
+  visibility: visible; /* Show the icon only when pressed */
+}
+
+

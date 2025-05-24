@@ -1,0 +1,59 @@
+<mat-card class="auth-card">
+    <mat-card-header>
+        <mat-card-title>Signup</mat-card-title>
+    </mat-card-header>
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Username</mat-label>
+                <input matInput type="text" formControlName="username"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>First Name</mat-label>
+                <input matInput type="text" formControlName="firstname"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Middle Name</mat-label>
+                <input matInput type="text" formControlName="middlename"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Last Name</mat-label>
+                <input matInput type="text" formControlName="lastname"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="text" formControlName="email"/>
+            </mat-form-field>    
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Date Of Birth</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="dob" (click)="picker.open()"/>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker xPosition="end" yPosition="below"></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="password() ? 'password' : 'text'" formControlName="password"/>
+                <button 
+                    mat-icon-button 
+                    matSuffix 
+                    (click)="hidePassword($event)"
+                    [attr.aria-label]="'Hide Password'"
+                    [attr.aria-pressed]="password()">
+                <mat-icon>{{password() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field> 
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput [type]="cpassword() ? 'password' : 'text'" formControlName="cpassword"/>
+                <button 
+                    mat-icon-button 
+                    matSuffix 
+                    (click)="hideCPassword($event)"
+                    [attr.aria-label]="'Hide Password'"
+                    [attr.aria-pressed]="cpassword()">
+                <mat-icon>{{cpassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>   
+            
+            <button mat-flat-button color="primary" type="submit" class="full-width">Signup</button>
+        </form>
+</mat-card>
