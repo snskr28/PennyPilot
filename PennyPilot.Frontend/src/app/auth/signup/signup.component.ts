@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { confirmPasswordValidator, passwordMatchValidator } from '../custom-validator';
 
 @Component({
   selector: 'app-signup',
@@ -40,8 +41,19 @@ export class SignupComponent implements OnInit {
       lastname: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       dob: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      cpassword: ['', [Validators.required]],
+      password: [
+        '', 
+        [
+          Validators.required,
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        ]
+      ],
+        cpassword: ['', [Validators.required, confirmPasswordValidator('password')]],
+    });
+
+    // Subscribe to password field to trigger confirm password validation
+    this.signupForm.get('password')?.valueChanges.subscribe(() => {
+      this.signupForm.get('cpassword')?.updateValueAndValidity();
     });
   }
 
