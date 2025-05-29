@@ -4,7 +4,7 @@ import { AuthContainerComponent } from "./auth/auth-container.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, AuthContainerComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

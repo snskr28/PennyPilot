@@ -52,21 +52,20 @@
       </div>
 
       <mat-card-content>
-        <mat-tab-group class="auth-tabs" [selectedIndex]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
-          <!-- Login Tab -->
-          <mat-tab label="Login">
-            <div class="tab-content">
-              <app-login></app-login>
-            </div>
-          </mat-tab>
-
-          <!-- Sign Up Tab -->
-          <mat-tab label="Sign Up">
-            <div class="tab-content">
-              <app-signup></app-signup>
-            </div>
-          </mat-tab>
-        </mat-tab-group>
+        <div class="auth-tabs">
+          <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex">
+            <mat-tab label="Login">
+              <div class="tab-content">
+                <app-login *ngIf="selectedTabIndex === 0"></app-login>
+              </div>
+            </mat-tab>
+            <mat-tab label="Sign Up">
+              <div class="tab-content">
+                <app-signup *ngIf="selectedTabIndex === 1"></app-signup>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

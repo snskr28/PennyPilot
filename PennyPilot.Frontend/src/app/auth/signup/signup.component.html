@@ -6,6 +6,9 @@
     <mat-error *ngIf="signupForm.get('username')?.hasError('required')">
       Username is required
     </mat-error>
+    <mat-error *ngIf="signupForm.get('username')?.hasError('specialCharacters')">
+      Username cannot contain special characters
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">

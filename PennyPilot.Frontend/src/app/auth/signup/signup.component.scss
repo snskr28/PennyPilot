@@ -25,13 +25,18 @@ form {
   margin-top: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   transition: all 0.3s ease;
-  color: #f9f2f27b;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .auth-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-  color: #f9f2f2;
+  color: #ffffff !important;
+}
+
+.auth-button:disabled {
+  background: linear-gradient(135deg, #667eea80 0%, #764ba280 100%);
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .toggle-password {

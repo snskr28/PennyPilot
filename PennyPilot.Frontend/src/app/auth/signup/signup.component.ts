@@ -32,7 +32,10 @@ export class SignupComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
-      username: ['', [Validators.required]],
+      username: ['', [
+        Validators.required, 
+        this.usernameValidator  // Add the custom validator
+      ]],
       email: ['', [Validators.required, Validators.email]],
       firstName: ['', [Validators.required]],
       middleName: [''],
@@ -61,6 +64,12 @@ export class SignupComponent implements OnInit {
     }
     
     return null;
+  }
+
+  // Custom validator for username
+  usernameValidator(control: AbstractControl) {
+    const forbidden = /[!@#$%^&*()+\=\[\]{};':"\\|,.<>\/?]+/;
+    return forbidden.test(control.value) ? { 'specialCharacters': true } : null;
   }
 
   onSubmit() {
