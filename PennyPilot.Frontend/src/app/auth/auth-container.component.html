@@ -1,0 +1,73 @@
+<div class="auth-container">
+  <!-- Left Side - Image Slideshow -->
+  <div class="left-panel">
+    <div class="slideshow-container">
+      <div class="slide" [class.active]="currentSlide === 0">
+        <div class="slide-content">
+          <div class="slide-overlay"></div>
+          <div class="slide-text">
+            <h2>Track Every Penny</h2>
+            <p>Monitor your expenses with precision and take control of your financial future</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide" [class.active]="currentSlide === 1">
+        <div class="slide-content">
+          <div class="slide-overlay"></div>
+          <div class="slide-text">
+            <h2>Smart Expense Monitoring</h2>
+            <p>AI-powered insights to help you understand your spending patterns</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide" [class.active]="currentSlide === 2">
+        <div class="slide-content">
+          <div class="slide-overlay"></div>
+          <div class="slide-text">
+            <h2>Your Financial Co-Pilot</h2>
+            <p>Navigate your financial journey with confidence and expert guidance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-indicators">
+      <span 
+        class="indicator" 
+        [class.active]="currentSlide === i"
+        *ngFor="let slide of slides; let i = index"
+        (click)="setSlide(i)">
+      </span>
+    </div>
+  </div>
+
+  <!-- Right Side - Auth Forms -->
+  <div class="right-panel">
+    <mat-card class="auth-card">
+      <!-- Logo Header -->
+      <div class="logo-header">
+        <div class="logo">
+          <mat-icon class="logo-icon">flight</mat-icon>
+          <span class="logo-text">PennyPilot</span>
+        </div>
+      </div>
+
+      <mat-card-content>
+        <mat-tab-group class="auth-tabs" [selectedIndex]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
+          <!-- Login Tab -->
+          <mat-tab label="Login">
+            <div class="tab-content">
+              <app-login></app-login>
+            </div>
+          </mat-tab>
+
+          <!-- Sign Up Tab -->
+          <mat-tab label="Sign Up">
+            <div class="tab-content">
+              <app-signup></app-signup>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

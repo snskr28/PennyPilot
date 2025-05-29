@@ -1,0 +1,242 @@
+.auth-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  align-items: stretch;
+  height: 100vh; // Ensure container fills viewport
+  overflow: hidden; // Prevent double scroll
+}
+
+.left-panel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  // Remove height: 100vh and min-height: 100vh here
+  display: flex;
+  flex-direction: column;
+}
+
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: flex-start; // Change from center to flex-start
+  justify-content: center;
+  padding: 40px;
+  background-color: #f8fafc;
+  overflow-y: auto;
+}
+
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide:nth-child(1) .slide-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.slide:nth-child(2) .slide-content {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.slide:nth-child(3) .slide-content {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.slide-text {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 0 40px;
+}
+
+.slide-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.slide-text p {
+  font-size: 1.2rem;
+  font-weight: 300;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.slide-indicators {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 3;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  background: white;
+  margin: 20px 0; // Add margin top and bottom
+}
+
+.logo-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  color: #667eea;
+  transform: rotate(-45deg);
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  letter-spacing: -0.5px;
+}
+
+.auth-tabs {
+  margin-bottom: 20px;
+}
+
+.auth-tabs ::ng-deep .mat-mdc-tab-group {
+  --mdc-secondary-navigation-tab-container-height: 60px;
+}
+
+.auth-tabs ::ng-deep .mat-mdc-tab {
+  min-width: 120px;
+  font-weight: 600;
+}
+
+.auth-tabs ::ng-deep .mat-ink-bar {
+  background-color: #667eea;
+  height: 3px;
+}
+
+.tab-content {
+  padding: 30px 0 20px;
+}
+
+/* Form Field Customization */
+::ng-deep .mat-mdc-form-field {
+  --mdc-outlined-text-field-container-shape: 12px;
+  --mdc-outlined-text-field-focus-outline-color: #667eea;
+  --mdc-outlined-text-field-hover-outline-color: #667eea;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-focus-overlay {
+  background-color: rgba(102, 126, 234, 0.04);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .auth-container {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .left-panel {
+    width: 100%;
+    height: 35vh;
+    min-height: 180px;
+    max-height: 40vh;
+  }
+  
+  .right-panel {
+    width: 100%;
+    height: 65vh;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .auth-card {
+    margin: 10px 0;
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .left-panel {
+    height: 35vh;
+    min-height: 100px;
+    max-height: 40vh;
+  }
+  .right-panel {
+    min-height: 65vh;
+    max-height: 100vh;
+    padding: 20px 0; // More padding for mobile
+  }
+  .slide-text h2 {
+    font-size: 1.3rem;
+  }
+  .slide-text p {
+    font-size: 0.9rem;
+  }
+  .auth-card {
+    padding: 12px 2px;
+  }
+}

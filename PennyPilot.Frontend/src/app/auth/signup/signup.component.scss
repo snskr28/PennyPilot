@@ -1,31 +1,93 @@
+form {
+  padding: 10px 0;
+}
 
-.auth-card {
-  max-width: 90vh;
-  margin: 4rem auto;
-  padding: 2rem;
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.name-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.name-field {
+  flex: 1;
+}
+
+.auth-button {
+  height: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 0.3s ease;
+  color: #f9f2f27b;
+}
+
+.auth-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  color: #f9f2f2;
+}
+
+.toggle-password {
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+  color: #374151;
+}
+
+.auth-redirect {
   text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
 
-  .full-width {
-    width: 100%;
-    margin-top: 1rem;
+.redirect-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #764ba2;
+    text-decoration: underline;
   }
 }
-/* Ensure no overlapping styles */
-.mat-form-field .mat-icon-button {
-  display: inline-block;
-  position: relative;
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .full-width, .name-row, .name-field {
+    width: 100% !important;
+    min-width: 0;
+    margin-bottom: 12px;
+    margin-top: 12px;
+  }
+  .name-row {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
-.mat-form-field input {
-  z-index: 1; /* Ensure input is above any button or icon */
+@media (max-width: 1024px) {
+  form {
+    padding: 5px 0;
+  }
+  
+  .full-width {
+    margin-bottom: 15px;
+  }
+  
+  .name-row {
+    gap: 8px;
+    margin-bottom: 15px;
+  }
 }
-
-.mat-form-field .mat-icon-button mat-icon {
-  visibility: hidden; /* Hide visibility icon by default */
-}
-
-.mat-form-field .mat-icon-button[aria-pressed="true"] mat-icon {
-  visibility: visible; /* Show the icon only when pressed */
-}
-
-

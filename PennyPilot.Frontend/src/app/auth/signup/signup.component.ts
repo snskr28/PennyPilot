@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -23,52 +24,57 @@ import { confirmPasswordValidator, passwordMatchValidator } from '../custom-vali
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
-export class SignupComponent implements OnInit {
-  signupForm!: FormGroup;
-  password = signal(true);
-  cpassword = signal(true);
 
-  constructor(private fb: FormBuilder) {}
-  ngOnInit(): void {
-    this.signUpForm();
-  }
-  
-  public signUpForm(): void {
+export class SignupComponent implements OnInit {
+  signupForm: FormGroup;
+  hidePassword = true;
+  hideConfirmPassword = true;
+
+  constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
       username: ['', [Validators.required]],
-      firstname: ['', [Validators.required]],
-      middlename: [''],
-      lastname: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      dob: ['', [Validators.required]],
-      password: [
-        '', 
-        [
-          Validators.required,
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-        ]
-      ],
-        cpassword: ['', [Validators.required, confirmPasswordValidator('password')]],
-    });
+      firstName: ['', [Validators.required]],
+      middleName: [''],
+      lastName: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+  }
 
-    // Subscribe to password field to trigger confirm password validation
-    this.signupForm.get('password')?.valueChanges.subscribe(() => {
-      this.signupForm.get('cpassword')?.updateValueAndValidity();
-    });
+  ngOnInit() {}
+
+  // Custom validator for password match
+  passwordMatchValidator(form: AbstractControl) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (!password || !confirmPassword) return null;
+    
+    if (confirmPassword.value && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+    } else if (confirmPassword.hasError('passwordMismatch')) {
+      delete confirmPassword.errors!['passwordMismatch'];
+      if (Object.keys(confirmPassword.errors!).length === 0) {
+        confirmPassword.setErrors(null);
+      }
+    }
+    
+    return null;
   }
 
   onSubmit() {
     if (this.signupForm.valid) {
-      console.log(this.signupForm.value);
+      console.log('Signup submitted:', this.signupForm.value);
+      // Handle signup logic here
     }
   }
-  
-  hidePassword(event: MouseEvent) {
-    this.password.set(!this.password());
-    event.stopPropagation();
+
+  togglePassword() {
+    this.hidePassword = !this.hidePassword;
   }
-  hideCPassword(event: MouseEvent) {
-    this.cpassword.set(!this.cpassword());
-    event.stopPropagation();
+
+  toggleConfirmPassword() {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
   }
 }

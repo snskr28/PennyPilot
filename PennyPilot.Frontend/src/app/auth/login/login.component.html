@@ -1,19 +1,39 @@
-<mat-card class="auth-card">
-    <mat-card-header>
-        <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email/Username</mat-label>
-            <input matInput type="text" formControlName="email" />
-        </mat-form-field>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Email or Username</mat-label>
+    <input matInput formControlName="emailOrUsername" placeholder="Enter your email or username">
+    <mat-icon matSuffix>person</mat-icon>
+    <mat-error *ngIf="loginForm.get('emailOrUsername')?.hasError('required')">
+      Email or username is required
+    </mat-error>
+    <mat-error *ngIf="loginForm.get('emailOrUsername')?.hasError('email') && loginForm.get('emailOrUsername')?.value?.includes('@')">
+      Please enter a valid email address
+    </mat-error>
+  </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" />
-        </mat-form-field>
-        
-        <button mat-flat-button color="primary" type="submit" class="full-width">Login</button>
-    </form>
-    <span style="margin-top: 10px;">New user? <a routerLink="/signup">SignUp</a></span>
-</mat-card> 
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Password</mat-label>
+    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+    <mat-icon matSuffix (click)="togglePassword()" class="toggle-password">
+      {{hidePassword ? 'visibility_off' : 'visibility'}}
+    </mat-icon>
+    <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+      Password is required
+    </mat-error>
+    <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+      Password must be at least 6 characters long
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="loginForm.invalid">
+    Login
+  </button>
+
+  <div class="forgot-password">
+    <a href="#" class="forgot-link">Forgot Password?</a>
+  </div>
+</form>
+
+<div class="auth-redirect">
+  <p>New user? <a routerLink="/signup" class="redirect-link">Create Account</a></p>
+</div>
