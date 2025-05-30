@@ -151,6 +151,12 @@
   transform: rotate(-45deg);
 }
 
+.logo-img {
+  height: 43px; /* adjust as needed */
+  width: auto;
+  object-fit: contain;
+}
+
 .logo-text {
   font-size: 2rem;
   font-weight: 700;
