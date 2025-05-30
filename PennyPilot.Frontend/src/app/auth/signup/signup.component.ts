@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { confirmPasswordValidator, passwordMatchValidator } from '../custom-validator';
 
 @Component({
   selector: 'app-signup',
@@ -40,7 +39,11 @@ export class SignupComponent implements OnInit {
       firstName: ['', [Validators.required]],
       middleName: [''],
       lastName: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(8),
+        this.passwordStrengthValidator
+      ]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -70,6 +73,20 @@ export class SignupComponent implements OnInit {
   usernameValidator(control: AbstractControl) {
     const forbidden = /[!@#$%^&*()+\=\[\]{};':"\\|,.<>\/?]+/;
     return forbidden.test(control.value) ? { 'specialCharacters': true } : null;
+  }
+
+  // Update the passwordStrengthValidator function
+  passwordStrengthValidator(control: AbstractControl) {
+    const value = control.value;
+    if (!value) return null;
+
+    const hasLetter = /[a-zA-Z]+/.test(value);    // at least one letter
+    const hasNumber = /[0-9]+/.test(value);        // at least one number
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]+/.test(value); // at least one special char
+
+    const passwordValid = hasLetter && hasNumber && hasSpecialChar;
+
+    return !passwordValid ? { passwordStrength: true } : null;
   }
 
   onSubmit() {
