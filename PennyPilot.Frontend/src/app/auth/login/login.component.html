@@ -1,12 +1,12 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Email or Username</mat-label>
-    <input matInput formControlName="emailOrUsername" placeholder="Enter your email or username">
+    <input matInput formControlName="identifier" placeholder="Enter your email or username">
     <mat-icon matSuffix>person</mat-icon>
-    <mat-error *ngIf="loginForm.get('emailOrUsername')?.hasError('required')">
+    <mat-error *ngIf="loginForm.get('identifier')?.hasError('required')">
       Email or username is required
     </mat-error>
-    <mat-error *ngIf="loginForm.get('emailOrUsername')?.hasError('email') && loginForm.get('emailOrUsername')?.value?.includes('@')">
+    <mat-error *ngIf="loginForm.get('identifier')?.hasError('email') && loginForm.get('identifier')?.value?.includes('@')">
       Please enter a valid email address
     </mat-error>
   </mat-form-field>
