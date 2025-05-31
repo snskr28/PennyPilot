@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MATERIAL_IMPORTS } from '../../shared/material';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,10 +14,11 @@ import { MATERIAL_IMPORTS } from '../../shared/material';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   hidePassword = true;
+  authService = inject(AuthService);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      emailOrUsername: ['', [Validators.required, this.emailOrUsernameValidator]],
+      identifier: ['', [Validators.required, this.emailOrUsernameValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -38,10 +40,16 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Login submitted:', this.loginForm.value);
-      // Handle login logic here
-    }
+    // if (this.loginForm.valid) {
+    //   console.log('Login submitted:', this.loginForm.value);
+    //   // Handle login logic here
+    // }
+    if(this.loginForm.invalid) return;
+
+    this.authService.login(this.loginForm.value).subscribe({
+      next: () => this.router.navigate(['/dashboard']),
+      error: (err) => console.error('Login Failed', err)
+    });
   }
 
   togglePassword() {

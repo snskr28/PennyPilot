@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import {
   AbstractControl,
@@ -8,8 +8,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -28,8 +29,9 @@ export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   hidePassword = true;
   hideConfirmPassword = true;
+  authService = inject(AuthService);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.signupForm = this.fb.group({
       username: ['', [
         Validators.required, 
@@ -37,7 +39,7 @@ export class SignupComponent implements OnInit {
       ]],
       email: ['', [Validators.required, Validators.email]],
       firstName: ['', [Validators.required]],
-      middleName: [''],
+      middleName: [null],
       lastName: ['', [Validators.required]],
       password: ['', [
         Validators.required, 
@@ -90,10 +92,16 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.signupForm.valid) {
-      console.log('Signup submitted:', this.signupForm.value);
-      // Handle signup logic here
-    }
+    // if (this.signupForm.valid) {
+    //   console.log('Signup submitted:', this.signupForm.value);
+    //   // Handle signup logic here
+    // }
+    if (this.signupForm.invalid) return;
+
+  this.authService.signup(this.signupForm.value).subscribe({
+    next: () => this.router.navigate(['/login']),
+    error: (err) => console.error('Signup failed', err)
+  });
   }
 
   togglePassword() {
