@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+
 
 export const MATERIAL_IMPORTS = [
   MatButtonModule,
@@ -17,5 +19,7 @@ export const MATERIAL_IMPORTS = [
   MatIconModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatTabsModule
+  MatTabsModule,
+  MatGridList,
+  MatGridTile,  
 ];
