@@ -1,1 +1,30 @@
-<h1>Logged In successfully</h1>
+<div class="dashboard-container">
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <mat-grid-list cols="3" rowHeight="140px" gutterSize="24">
+      <mat-grid-tile *ngFor="let card of summaryCards">
+        <mat-card class="summary-card">
+          <mat-card-content>
+            <div class="card-icon" [style.background-color]="card.color + '15'">
+              <mat-icon [style.color]="card.color">{{card.icon}}</mat-icon>
+            </div>
+            <div class="card-info">
+              <h3>{{card.title}}</h3>
+              <h2>${{card.amount | number:'1.2-2'}}</h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <app-dashboard-charts></app-dashboard-charts>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="transactions-section">
+    <!-- We'll add transactions table in later steps -->
+  </div>
+</div>
