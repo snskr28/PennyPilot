@@ -1,0 +1,53 @@
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 0 16px 0;
+  padding: 0 24px;
+}
+
+.table-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+mat-card {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.07);
+  background: #fff;
+  padding-bottom: 16px;
+  padding: 1rem;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th.mat-header-cell, td.mat-cell {
+  padding: 16px 12px !important;
+  font-size: 1rem;
+}
+
+tr.mat-header-row {
+  background: #f3f4f6;
+}
+
+mat-paginator {
+  margin-top: 8px;
+  padding: 0 24px;
+}
+
+@media (max-width: 900px) {
+  .table-header, mat-paginator {
+    padding: 0 8px;
+  }
+  th.mat-header-cell, td.mat-cell {
+    padding: 10px 6px !important;
+    font-size: 0.95rem;
+  }
+}

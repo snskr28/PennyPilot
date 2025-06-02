@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../shared/material';
 import { CommonModule } from '@angular/common';
 import { ChartsComponent } from './charts/charts.component';
+import { TransactionsTableComponent } from './transactions-table/transactions-table.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,ChartsComponent,...MATERIAL_IMPORTS],
+  imports: [CommonModule,ChartsComponent,TransactionsTableComponent,...MATERIAL_IMPORTS],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
