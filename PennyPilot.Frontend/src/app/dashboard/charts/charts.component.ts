@@ -23,6 +23,7 @@ export class ChartsComponent implements OnInit {
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' }
     }
@@ -38,6 +39,7 @@ export class ChartsComponent implements OnInit {
 
   pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: 'right' }
     }
