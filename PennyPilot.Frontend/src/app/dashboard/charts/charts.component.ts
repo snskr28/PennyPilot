@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import * as Chart from 'chart.js';
-
 import { MATERIAL_IMPORTS } from '../../shared/material';
-import { ChartConfiguration } from 'chart.js';
-// import {NgChartsModule} from 'ng2-charts';
+import { ChartConfiguration, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+ 
 @Component({
   selector: 'app-dashboard-charts',
   standalone: true,
-  imports: [CommonModule, NgChartsModule,...MATERIAL_IMPORTS],
+  imports: [CommonModule, BaseChartDirective,...MATERIAL_IMPORTS],
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss']
 })
