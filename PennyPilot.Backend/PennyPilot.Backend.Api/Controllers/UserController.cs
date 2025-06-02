@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PennyPilot.Backend.Api.Helpers;
@@ -27,6 +28,9 @@ namespace PennyPilot.Backend.Api.Controllers
             try
             {
                 serverResponse = await _userService.RegisterUserAsync(registerUserRequestDto);
+                if (!serverResponse.Success)
+                    return BadRequest(serverResponse);
+
                 return Ok(serverResponse);
             }
             catch (Exception ex)

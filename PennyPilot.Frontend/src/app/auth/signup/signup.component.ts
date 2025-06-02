@@ -30,6 +30,7 @@ export class SignupComponent implements OnInit {
   hidePassword = true;
   hideConfirmPassword = true;
   authService = inject(AuthService);
+  signupError:string | null = null;
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.signupForm = this.fb.group({
@@ -92,15 +93,13 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
-    // if (this.signupForm.valid) {
-    //   console.log('Signup submitted:', this.signupForm.value);
-    //   // Handle signup logic here
-    // }
     if (this.signupForm.invalid) return;
 
   this.authService.signup(this.signupForm.value).subscribe({
     next: () => this.router.navigate(['/login']),
-    error: (err) => console.error('Signup failed', err)
+    error: (err) =>{
+      this.signupError = err.error?.message || 'Signup failed. Please try again.';
+    }
   });
   }
 

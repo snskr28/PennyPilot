@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   hidePassword = true;
   authService = inject(AuthService);
+  loginError: string | null = null;
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
@@ -40,15 +41,13 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    // if (this.loginForm.valid) {
-    //   console.log('Login submitted:', this.loginForm.value);
-    //   // Handle login logic here
-    // }
     if(this.loginForm.invalid) return;
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: (err) => console.error('Login Failed', err)
+      error: (err) => {
+        this.loginError = err.error?.message || 'Login failed. Please try again.';
+      }
     });
   }
 

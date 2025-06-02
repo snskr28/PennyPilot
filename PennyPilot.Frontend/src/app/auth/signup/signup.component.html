@@ -81,6 +81,9 @@
     </mat-error>
   </mat-form-field>
 
+  <div *ngIf="signupError" class="error-message">
+    {{ signupError }}
+  </div>
   <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="signupForm.invalid">
     Sign Up
   </button>

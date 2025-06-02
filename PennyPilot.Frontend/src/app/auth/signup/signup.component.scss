@@ -67,6 +67,14 @@ form {
   }
 }
 
+.error-message {
+  color: #f44336;
+  font-size: 0.875rem;
+  margin: -10px 0 16px;
+  text-align: center;
+  padding: 4px 0;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .full-width, .name-row, .name-field {
