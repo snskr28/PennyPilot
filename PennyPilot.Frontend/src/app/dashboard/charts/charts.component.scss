@@ -49,6 +49,12 @@ mat-card-content {
   display: block;
 }
 
+.divider{
+  border: none;
+  border-top: 2px solid #e5e7eb; /* Tailwind gray-200 */
+  margin: 10px 24px;
+}
+
 @media (max-width: 900px) {
   .charts-container {
     flex-direction: column;

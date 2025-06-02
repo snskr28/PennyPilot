@@ -14,10 +14,10 @@ import { BaseChartDirective } from 'ng2-charts';
 export class ChartsComponent implements OnInit {
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
-      { data: [2100, 1800, 2400, 1900, 2600, 2200], label: 'Income' },
-      { data: [1500, 1300, 1900, 1600, 2000, 1800], label: 'Expenses' }
+      { data: [2100, 1800, 2400, 1900, 2600, 2200,1000,2500,5900,2800,2500,3000], label: 'Income' },
+      { data: [1500, 1300, 1900, 1600, 2000, 1800,1200,1800,1700,2200,1100,2500], label: 'Expenses' }
     ]
   };
 
