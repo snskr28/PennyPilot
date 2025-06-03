@@ -68,4 +68,8 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
       this.startSlideshow();
     }
   }
+  
+  isLoginOrSignupRoute(): boolean {
+    return this.router.url === '/login' || this.router.url === '/signup' || this.router.url === '/';
+  }
 }

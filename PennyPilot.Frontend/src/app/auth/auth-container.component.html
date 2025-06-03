@@ -53,20 +53,26 @@
       </div>
 
       <mat-card-content>
-        <div class="auth-tabs">
-          <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex">
-            <mat-tab label="Login">
-              <div class="tab-content">
-                <app-login *ngIf="selectedTabIndex === 0"></app-login>
-              </div>
-            </mat-tab>
-            <mat-tab label="Sign Up">
-              <div class="tab-content">
-                <app-signup *ngIf="selectedTabIndex === 1"></app-signup>
-              </div>
-            </mat-tab>
-          </mat-tab-group>
-        </div>
+        <!-- Only show tabs for login/signup, otherwise show router-outlet -->
+        <ng-container *ngIf="isLoginOrSignupRoute(); else showOutlet">
+          <div class="auth-tabs">
+            <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex">
+              <mat-tab label="Login">
+                <div class="tab-content">
+                  <app-login *ngIf="selectedTabIndex === 0"></app-login>
+                </div>
+              </mat-tab>
+              <mat-tab label="Sign Up">
+                <div class="tab-content">
+                  <app-signup *ngIf="selectedTabIndex === 1"></app-signup>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </ng-container>
+        <ng-template #showOutlet>
+          <router-outlet></router-outlet>
+        </ng-template>
       </mat-card-content>
     </mat-card>
   </div>

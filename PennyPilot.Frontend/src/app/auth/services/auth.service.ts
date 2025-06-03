@@ -8,7 +8,7 @@ import { Observable, tap } from "rxjs";
 export class AuthService{
     private http = inject(HttpClient);
     private tokenService = inject(TokenService)
-    private apiUrl = 'https://localhost:7098/api/User'
+    private apiUrl = 'https://localhost:7098/api/auth'
 
     login(payload: LoginRequest): Observable<AuthResponse>{
         return this.http.post<AuthResponse>(`${this.apiUrl}/login`, payload).pipe(
@@ -22,5 +22,14 @@ export class AuthService{
 
     logout(): void{
         this.tokenService.removeToken()
+    }
+
+    
+    forgotPassword(identifier: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/forgot-password`, { identifier });
+    }
+
+    resetPassword(token: string, newPassword: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/reset-password`, { token, newPassword });
     }
 }
