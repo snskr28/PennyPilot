@@ -36,6 +36,7 @@ namespace PennyPilot.Backend.Application.Services
             user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
 
             await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
             // Compose reset link
             var resetLink = $"https://yourfrontend.com/reset-password?token={token}";
