@@ -25,7 +25,7 @@ namespace PennyPilot.Backend.Application.Services
 
         public async Task<bool> SendPasswordResetTokenAsync(ForgotPasswordRequestDto request)
         {
-            var user = await _unitOfWork.Users.GetUserByEmailAsync(request.Email);
+            var user = await _unitOfWork.Users.GetUserByEmailAsync(request.Identifier);
             if (user == null)
                 return false; // optionally do not disclose if email exists or not
 
@@ -39,7 +39,7 @@ namespace PennyPilot.Backend.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             // Compose reset link
-            var resetLink = $"https://yourfrontend.com/reset-password?token={token}";
+            var resetLink = $"http://localhost:4200/reset-password?token={token}";
 
             var emailBody = $"Click this link to reset your password: {resetLink}\n\nThis link expires in 1 hour.";
 
@@ -60,6 +60,7 @@ namespace PennyPilot.Backend.Application.Services
             user.PasswordResetTokenExpiry = null;
 
             await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
             return true;
         }
