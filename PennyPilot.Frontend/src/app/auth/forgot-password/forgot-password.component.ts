@@ -17,10 +17,6 @@ export class ForgotPasswordComponent {
   loading = false;
   forgotForm:FormGroup;
 
-//   forgotForm = this.fb.group({
-//     emailOrUsername: ['', [Validators.required]]
-//   });
-
   constructor(private fb: FormBuilder, private auth: AuthService) {
     this.forgotForm = this.fb.group({
       emailOrUsername: ['', [Validators.required]]
@@ -37,7 +33,7 @@ export class ForgotPasswordComponent {
         this.loading = false;
       },
       error: err => {
-        this.error = err.error || err.error?.message || 'Email not found';
+        this.error = err.error?.message || 'Username/Email not found.';
         this.loading = false;
       }
     });
