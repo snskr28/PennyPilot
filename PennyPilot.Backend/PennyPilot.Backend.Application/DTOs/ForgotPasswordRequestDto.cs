@@ -8,6 +8,6 @@ namespace PennyPilot.Backend.Application.DTOs
 {
     public class ForgotPasswordRequestDto
     {
-        public string Email { get; set; }
+        public string Identifier { get; set; }
     }
 }

@@ -11,13 +11,13 @@ namespace PennyPilot.Backend.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public UserController(IUserService userService)
+        public AuthController(IAuthService authService)
         {
-            _userService = userService;
+            _authService = authService;
         }
 
 
@@ -27,7 +27,7 @@ namespace PennyPilot.Backend.Api.Controllers
             var serverResponse = new ServerResponse<UserDto>();
             try
             {
-                serverResponse = await _userService.RegisterUserAsync(registerUserRequestDto);
+                serverResponse = await _authService.RegisterUserAsync(registerUserRequestDto);
                 if (!serverResponse.Success)
                     return BadRequest(serverResponse);
 
@@ -47,7 +47,7 @@ namespace PennyPilot.Backend.Api.Controllers
         {
             try
             {
-                var response = await _userService.LoginAsync(loginDto);
+                var response = await _authService.LoginAsync(loginDto);
                 if (!response.Success)
                     return Unauthorized(response);
 
@@ -63,25 +63,24 @@ namespace PennyPilot.Backend.Api.Controllers
             }
         }
 
-        [HttpGet("profile")]
-        [Authorize]
-        public async Task<IActionResult> GetProfile()
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
         {
-            var userId = User.GetUserId();
+            var result = await _authService.SendPasswordResetTokenAsync(request);
+            if (!result)
+                return BadRequest("Email not found.");
 
-            if (userId == Guid.Empty)
-                return Unauthorized(new ServerResponse<string>
-                {
-                    Success = false,
-                    Message = "Invalid user token."
-                });
+            return Ok("Password reset link sent if email exists.");
+        }
 
-            var response = await _userService.GetCurrentUserProfileAsync(userId);
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+        {
+            var result = await _authService.ResetPasswordAsync(request);
+            if (!result)
+                return BadRequest("Invalid or expired token.");
 
-            if (!response.Success)
-                return NotFound(response);
-
-            return Ok(response);
+            return Ok("Password reset successfully.");
         }
 
     }
