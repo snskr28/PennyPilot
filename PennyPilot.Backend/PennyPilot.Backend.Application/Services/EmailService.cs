@@ -25,7 +25,7 @@ namespace PennyPilot.Backend.Domain.Services
             message.To.Add(MailboxAddress.Parse(toEmail));
             message.Subject = subject;
 
-            message.Body = new TextPart("plain")
+            message.Body = new TextPart("html")
             {
                 Text = body
             };

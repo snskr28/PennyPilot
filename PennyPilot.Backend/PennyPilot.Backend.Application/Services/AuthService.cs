@@ -5,6 +5,7 @@ using PennyPilot.Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -116,7 +117,7 @@ namespace PennyPilot.Backend.Application.Services
 
         public async Task<ServerResponse<string>> SendPasswordResetTokenAsync(ForgotPasswordRequestDto requestDto)
         {
-            var user = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Identifier) 
+            var user = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Identifier)
                         ?? await _unitOfWork.Users.GetUserByUsernameAsync(requestDto.Identifier); ;
             if (user == null)
                 return new ServerResponse<string>
@@ -124,7 +125,7 @@ namespace PennyPilot.Backend.Application.Services
                     Data = "Username/Email not found",
                     Success = false,
                     Message = "Username/Email not found"
-                }; 
+                };
 
             // Generate token (secure random string)
             var token = _securityService.GenerateSecureToken();
@@ -138,9 +139,26 @@ namespace PennyPilot.Backend.Application.Services
             // Compose reset link
             var resetLink = $"http://localhost:4200/reset-password?token={token}";
 
-            var emailBody = $"Click this link to reset your password: {resetLink}\n\nThis link expires in 1 hour.";
+            var subject = "Reset Your PennyPilot Password";
+            var emailBody = $@"
+                                <html>
+                                    <body style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                                        <h2 style='color: #2c3e50;'>Password Reset Request</h2>
+                                        <p>Hi {user.Username},</p>
+                                        <p>We received a request to reset your password for your <strong>PennyPilot</strong> account.</p>
+                                        <p>Click the button below to reset your password. This link will expire in <strong>1 hour</strong>.</p>
+                                        <p>
+                                            <a href='{resetLink}' style='background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                                                Reset Password
+                                            </a>
+                                        </p>
+                                        <p>If you didn’t request this, you can safely ignore this email. Your password will remain unchanged.</p>
+                                        <br />
+                                        <p>Best regards,<br><strong>PennyPilot Team</strong></p>
+                                    </body>
+                                </html>";
 
-            await _emailService.SendEmailAsync(user.Email, "PennyPilot Password Reset", emailBody);
+            await _emailService.SendEmailAsync(user.Email, subject, emailBody);
 
             return new ServerResponse<string>
             {
