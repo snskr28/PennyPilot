@@ -67,41 +67,42 @@ namespace PennyPilot.Backend.Api.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
         {
-            var result = await _authService.SendPasswordResetTokenAsync(request);
-            if (!result)
-                return BadRequest("Email not found.");
+            try
+            {
+                var response = await _authService.SendPasswordResetTokenAsync(request);
+                if (!response.Success)
+                    return BadRequest(response);
 
-            return Ok("Password reset link sent if email exists.");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ServerResponse<string>
+                {
+                    Success = false,
+                    Message = "Internal server error: " + ex.Message
+                });
+            }
         }
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
         {
-            var result = await _authService.ResetPasswordAsync(request);
-            if (!result)
-                return BadRequest("Invalid or expired token.");
-
-            return Ok("Password reset successfully.");
-        }
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
-        {
-            var result = await _forgotPasswordService.SendPasswordResetTokenAsync(request);
-            if (!result)
-                return BadRequest("Email not found.");
-
-            return Ok("Password reset link sent");
-        }
-
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
-        {
-            var result = await _forgotPasswordService.ResetPasswordAsync(request);
-            if (!result)
-                return BadRequest("Invalid or expired token.");
-
-            return Ok("Password reset successfully.");
+            try
+            {
+                var response = await _authService.ResetPasswordAsync(request);
+                if (!response.Success)
+                    return BadRequest(response);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ServerResponse<string>
+                {
+                    Success = false,
+                    Message = "Internal server error: " + ex.Message
+                });
+            }
         }
 
     }

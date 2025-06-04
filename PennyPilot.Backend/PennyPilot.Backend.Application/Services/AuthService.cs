@@ -114,11 +114,17 @@ namespace PennyPilot.Backend.Application.Services
             }
         }
 
-        public async Task<bool> SendPasswordResetTokenAsync(ForgotPasswordRequestDto request)
+        public async Task<ServerResponse<string>> SendPasswordResetTokenAsync(ForgotPasswordRequestDto requestDto)
         {
-            var user = await _unitOfWork.Users.GetUserByEmailAsync(request.Identifier);
+            var user = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Identifier) 
+                        ?? await _unitOfWork.Users.GetUserByUsernameAsync(requestDto.Identifier); ;
             if (user == null)
-                return false; // optionally do not disclose if email exists or not
+                return new ServerResponse<string>
+                {
+                    Data = "Email not found",
+                    Success = false,
+                    Message = "Email not found"
+                }; 
 
             // Generate token (secure random string)
             var token = _securityService.GenerateSecureToken();
@@ -130,20 +136,30 @@ namespace PennyPilot.Backend.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             // Compose reset link
-            var resetLink = $"https://yourfrontend.com/reset-password?token={token}";
+            var resetLink = $"http://localhost:4200/reset-password?token={token}";
 
             var emailBody = $"Click this link to reset your password: {resetLink}\n\nThis link expires in 1 hour.";
 
             await _emailService.SendEmailAsync(user.Email, "PennyPilot Password Reset", emailBody);
 
-            return true;
+            return new ServerResponse<string>
+            {
+                Data = "Email sent successfully",
+                Success = true,
+                Message = "Email sent successfully"
+            }; ;
         }
 
-        public async Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request)
+        public async Task<ServerResponse<string>> ResetPasswordAsync(ResetPasswordRequestDto request)
         {
             var user = await _unitOfWork.Users.GetByPasswordResetTokenAsync(request.Token);
             if (user == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
-                return false;
+                return new ServerResponse<string>
+                {
+                    Data = "Token Expired or Invalid",
+                    Success = false,
+                    Message = "Token Expired or Invalid"
+                };
 
             // Hash new password - (replace with your password hasher)
             user.PasswordHash = _securityService.HashPassword(request.NewPassword);
@@ -151,8 +167,14 @@ namespace PennyPilot.Backend.Application.Services
             user.PasswordResetTokenExpiry = null;
 
             await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
-            return true;
+            return new ServerResponse<string>
+            {
+                Data = "Password Changed Successfully",
+                Success = true,
+                Message = "Password Changed Successfully"
+            };
         }
 
     }
