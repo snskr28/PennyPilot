@@ -72,6 +72,8 @@ namespace PennyPilot.Backend.Application.Services
                 CreatedAt = createdUser.CreatedAt
             };
 
+            await SendWelcomeEmail(userDto);
+
             return new ServerResponse<UserDto>
             {
                 Success = true,
@@ -193,6 +195,38 @@ namespace PennyPilot.Backend.Application.Services
                 Success = true,
                 Message = "Password Changed Successfully"
             };
+        }
+
+
+
+        private async Task SendWelcomeEmail(UserDto newUser)
+        {
+            var subject = "Welcome to PennyPilot — Manage Every Penny!";
+            var emailBody = $@"
+                               <html>
+                                 <body style='font-family: Arial, sans-serif; color: #333; background-color: #f9f9f9; padding: 20px;'>
+                                   <div style='max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
+                                     <div style='text-align: center; margin-bottom: 20px;'>
+                                       <img src='https://postimg.cc/N5nQsJs6' alt='PennyPilot Logo' style='height: 60px;' />
+                                     </div>
+                                     <h2 style='color: #2c3e50;'>Welcome to PennyPilot, {newUser.FirstName}!</h2>
+                                     <p>We're excited to have you on board.</p>
+                                     <p><strong>PennyPilot</strong> helps you track your <strong>expenses</strong> and <strong>incomes</strong> effortlessly, giving you full control over every penny.</p>
+                                     <p>Here's what you can do:</p>
+                                     <ul>
+                                       <li>🧾 Add and manage your expenses & incomes</li>
+                                       <li>📊 Visualize your financial trends</li>
+                                       <li>🔐 Stay in control with secure access</li>
+                                     </ul>
+                                     <p style='margin-top: 20px;'>Let’s get started and manage every penny together!</p>
+                                     <p>Cheers,<br/><strong>The PennyPilot Team</strong></p>
+                                     <hr style='margin-top: 30px;'/>
+                                     <p style='font-size: 12px; color: #888;'>If you didn't sign up for PennyPilot, please ignore this email.</p>
+                                   </div>
+                                 </body>
+                               </html>";
+
+            await _emailService.SendEmailAsync(newUser.Email, subject, emailBody);
         }
 
     }
