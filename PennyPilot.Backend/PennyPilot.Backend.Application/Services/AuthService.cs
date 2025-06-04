@@ -121,9 +121,9 @@ namespace PennyPilot.Backend.Application.Services
             if (user == null)
                 return new ServerResponse<string>
                 {
-                    Data = "Email not found",
+                    Data = "Username/Email not found",
                     Success = false,
-                    Message = "Email not found"
+                    Message = "Username/Email not found"
                 }; 
 
             // Generate token (secure random string)
