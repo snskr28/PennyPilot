@@ -15,12 +15,11 @@ namespace PennyPilot.Backend.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ForgotPasswordService>();
 
             return services;
         }
