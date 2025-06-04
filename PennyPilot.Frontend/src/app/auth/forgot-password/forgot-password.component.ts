@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 
 @Component({
@@ -17,7 +17,7 @@ export class ForgotPasswordComponent {
   loading = false;
   forgotForm:FormGroup;
 
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.forgotForm = this.fb.group({
       emailOrUsername: ['', [Validators.required]]
     });
@@ -37,5 +37,9 @@ export class ForgotPasswordComponent {
         this.loading = false;
       }
     });
+  }
+
+  goBack() {
+    this.router.navigate(['/login']);
   }
 }
