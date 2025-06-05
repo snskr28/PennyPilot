@@ -207,7 +207,7 @@ namespace PennyPilot.Backend.Application.Services
                                  <body style='font-family: Arial, sans-serif; color: #333; background-color: #f9f9f9; padding: 20px;'>
                                    <div style='max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
                                      <div style='text-align: center; margin-bottom: 20px;'>
-                                       <img src='https://postimg.cc/N5nQsJs6' alt='PennyPilot Logo' style='height: 60px;' />
+                                       <img src='https://i.postimg.cc/K8Gj5wCH/title.png' alt='PennyPilot Logo' style='height: 60px;' />
                                      </div>
                                      <h2 style='color: #2c3e50;'>Welcome to PennyPilot, {newUser.FirstName}!</h2>
                                      <p>We're excited to have you on board.</p>
