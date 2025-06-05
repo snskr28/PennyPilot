@@ -84,8 +84,8 @@
   <div *ngIf="signupError" class="error-message">
     {{ signupError }}
   </div>
-  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="signupForm.invalid">
-    Sign Up
+  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="signupForm.invalid || loading">
+    {{ loading ? 'Signing Up' : 'Sign Up'}}
   </button>
 </form>
 <div class="auth-redirect">

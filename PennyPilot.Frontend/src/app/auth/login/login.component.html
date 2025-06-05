@@ -29,8 +29,8 @@
     {{ loginError }}
   </div>
 
-  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="loginForm.invalid">
-    Login
+  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="loginForm.invalid || loading">
+    {{ loading ? 'Logging in...' : 'Login' }}
   </button>
 
   <div class="forgot-password">
