@@ -3,11 +3,13 @@ import { inject, Injectable } from "@angular/core";
 import { TokenService } from "../../core/services/token.service";
 import { AuthResponse, LoginRequest, SignupRequest } from "../models/auth.model";
 import { Observable, tap } from "rxjs";
+import { Router } from "@angular/router";
 
 @Injectable({providedIn: 'root'})
 export class AuthService{
     private http = inject(HttpClient);
     private tokenService = inject(TokenService)
+    private router = inject(Router);
     private apiUrl = 'https://localhost:7098/api/auth'
 
     login(payload: LoginRequest): Observable<AuthResponse>{
@@ -21,7 +23,8 @@ export class AuthService{
     }
 
     logout(): void{
-        this.tokenService.removeToken()
+        this.tokenService.removeToken();
+        this.router.navigate(['/login']);
     }
 
     

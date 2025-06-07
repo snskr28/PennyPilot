@@ -1,3 +1,36 @@
+<mat-sidenav-container class="dashboard-sidenav-container">
+  <mat-sidenav #drawer mode="over" class="dashboard-sidenav" [autoFocus]="false">
+    <div class="sidebar-header">
+      <img class="avatar" src="assets/profile.jpg" alt="Profile" />
+      <span class="sidebar-title">Your Name</span>
+    </div>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" (click)="drawer.close()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </a>
+      <a mat-list-item routerLink="/reports" (click)="drawer.close()">
+        <mat-icon>bar_chart</mat-icon>
+        <span>Reports</span>
+      </a>
+      <a mat-list-item routerLink="/profile" (click)="drawer.close()">
+        <mat-icon>person</mat-icon>
+        <span>View Profile</span>
+      </a>
+      <a mat-list-item (click)="logout(); drawer.close()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  
+   <mat-sidenav-content>
+    <div class="dashboard-toolbar">
+      <button mat-icon-button (click)="drawer.toggle()" class="hamburger-btn">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="dashboard-title">Dashboard</span>
+    </div>
 <div class="dashboard-container">
   <!-- Summary Cards -->
   <div class="summary-cards-flex">
@@ -23,4 +56,7 @@
   <div class="transactions-section">
     <app-transactions-table></app-transactions-table>
   </div>
+  <ng-content></ng-content>
 </div>
+</mat-sidenav-content>
+</mat-sidenav-container>

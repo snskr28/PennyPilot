@@ -14,6 +14,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 
 export const MATERIAL_IMPORTS = [
@@ -33,4 +35,6 @@ export const MATERIAL_IMPORTS = [
   MatSortModule,
   MatDialogModule,
   MatTooltipModule,
+  MatSidenavModule,
+  MatListModule,
 ];

@@ -3,21 +3,38 @@ import { MATERIAL_IMPORTS } from '../shared/material';
 import { CommonModule } from '@angular/common';
 import { ChartsComponent } from './charts/charts.component';
 import { TransactionsTableComponent } from './transactions-table/transactions-table.component';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,ChartsComponent,TransactionsTableComponent,...MATERIAL_IMPORTS],
+  imports: [
+    CommonModule,
+    ChartsComponent,
+    TransactionsTableComponent,
+    ...MATERIAL_IMPORTS,
+  ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   summaryCards = [
     { title: 'Total Income', amount: 0, icon: 'trending_up', color: '#10B981' },
-    { title: 'Total Expenses', amount: 0, icon: 'trending_down', color: '#EF4444' },
-    { title: 'Net Savings', amount: 0, icon: 'savings', color: '#6366F1' }
+    {
+      title: 'Total Expenses',
+      amount: 0,
+      icon: 'trending_down',
+      color: '#EF4444',
+    },
+    { title: 'Net Savings', amount: 0, icon: 'savings', color: '#6366F1' },
   ];
+
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     // We'll fetch data here later
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
