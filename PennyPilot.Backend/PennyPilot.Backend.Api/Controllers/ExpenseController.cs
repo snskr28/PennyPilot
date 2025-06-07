@@ -20,9 +20,9 @@ namespace PennyPilot.Backend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddExpense([FromBody] AddExpenseDto dto)
+        public async Task<IActionResult> AddExpenses([FromBody] List<AddExpenseDto> expenses)
         {
-            var response = new ServerResponse<Guid>();
+            var response = new ServerResponse<List<Guid>>();
             try
             {
                 var userId = User.GetUserId();
@@ -33,15 +33,14 @@ namespace PennyPilot.Backend.Api.Controllers
                     return Unauthorized(response);
                 }
 
-                var expenseId = await _expenseService.AddExpenseAsync(userId, dto);
-                response.Data = expenseId;
-                response.Message = "Expense added successfully.";
+                response = await _expenseService.AddExpensesAsync(userId, expenses);
+                response.Message = "Expenses added successfully.";
                 response.Success = true;
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                response.Data = Guid.Empty;
+                response.Data = null;
                 response.Message = ex.Message;
                 response.Success = false;
                 return StatusCode(500, response);

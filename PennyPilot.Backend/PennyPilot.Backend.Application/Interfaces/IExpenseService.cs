@@ -9,7 +9,7 @@ namespace PennyPilot.Backend.Application.Interfaces
 {
     public interface IExpenseService
     {
-        Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto dto);
+        Task<ServerResponse<List<Guid>>> AddExpensesAsync(Guid userId, List<AddExpenseDto> dto);
         Task UpdateExpenseAsync(Guid userId, UpdateExpenseDto dto);
         Task DeleteExpenseAsync(Guid userId, Guid expenseId);       
         Task<TableResponseDto<ExpenseTableDto>> GetUserExpensesAsync(Guid userId, TableRequestDto request);

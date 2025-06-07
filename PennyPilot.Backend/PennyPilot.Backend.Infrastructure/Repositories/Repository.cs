@@ -59,5 +59,10 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
                 _dbSet.Remove(entity);
             }
         }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
     }
 }

@@ -20,58 +20,97 @@ namespace PennyPilot.Backend.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> AddExpenseAsync(Guid userId, AddExpenseDto requestDto)
+        public async Task<ServerResponse<List<Guid>>> AddExpensesAsync(Guid userId, List<AddExpenseDto> requestDtos)
         {
-            string formattedCategory = requestDto.Category.ToPascalCase();
-            var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
+            // Cache to avoid repeated DB calls within this request
+            var categoryLookup = new Dictionary<string, Category>(StringComparer.OrdinalIgnoreCase);
+            var mappedCategories = new HashSet<Guid>();
 
-            if (category == null)
+            var expensesToAdd = new List<Expense>();
+            var newCategoriesToAdd = new List<Category>();
+            var newUserCategoriesToAdd = new List<UserCategory>();
+
+            var response = new ServerResponse<List<Guid>>
             {
-                category = new Category
+                Data = new List<Guid>()
+            };
+
+            foreach (var dto in requestDtos)
+            {
+                string formattedCategory = dto.Category.ToPascalCase();
+
+                // Get or add category
+                if (!categoryLookup.TryGetValue(formattedCategory, out var category))
                 {
-                    CategoryId = Guid.NewGuid(),
-                    Name = formattedCategory,
-                    Type = "Expense",
+                    category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
+
+                    if (category == null)
+                    {
+                        category = new Category
+                        {
+                            CategoryId = Guid.NewGuid(),
+                            Name = formattedCategory,
+                            Type = "Expense",
+                            IsEnabled = true,
+                            IsDeleted = false
+                        };
+                        newCategoriesToAdd.Add(category);
+                    }
+
+                    categoryLookup[formattedCategory] = category;
+                }
+
+                // Map user to category if not already
+                if (!mappedCategories.Contains(category.CategoryId))
+                {
+                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+                    if (!isMapped)
+                    {
+                        newUserCategoriesToAdd.Add(new UserCategory
+                        {
+                            UserCategoryId = Guid.NewGuid(),
+                            UserId = userId,
+                            CategoryId = category.CategoryId
+                        });
+                    }
+                    mappedCategories.Add(category.CategoryId);
+                }
+
+                // Prepare expense entity
+                var expense = new Expense
+                {
+                    ExpenseId = Guid.NewGuid(),
+                    UserId = userId,
+                    CategoryId = category.CategoryId,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    Amount = dto.Amount,
+                    PaymentMode = dto.PaymentMode,
+                    PaidBy = dto.PaidBy,
+                    Date = dto.Date,
+                    ReceiptImage = dto.ReceiptImage,
+                    CreatedAt = DateTime.UtcNow,
                     IsEnabled = true,
                     IsDeleted = false
                 };
-                await _unitOfWork.Categories.AddAsync(category);
+
+                expensesToAdd.Add(expense);
             }
 
-            // Map User and Category
-            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
-            if (!isMapped)
-            {
-                var userCategory = new UserCategory
-                {
-                    UserCategoryId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId
-                };
-                await _unitOfWork.UserCategories.AddAsync(userCategory);
-            }
+            // Batch insert all
+            if (newCategoriesToAdd.Any())
+                await _unitOfWork.Categories.AddRangeAsync(newCategoriesToAdd);
 
-            var expense = new Expense
-            {
-                ExpenseId = Guid.NewGuid(),
-                UserId = userId,
-                CategoryId = category.CategoryId,
-                Title = requestDto.Title,
-                Description = requestDto.Description,
-                Amount = requestDto.Amount,
-                PaymentMode = requestDto.PaymentMode,
-                PaidBy = requestDto.PaidBy,
-                Date = requestDto.Date,
-                ReceiptImage = requestDto.ReceiptImage,
-                CreatedAt = DateTime.UtcNow,
-                IsEnabled = true,
-                IsDeleted = false
-            };
+            if (newUserCategoriesToAdd.Any())
+                await _unitOfWork.UserCategories.AddRangeAsync(newUserCategoriesToAdd);
 
-            await _unitOfWork.Expenses.AddAsync(expense);
+            if (expensesToAdd.Any())
+                await _unitOfWork.Expenses.AddRangeAsync(expensesToAdd);
+
             await _unitOfWork.SaveChangesAsync();
 
-            return expense.ExpenseId;
+            response.Data = expensesToAdd.Select(e => e.ExpenseId).ToList();
+            return response;
         }
 
         public async Task UpdateExpenseAsync(Guid userId, UpdateExpenseDto requestDto)
