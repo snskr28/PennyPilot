@@ -35,7 +35,7 @@
         <tr mat-header-row *matHeaderRowDef="incomeDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: incomeDisplayedColumns;"></tr>
       </table>
-      <mat-paginator #incomePaginator [pageSize]="5"></mat-paginator>
+      <mat-paginator #incomePaginator [pageSize]="5" [pageSizeOptions]="[5,10,20,50,100]"></mat-paginator>
     </mat-tab>
     <mat-tab label="Expenses">
       <div class="table-header">
@@ -80,7 +80,7 @@
         <tr mat-header-row *matHeaderRowDef="expenseDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: expenseDisplayedColumns;"></tr>
       </table>
-      <mat-paginator #expensePaginator [pageSize]="5"></mat-paginator>
+      <mat-paginator #expensePaginator [pageSize]="5" [pageSizeOptions]="[5,10,20,50,100]"></mat-paginator>
     </mat-tab>
   </mat-tab-group>
 </mat-card>

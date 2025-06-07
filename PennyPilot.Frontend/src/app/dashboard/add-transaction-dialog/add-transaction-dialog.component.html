@@ -2,7 +2,14 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="dialog-scroll-area">
     <div formArrayName="entries">
-      <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="entry-row">
+      <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="transaction-card">
+        <div class="transaction-card-header">
+          <span class="transaction-label">Transaction {{ i + 1 }}</span>
+          <button mat-icon-button color="warn" type="button" (click)="removeEntry(i)" *ngIf="entries.length > 1">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+        <!-- Your existing fields go here -->
         <ng-container *ngIf="data.type === 'income'; else expenseFields">
           <mat-form-field appearance="outline">
             <mat-label>Category</mat-label>
@@ -55,9 +62,6 @@
             <input matInput type="date" formControlName="date" required>
           </mat-form-field>
         </ng-template>
-        <button mat-icon-button color="warn" type="button" (click)="removeEntry(i)" *ngIf="entries.length > 1">
-          <mat-icon>remove_circle</mat-icon>
-        </button>
       </div>
     </div>
   </div>
