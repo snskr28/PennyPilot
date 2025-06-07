@@ -43,6 +43,25 @@
         </mat-error>
        </mat-form-field>
   </div>
+  <div class="name-row">
+    <mat-form-field appearance="outline" class="name-field">
+      <mat-label>Date of Birth</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dob" 
+             [max]="maxDate" [min]="minDate" 
+             placeholder="MM/DD/YYYY">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker panelClass="signup-datepicker"
+                      xPosition="end"
+                      yPosition="below">
+      </mat-datepicker>
+      <mat-error *ngIf="signupForm.get('dob')?.hasError('required')">
+        Date of Birth is required
+      </mat-error>
+      <mat-error *ngIf="signupForm.get('dob')?.hasError('invalidDob')">
+        Please enter a valid date (1900 - present)
+      </mat-error>
+    </mat-form-field>
+  </div>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Password</mat-label>

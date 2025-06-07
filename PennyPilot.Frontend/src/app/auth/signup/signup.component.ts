@@ -6,6 +6,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -31,6 +32,8 @@ export class SignupComponent implements OnInit {
   authService = inject(AuthService);
   signupError: string | null = null;
   loading = false;
+  maxDate = new Date();
+  minDate = new Date(1900, 0, 1);
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.signupForm = this.fb.group(
@@ -46,6 +49,7 @@ export class SignupComponent implements OnInit {
         firstName: ['', [Validators.required]],
         middleName: [null],
         lastName: ['', [Validators.required]],
+        dob: [null, [Validators.required, this.dobValidator]], // Add this
         password: [
           '',
           [
@@ -99,6 +103,19 @@ export class SignupComponent implements OnInit {
     const passwordValid = hasLetter && hasNumber && hasSpecialChar;
 
     return !passwordValid ? { passwordStrength: true } : null;
+  }
+
+  // Add this validator
+  private dobValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const date = new Date(control.value);
+    const min = new Date(1900, 0, 1);
+    const max = new Date();
+
+    if (date < min || date > max) {
+      return { invalidDob: true };
+    }
+    return null;
   }
 
   onSubmit() {
