@@ -62,7 +62,7 @@ form {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
-  
+
   &:hover {
     color: #764ba2;
   }
@@ -89,11 +89,11 @@ form {
   .mat-calendar-header {
     background: #ffffff !important;
     color: #374151 !important;
-    
+
     .mat-calendar-arrow {
       fill: #374151;
     }
-    
+
     .mat-calendar-previous-button,
     .mat-calendar-next-button,
     .mat-calendar-period-button {
@@ -132,7 +132,7 @@ form {
     /* Disabled dates */
     .mat-calendar-body-disabled > .mat-calendar-body-cell-content {
       color: rgba(0, 0, 0, 0.38) !important;
-      
+
       &:not(.mat-calendar-body-selected) {
         background: none !important;
       }
@@ -152,7 +152,7 @@ form {
   border-radius: 12px;
   background: white !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  
+
   .mat-calendar {
     background: white !important;
   }
@@ -167,7 +167,7 @@ form {
 /* Datepicker Toggle Button */
 .mat-datepicker-toggle {
   color: #6b7280 !important;
-  
+
   &:hover {
     color: #374151 !important;
   }
@@ -175,7 +175,9 @@ form {
 
 /* Responsive Design */
 @media (max-width: 600px) {
-  .full-width, .name-row, .name-field {
+  .full-width,
+  .name-row,
+  .name-field {
     width: 100% !important;
     min-width: 0;
     margin-bottom: 12px;
@@ -191,11 +193,11 @@ form {
   form {
     padding: 5px 0;
   }
-  
+
   .full-width {
     margin-bottom: 15px;
   }
-  
+
   .name-row {
     gap: 8px;
     margin-bottom: 15px;

@@ -13,10 +13,10 @@ import { filter } from 'rxjs/operators';
     LoginComponent,
     SignupComponent,
     RouterModule,
-    ...MATERIAL_IMPORTS
+    ...MATERIAL_IMPORTS,
   ],
   templateUrl: './auth-container.component.html',
-  styleUrl: './auth-container.component.scss'
+  styleUrl: './auth-container.component.scss',
 })
 export class AuthContainerComponent implements OnInit, OnDestroy {
   selectedTabIndex = 0;
@@ -26,11 +26,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router) {
     // Sync tabs with route
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.selectedTabIndex = this.router.url.includes('signup') ? 1 : 0;
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.selectedTabIndex = this.router.url.includes('signup') ? 1 : 0;
+      });
   }
 
   ngOnInit() {
@@ -68,8 +68,12 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
       this.startSlideshow();
     }
   }
-  
+
   isLoginOrSignupRoute(): boolean {
-    return this.router.url === '/login' || this.router.url === '/signup' || this.router.url === '/';
+    return (
+      this.router.url === '/login' ||
+      this.router.url === '/signup' ||
+      this.router.url === '/'
+    );
   }
 }

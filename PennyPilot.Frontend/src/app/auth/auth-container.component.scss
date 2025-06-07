@@ -1,7 +1,7 @@
 .auth-container {
   display: flex;
   min-height: 100vh;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   align-items: stretch;
   height: 100vh; // Ensure container fills viewport
   overflow: hidden; // Prevent double scroll
@@ -204,21 +204,21 @@
     height: 100vh;
     overflow: hidden;
   }
-  
+
   .left-panel {
     width: 100%;
     height: 35vh;
     min-height: 180px;
     max-height: 40vh;
   }
-  
+
   .right-panel {
     width: 100%;
     height: 65vh;
     padding: 20px;
     overflow-y: auto;
   }
-  
+
   .auth-card {
     margin: 10px 0;
     padding: 24px 16px;

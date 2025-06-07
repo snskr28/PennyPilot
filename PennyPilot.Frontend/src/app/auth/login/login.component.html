@@ -1,36 +1,52 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Email or Username</mat-label>
-    <input matInput formControlName="identifier" placeholder="Enter your email or username">
+    <input
+      matInput
+      formControlName="identifier"
+      placeholder="Enter your email or username"
+    />
     <mat-icon matSuffix>person</mat-icon>
-    <mat-error *ngIf="loginForm.get('identifier')?.hasError('required')">
-      Email or username is required
-    </mat-error>
-    <mat-error *ngIf="loginForm.get('identifier')?.hasError('email') && loginForm.get('identifier')?.value?.includes('@')">
-      Please enter a valid email address
-    </mat-error>
+    @if(loginForm.get('identifier')?.hasError('required')){
+    <mat-error> Email or username is required </mat-error>
+    } @if(loginForm.get('identifier')?.hasError('email') &&
+    loginForm.get('identifier')?.value?.includes('@')){
+    <mat-error> Please enter a valid email address </mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Password</mat-label>
-    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+    <input
+      matInput
+      [type]="hidePassword ? 'password' : 'text'"
+      formControlName="password"
+      placeholder="Enter your password"
+    />
     <mat-icon matSuffix (click)="togglePassword()" class="toggle-password">
-      {{hidePassword ? 'visibility_off' : 'visibility'}}
+      {{ hidePassword ? "visibility_off" : "visibility" }}
     </mat-icon>
-    <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-      Password is required
-    </mat-error>
-    <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-      Password must be at least 6 characters long
-    </mat-error>
+    @if(loginForm.get('password')?.hasError('required')){
+    <mat-error> Password is required </mat-error>
+    } @if(loginForm.get('password')?.hasError('minlength')){
+    <mat-error> Password must be at least 6 characters long </mat-error>
+    }
   </mat-form-field>
 
-  <div *ngIf="loginError" class="error-message">
+  @if(loginError){
+  <div class="error-message">
     {{ loginError }}
   </div>
+  }
 
-  <button mat-raised-button color="primary" type="submit" class="full-width auth-button" [disabled]="loginForm.invalid || loading">
-    {{ loading ? 'Logging in...' : 'Login' }}
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    class="full-width auth-button"
+    [disabled]="loginForm.invalid || loading"
+  >
+    {{ loading ? "Logging in..." : "Login" }}
   </button>
 
   <div class="forgot-password">
@@ -39,5 +55,7 @@
 </form>
 
 <div class="auth-redirect">
-  <p>New user? <a routerLink="/signup" class="redirect-link">Create Account</a></p>
+  <p>
+    New user? <a routerLink="/signup" class="redirect-link">Create Account</a>
+  </p>
 </div>

@@ -1,11 +1,23 @@
-<h2 mat-dialog-title style="padding: 24px 24px 0 24px;">Add {{ data.type | titlecase }}</h2>
+<h2 mat-dialog-title style="padding: 24px 24px 0 24px">
+  Add {{ data.type | titlecase }}
+</h2>
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="dialog-scroll-area">
     <div formArrayName="entries">
-      <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="transaction-card">
+      <div
+        *ngFor="let entry of entries.controls; let i = index"
+        [formGroupName]="i"
+        class="transaction-card"
+      >
         <div class="transaction-card-header">
           <span class="transaction-label">Transaction {{ i + 1 }}</span>
-          <button mat-icon-button color="warn" type="button" (click)="removeEntry(i)" *ngIf="entries.length > 1">
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="removeEntry(i)"
+            *ngIf="entries.length > 1"
+          >
             <mat-icon>remove_circle</mat-icon>
           </button>
         </div>
@@ -13,60 +25,65 @@
         <ng-container *ngIf="data.type === 'income'; else expenseFields">
           <mat-form-field appearance="outline">
             <mat-label>Category</mat-label>
-            <input matInput formControlName="category" required>
+            <input matInput formControlName="category" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Source</mat-label>
-            <input matInput formControlName="source" required>
+            <input matInput formControlName="source" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
-            <input matInput formControlName="description">
+            <input matInput formControlName="description" />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Amount</mat-label>
-            <input matInput type="number" formControlName="amount" required>
+            <input matInput type="number" formControlName="amount" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" required>
+            <input matInput type="date" formControlName="date" required />
           </mat-form-field>
         </ng-container>
         <ng-template #expenseFields>
           <mat-form-field appearance="outline">
             <mat-label>Title</mat-label>
-            <input matInput formControlName="title" required>
+            <input matInput formControlName="title" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Category</mat-label>
-            <input matInput formControlName="category" required>
+            <input matInput formControlName="category" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
-            <input matInput formControlName="description">
+            <input matInput formControlName="description" />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Amount</mat-label>
-            <input matInput type="number" formControlName="amount" required>
+            <input matInput type="number" formControlName="amount" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Payment Mode</mat-label>
-            <input matInput formControlName="paymentMode" required>
+            <input matInput formControlName="paymentMode" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Paid By</mat-label>
-            <input matInput formControlName="paidBy" required>
+            <input matInput formControlName="paidBy" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" required>
+            <input matInput type="date" formControlName="date" required />
           </mat-form-field>
         </ng-template>
       </div>
     </div>
   </div>
   <div class="actions">
-    <button mat-stroked-button color="primary" type="button" (click)="addEntry()">
+    <button
+      mat-stroked-button
+      color="primary"
+      type="button"
+      (click)="addEntry()"
+    >
       <mat-icon>add</mat-icon> Add Row
     </button>
     <span class="spacer"></span>

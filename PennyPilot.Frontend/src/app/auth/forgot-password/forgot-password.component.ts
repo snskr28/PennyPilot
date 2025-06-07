@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -7,19 +13,29 @@ import { MATERIAL_IMPORTS } from '../../shared/material';
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [FormsModule, CommonModule, RouterModule, ReactiveFormsModule, ...MATERIAL_IMPORTS],
+  imports: [
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ...MATERIAL_IMPORTS,
+  ],
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss'
+  styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent {
   sent = false;
   error: string | null = null;
   loading = false;
-  forgotForm:FormGroup;
+  forgotForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router
+  ) {
     this.forgotForm = this.fb.group({
-      emailOrUsername: ['', [Validators.required]]
+      emailOrUsername: ['', [Validators.required]],
     });
   }
 
@@ -32,10 +48,10 @@ export class ForgotPasswordComponent {
         this.sent = true;
         this.loading = false;
       },
-      error: err => {
+      error: (err) => {
         this.error = err.error?.message || 'Username/Email not found.';
         this.loading = false;
-      }
+      },
     });
   }
 
