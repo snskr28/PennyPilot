@@ -11,12 +11,9 @@ import { MatTableDataSource } from '@angular/material/table';
 @Component({
   selector: 'app-transactions-table',
   standalone: true,
-  imports: [
-    CommonModule,
-    ...MATERIAL_IMPORTS
-  ],
+  imports: [CommonModule, ...MATERIAL_IMPORTS],
   templateUrl: './transactions-table.component.html',
-  styleUrls: ['./transactions-table.component.scss']
+  styleUrls: ['./transactions-table.component.scss'],
 })
 export class TransactionsTableComponent {
   private dialog = inject(MatDialog);
@@ -24,8 +21,25 @@ export class TransactionsTableComponent {
 
   activeTab: 'income' | 'expense' = 'income';
 
-  incomeDisplayedColumns = ['sn', 'title', 'category', 'description', 'source', 'amount', 'date'];
-  expenseDisplayedColumns = ['sn', 'title', 'category', 'description', 'amount', 'paidBy', 'paymentMode', 'date'];
+  incomeDisplayedColumns = [
+    'sn',
+    'title',
+    'category',
+    'description',
+    'source',
+    'amount',
+    'date',
+  ];
+  expenseDisplayedColumns = [
+    'sn',
+    'title',
+    'category',
+    'description',
+    'amount',
+    'paidBy',
+    'paymentMode',
+    'date',
+  ];
 
   incomeDataSource = new MatTableDataSource<Income>([]);
   expenseDataSource = new MatTableDataSource<Expense>([]);
@@ -51,9 +65,9 @@ export class TransactionsTableComponent {
   openAddDialog() {
     const dialogRef = this.dialog.open(AddTransactionDialogComponent, {
       width: '600px',
-      data: { type: this.activeTab }
+      data: { type: this.activeTab },
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (this.activeTab === 'income') {
           this.transactionsService.addIncomes(result);

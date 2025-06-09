@@ -1,5 +1,10 @@
 <mat-sidenav-container class="dashboard-sidenav-container">
-  <mat-sidenav #drawer mode="over" class="dashboard-sidenav" [autoFocus]="false">
+  <mat-sidenav
+    #drawer
+    mode="over"
+    class="dashboard-sidenav"
+    [autoFocus]="false"
+  >
     <div class="sidebar-header">
       <img class="avatar" src="assets/profile.jpg" alt="Profile" />
       <span class="sidebar-title">Your Name</span>
@@ -23,40 +28,40 @@
       </a>
     </mat-nav-list>
   </mat-sidenav>
-  
-   <mat-sidenav-content>
+
+  <mat-sidenav-content>
     <div class="dashboard-toolbar">
       <button mat-icon-button (click)="drawer.toggle()" class="hamburger-btn">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="dashboard-title">Dashboard</span>
     </div>
-<div class="dashboard-container">
-  <!-- Summary Cards -->
-  <div class="summary-cards-flex">
-    <mat-card class="summary-card" *ngFor="let card of summaryCards">
-      <mat-card-content>
-        <div class="card-icon" [style.background-color]="card.color + '15'">
-          <mat-icon [style.color]="card.color">{{card.icon}}</mat-icon>
-        </div>
-        <div class="card-info">
-          <h3>{{card.title}}</h3>
-          <h2>${{card.amount | number:'1.2-2'}}</h2>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <div class="dashboard-container">
+      <!-- Summary Cards -->
+      <div class="summary-cards-flex">
+        <mat-card class="summary-card" *ngFor="let card of summaryCards">
+          <mat-card-content>
+            <div class="card-icon" [style.background-color]="card.color + '15'">
+              <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+            </div>
+            <div class="card-info">
+              <h3>{{ card.title }}</h3>
+              <h2>${{ card.amount | number : "1.2-2" }}</h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-  <!-- Charts Grid -->
-  <div class="charts-grid">
-    <app-dashboard-charts></app-dashboard-charts>
-  </div>
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <app-dashboard-charts></app-dashboard-charts>
+      </div>
 
-  <!-- Transactions Table -->
-  <div class="transactions-section">
-    <app-transactions-table></app-transactions-table>
-  </div>
-  <ng-content></ng-content>
-</div>
-</mat-sidenav-content>
+      <!-- Transactions Table -->
+      <div class="transactions-section">
+        <app-transactions-table></app-transactions-table>
+      </div>
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
 </mat-sidenav-container>

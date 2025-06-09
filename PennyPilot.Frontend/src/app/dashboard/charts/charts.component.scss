@@ -11,13 +11,13 @@
   min-width: 0;
   min-height: 18rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.07);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.07);
   background: #fff;
   display: flex;
   flex-direction: column;
   width: 0; /* Ensures flex:1 works as expected */
   max-width: 100%;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 mat-card-header {
@@ -49,7 +49,7 @@ mat-card-content {
   display: block;
 }
 
-.divider{
+.divider {
   border: none;
   border-top: 2px solid #e5e7eb; /* Tailwind gray-200 */
   margin: 10px 24px;
