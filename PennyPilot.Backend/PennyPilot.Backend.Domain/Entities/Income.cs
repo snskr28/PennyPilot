@@ -27,6 +27,8 @@ public partial class Income
 
     public bool IsDeleted { get; set; }
 
+    public string Title { get; set; } = null!;
+
     public virtual Category Category { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;

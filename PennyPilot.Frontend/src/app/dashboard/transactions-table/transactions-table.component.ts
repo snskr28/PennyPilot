@@ -24,8 +24,8 @@ export class TransactionsTableComponent {
 
   activeTab: 'income' | 'expense' = 'income';
 
-  incomeDisplayedColumns = ['sn', 'category', 'source', 'description', 'amount', 'date'];
-  expenseDisplayedColumns = ['sn', 'title', 'category', 'description', 'amount', 'paymentMode', 'paidBy', 'date'];
+  incomeDisplayedColumns = ['sn', 'title', 'category', 'description', 'source', 'amount', 'date'];
+  expenseDisplayedColumns = ['sn', 'title', 'category', 'description', 'amount', 'paidBy', 'paymentMode', 'date'];
 
   incomeDataSource = new MatTableDataSource<Income>([]);
   expenseDataSource = new MatTableDataSource<Expense>([]);

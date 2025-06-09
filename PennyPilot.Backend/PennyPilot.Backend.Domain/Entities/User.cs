@@ -26,7 +26,9 @@ public partial class User
     public bool IsEnabled { get; set; }
 
     public bool IsDeleted { get; set; }
+
     public string? PasswordResetToken { get; set; }
+
     public DateTime? PasswordResetTokenExpiry { get; set; }
 
     public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();

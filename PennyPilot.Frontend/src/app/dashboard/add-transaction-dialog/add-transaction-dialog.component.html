@@ -21,19 +21,22 @@
             <mat-icon>remove_circle</mat-icon>
           </button>
         </div>
-        <!-- Your existing fields go here -->
         <ng-container *ngIf="data.type === 'income'; else expenseFields">
+          <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" required />
+          </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Category</mat-label>
             <input matInput formControlName="category" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Source</mat-label>
-            <input matInput formControlName="source" required />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
             <input matInput formControlName="description" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Source</mat-label>
+            <input matInput formControlName="source" required />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Amount</mat-label>
@@ -41,7 +44,23 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" required />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="date"
+              placeholder="MM/DD/YYYY"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+              #picker
+              panelClass="signup-datepicker"
+              xPosition="end"
+              yPosition="above"
+            >
+            </mat-datepicker>
           </mat-form-field>
         </ng-container>
         <ng-template #expenseFields>
@@ -71,7 +90,23 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" required />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="date"
+              placeholder="MM/DD/YYYY"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+              #picker
+              panelClass="signup-datepicker"
+              xPosition="end"
+              yPosition="above"
+            >
+            </mat-datepicker>
           </mat-form-field>
         </ng-template>
       </div>
