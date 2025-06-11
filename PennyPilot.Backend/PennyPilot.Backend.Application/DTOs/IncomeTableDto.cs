@@ -8,6 +8,7 @@ namespace PennyPilot.Backend.Application.DTOs
 {
     public class IncomeTableDto
     {
+        public string Title { get; set; } 
         public string Category { get; set; } = null!;
         public string Source { get; set; } = null!;
         public string? Description { get; set; }

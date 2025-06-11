@@ -147,6 +147,7 @@ namespace PennyPilot.Backend.Application.Services
                               Category = e.Category.Name,
                               Description = e.Description,
                               Source = e.Source,
+                              Title = e.Title
                            });
 
             bool descending = requestDto.SortOrder?.ToLower() == "desc";
@@ -158,6 +159,7 @@ namespace PennyPilot.Backend.Application.Services
                 "description" => descending ? incomes.OrderByDescending(x => x.Description) : incomes.OrderBy(x => x.Description),
                 "source" => descending ? incomes.OrderByDescending(x => x.Source) : incomes.OrderBy(x => x.Source),
                 "date" => descending ? incomes.OrderByDescending(x => x.Date) : incomes.OrderBy(x => x.Date),
+                "title" => descending ? incomes.OrderByDescending(x=>x.Title) : incomes.OrderBy(x=>x.Title),
                 _ => incomes.OrderBy(x => x.Date) // default sorting
             };
 
