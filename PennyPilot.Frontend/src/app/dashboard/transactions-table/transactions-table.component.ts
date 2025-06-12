@@ -4,9 +4,22 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTransactionDialogComponent } from '../add-transaction-dialog/add-transaction-dialog.component';
-import { TransactionsService, Income, Expense } from '../transactions.service';
+import {
+  TransactionsService,
+  Income,
+  Expense,
+} from '../services/transactions.service';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import { MatTableDataSource } from '@angular/material/table';
+import {
+  catchError,
+  finalize,
+  map,
+  merge,
+  Observable,
+  startWith,
+  switchMap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-transactions-table',
@@ -20,6 +33,9 @@ export class TransactionsTableComponent {
   private transactionsService = inject(TransactionsService);
 
   activeTab: 'income' | 'expense' = 'income';
+  loading = false;
+  error: string | null = null;
+  totalItems = 0;
 
   incomeDisplayedColumns = [
     'sn',
@@ -50,36 +66,120 @@ export class TransactionsTableComponent {
   @ViewChild('expenseSort') expenseSort!: MatSort;
 
   ngAfterViewInit() {
-    this.incomeDataSource.paginator = this.incomePaginator;
-    this.incomeDataSource.sort = this.incomeSort;
-    this.expenseDataSource.paginator = this.expensePaginator;
-    this.expenseDataSource.sort = this.expenseSort;
-    this.loadData();
+    this.setupIncomeTable();
+    this.setupExpenseTable();
   }
 
-  loadData() {
-    this.incomeDataSource.data = this.transactionsService.getIncomes();
-    this.expenseDataSource.data = this.transactionsService.getExpenses();
-  }
-
-  openAddDialog() {
-    const dialogRef = this.dialog.open(AddTransactionDialogComponent, {
-      width: '600px',
-      data: { type: this.activeTab },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (this.activeTab === 'income') {
-          this.transactionsService.addIncomes(result);
-        } else {
-          this.transactionsService.addExpenses(result);
-        }
-        this.loadData();
+  private setupIncomeTable() {
+    this.incomePaginator.page.subscribe(() => {
+      if (this.incomeSort.active) {
+        this.incomeSort.direction = '';
       }
     });
+
+    merge(this.incomeSort.sortChange, this.incomePaginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.loading = true;
+          this.error = null;
+          return this.transactionsService.getIncomeTable({
+            pageNumber: this.incomePaginator.pageIndex + 1,
+            pageSize: this.incomePaginator.pageSize,
+            sortBy: this.incomeSort.active || 'date',
+            sortOrder: this.incomeSort.direction || 'desc',
+          });
+        }),
+        map((response: any) => {
+          this.totalItems = response.totalCount;
+          return response.items;
+        }),
+        catchError((error) => {
+          this.error =
+            error.message || 'An error occurred while fetching income data.';
+          return [];
+        }),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe((data) => {
+        this.incomeDataSource.data = data;
+      });
   }
+
+  private setupExpenseTable() {
+    //Reset sort when paginator changes
+    this.expensePaginator.page.subscribe(() => {
+      if (this.expenseSort.active) {
+        this.expenseSort.direction = '';
+      }
+    });
+
+    //Load data when sort or page changes
+    merge(this.expenseSort.sortChange, this.expensePaginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.loading = true;
+          this.error = null;
+          return this.transactionsService.getExpenseTable({
+            pageNumber: this.expensePaginator.pageIndex + 1,
+            pageSize: this.expensePaginator.pageSize,
+            sortBy: this.expenseSort.active || 'date',
+            sortOrder: this.expenseSort.direction || 'desc',
+          });
+        }),
+        map((response: any) => {
+          this.totalItems = response.totalCount;
+          return response.items;
+        }),
+        catchError((error) => {
+          this.error =
+            error.message || 'An error occurred while fetching expense data.';
+          return [];
+        }),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe((data) => {
+        this.expenseDataSource.data = data;
+      });
+  }
+
+  // loadData() {
+  //   this.incomeDataSource.data = this.transactionsService.getIncomeTable();
+  //   this.expenseDataSource.data = this.transactionsService.getExpenseTable();
+  // }
+
+  // openAddDialog() {
+  //   const dialogRef = this.dialog.open(AddTransactionDialogComponent, {
+  //     width: '600px',
+  //     data: { type: this.activeTab },
+  //   });
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     if (result) {
+  //       if (this.activeTab === 'income') {
+  //         this.transactionsService.addIncomes(result);
+  //       } else {
+  //         this.transactionsService.addExpenses(result);
+  //       }
+  //       this.loadData();
+  //     }
+  //   });
+  // }
 
   onTabChange(event: any) {
     this.activeTab = event.index === 0 ? 'income' : 'expense';
+    this.error = null;
+
+    if (this.activeTab === 'income') {
+      this.incomePaginator.pageIndex = 0;
+      this.setupIncomeTable();
+    } else {
+      this.expensePaginator.pageIndex = 0;
+      this.setupExpenseTable();
+    }
   }
 }

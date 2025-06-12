@@ -13,6 +13,14 @@ export interface SignupRequest {
   password: string;
 }
 
-export interface AuthResponse {
+export interface LoginResponseData {
   token: string;
+  username: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  data: LoginResponseData;
 }

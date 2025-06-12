@@ -19,7 +19,7 @@ export class AuthService {
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/login`, payload)
-      .pipe(tap((res) => this.tokenService.saveToken(res.token)));
+      .pipe(tap((res) => this.tokenService.saveToken(res.data.token)));
   }
 
   signup(payload: SignupRequest): Observable<any> {
