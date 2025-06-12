@@ -93,6 +93,7 @@ export class TransactionsTableComponent {
         map((response: any) => {
           if (response.success) {
             this.totalItems = response.data.totalCount;
+            this.loading = false;
             return response.data.items;
           }
           throw new Error(response.message);
@@ -101,10 +102,8 @@ export class TransactionsTableComponent {
           this.error =
             error.message || 'An error occurred while fetching income data.';
           console.error('Error fetching incomes:', error);
-          return [];
-        }),
-        finalize(() => {
           this.loading = false;
+          return [];
         })
       )
       .subscribe((data) => {
@@ -135,6 +134,7 @@ export class TransactionsTableComponent {
         map((response: any) => {
           if (response.success) {
             this.totalItems = response.data.totalCount;
+            this.loading = false;
             return response.data.items;
           }
           throw new Error(response.message);
@@ -143,39 +143,15 @@ export class TransactionsTableComponent {
           this.error =
             error.message || 'An error occurred while fetching expense data.';
           console.error('Error fetching expenses:', error);
-          return [];
-        }),
-        finalize(() => {
           this.loading = false;
+          return [];
         })
       )
       .subscribe((data) => {
         this.expenseDataSource.data = data;
       });
   }
-
-  // loadData() {
-  //   this.incomeDataSource.data = this.transactionsService.getIncomeTable();
-  //   this.expenseDataSource.data = this.transactionsService.getExpenseTable();
-  // }
-
-  // openAddDialog() {
-  //   const dialogRef = this.dialog.open(AddTransactionDialogComponent, {
-  //     width: '600px',
-  //     data: { type: this.activeTab },
-  //   });
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result) {
-  //       if (this.activeTab === 'income') {
-  //         this.transactionsService.addIncomes(result);
-  //       } else {
-  //         this.transactionsService.addExpenses(result);
-  //       }
-  //       this.loadData();
-  //     }
-  //   });
-  // }
-
+  
   onTabChange(event: any) {
     this.activeTab = event.index === 0 ? 'income' : 'expense';
     this.error = null;
