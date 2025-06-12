@@ -4,6 +4,7 @@ import { TableRequest } from '../models/table-request.model';
 import { Observable } from 'rxjs';
 import { TableResponse } from '../models/table-response.model';
 import { HttpClient } from '@angular/common/http';
+import { ApiResponse } from '../../shared/api-response.model';
 
 export interface Income {
   category: string;
@@ -32,12 +33,12 @@ export class TransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  getIncomeTable(request: TableRequest): Observable<TableResponse<Income>> {
-    return this.http.post<TableResponse<Income>>(`${this.apiUrl}/Income/IncomeTable`, request);
+  getIncomeTable(request: TableRequest): Observable<ApiResponse<TableResponse<Income>>> {
+    return this.http.post<ApiResponse<TableResponse<Income>>>(`${this.apiUrl}/Income/IncomeTable`, request);
   }
 
-  getExpenseTable(request: TableRequest): Observable<TableResponse<Expense>> {
-    return this.http.post<TableResponse<Expense>>(`${this.apiUrl}/Expense/ExpenseTable`, request);
+  getExpenseTable(request: TableRequest): Observable<ApiResponse<TableResponse<Expense>>> {
+    return this.http.post<ApiResponse<TableResponse<Expense>>>(`${this.apiUrl}/Expense/ExpenseTable`, request);
   }
 
   addIncomes(incomes: Income[]) {

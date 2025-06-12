@@ -104,7 +104,7 @@ namespace PennyPilot.Backend.Api.Controllers
         }
 
         [HttpPost("IncomeTable")]
-        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto requestDto)
+        public async Task<IActionResult> GetIncomeTable([FromBody] TableRequestDto requestDto)
         {
             var response = new ServerResponse<TableResponseDto<IncomeTableDto>>();
             try

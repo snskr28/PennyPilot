@@ -91,12 +91,16 @@ export class TransactionsTableComponent {
           });
         }),
         map((response: any) => {
-          this.totalItems = response.totalCount;
-          return response.items;
+          if (response.success) {
+            this.totalItems = response.data.totalCount;
+            return response.data.items;
+          }
+          throw new Error(response.message);
         }),
         catchError((error) => {
           this.error =
             error.message || 'An error occurred while fetching income data.';
+          console.error('Error fetching incomes:', error);
           return [];
         }),
         finalize(() => {
@@ -109,14 +113,12 @@ export class TransactionsTableComponent {
   }
 
   private setupExpenseTable() {
-    //Reset sort when paginator changes
     this.expensePaginator.page.subscribe(() => {
       if (this.expenseSort.active) {
         this.expenseSort.direction = '';
       }
     });
 
-    //Load data when sort or page changes
     merge(this.expenseSort.sortChange, this.expensePaginator.page)
       .pipe(
         startWith({}),
@@ -131,12 +133,16 @@ export class TransactionsTableComponent {
           });
         }),
         map((response: any) => {
-          this.totalItems = response.totalCount;
-          return response.items;
+          if (response.success) {
+            this.totalItems = response.data.totalCount;
+            return response.data.items;
+          }
+          throw new Error(response.message);
         }),
         catchError((error) => {
           this.error =
             error.message || 'An error occurred while fetching expense data.';
+          console.error('Error fetching expenses:', error);
           return [];
         }),
         finalize(() => {
