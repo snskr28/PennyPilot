@@ -20,11 +20,6 @@
       </div>
       }
       <div class="table-container">
-        @if(incomeDataSource.data.length === 0){
-          <div class="no-records-message">
-            No income records available
-          </div>
-          } @else {
       <table
         mat-table
         [dataSource]="incomeDataSource"
@@ -44,8 +39,12 @@
 
         <tr mat-header-row *matHeaderRowDef="incomeDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: incomeDisplayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+  <td class="no-records-message" [attr.colspan]="incomeDisplayedColumns.length">
+    No records available
+  </td>
+</tr>
       </table>
-    }
       </div>
       <mat-paginator
         #incomePaginator
@@ -76,11 +75,6 @@
       }
 
       <div class="table-container">
-        @if(expenseDataSource.data.length === 0){
-          <div class="no-records-message">
-            No income records available
-          </div>
-          } @else {
       <table
         mat-table
         [dataSource]="expenseDataSource"
@@ -99,8 +93,12 @@
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="expenseDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: expenseDisplayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+  <td class="no-records-message" [attr.colspan]="incomeDisplayedColumns.length">
+    No records available
+  </td>
+</tr>
       </table>
-    }
     </div>
       <mat-paginator
         #expensePaginator
