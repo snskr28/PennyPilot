@@ -5,6 +5,7 @@
   <hr class="divider" />
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Income">
+      <div class="tab-content-wrapper">
       <!-- Loading Spinner -->
       @if(loading){
       <div class="loading-spinner">
@@ -18,7 +19,12 @@
         {{ error }}
       </div>
       }
-
+      <div class="table-container">
+        @if(incomeDataSource.data.length === 0){
+          <div class="no-records-message">
+            No income records available
+          </div>
+          } @else {
       <table
         mat-table
         [dataSource]="incomeDataSource"
@@ -39,7 +45,8 @@
         <tr mat-header-row *matHeaderRowDef="incomeDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: incomeDisplayedColumns"></tr>
       </table>
-
+    }
+      </div>
       <mat-paginator
         #incomePaginator
         [length]="totalItems"
@@ -48,9 +55,12 @@
         showFirstLastButtons
       >
       </mat-paginator>
+      </div>
     </mat-tab>
 
     <mat-tab label="Expenses">
+
+      <div class="tab-content-wrapper">
       <!-- Loading Spinner -->
       @if(loading){
       <div class="loading-spinner">
@@ -65,6 +75,12 @@
       </div>
       }
 
+      <div class="table-container">
+        @if(expenseDataSource.data.length === 0){
+          <div class="no-records-message">
+            No income records available
+          </div>
+          } @else {
       <table
         mat-table
         [dataSource]="expenseDataSource"
@@ -84,7 +100,8 @@
         <tr mat-header-row *matHeaderRowDef="expenseDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: expenseDisplayedColumns"></tr>
       </table>
-
+    }
+    </div>
       <mat-paginator
         #expensePaginator
         [length]="totalItems"
@@ -93,6 +110,7 @@
         showFirstLastButtons
       >
       </mat-paginator>
+      </div>
     </mat-tab>
   </mat-tab-group>
 </mat-card>
