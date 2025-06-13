@@ -85,6 +85,20 @@ mat-paginator {
   border-top: 1px solid #e5e7eb;
 }
 
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+}
+
 @media (max-width: 900px) {
   .table-header,
   mat-paginator {
