@@ -31,10 +31,19 @@
               *ngFor="let column of incomeDisplayedColumns"
               [matColumnDef]="column"
             >
+            @if(column === 'sn'){
+              <th mat-header-cell *matHeaderCellDef>
+                {{ column | titlecase }}
+              </th>
+              <td mat-cell *matCellDef="let element; let i = index">
+                {{ incomePaginator.pageIndex * incomePaginator.pageSize + i + 1}}
+              </td>
+            }@else {
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{ column | titlecase }}
               </th>
               <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+            }
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="incomeDisplayedColumns"></tr>
@@ -91,10 +100,19 @@
               *ngFor="let column of expenseDisplayedColumns"
               [matColumnDef]="column"
             >
+             @if(column === 'sn'){
+              <th mat-header-cell *matHeaderCellDef>
+                {{ column | titlecase }}
+              </th>
+              <td mat-cell *matCellDef="let element; let i = index">
+                {{ expensePaginator.pageIndex * expensePaginator.pageSize + i + 1}}
+              </td>
+            }@else {
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{ column | titlecase }}
               </th>
               <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+            }
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="expenseDisplayedColumns"></tr>
             <tr
