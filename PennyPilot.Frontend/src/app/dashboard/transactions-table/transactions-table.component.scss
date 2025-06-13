@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 .table-header {
   display: flex;
   justify-content: space-between;
@@ -106,12 +108,17 @@ mat-paginator {
 }
 
 ::ng-deep .mat-mdc-tab.mdc-tab--active{
-  background-color: #f8e5e5;
+  background-color: $color-primary ;
   border-radius: 12px 12px 0 0;
 }
 
 ::ng-deep .mat-mdc-tab:hover{
+  background-color: #c3c7ce;
   border-radius: 12px 12px 0 0;
+}
+
+::ng-deep .mat-mdc-tab-body-wrapper{
+  border-radius: 0px 18px 18px 18px;
 }
 
 @media (max-width: 900px) {
