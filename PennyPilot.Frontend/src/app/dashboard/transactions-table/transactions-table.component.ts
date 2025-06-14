@@ -164,4 +164,10 @@ export class TransactionsTableComponent {
       this.setupExpenseTable();
     }
   }
+  openAddTransactionDialog() {
+  this.dialog.open(AddTransactionDialogComponent, {
+    width: '600px',
+    data: { type: this.activeTab }
+  });
+}
 }

@@ -60,6 +60,12 @@ mat-card {
   padding: 1.5rem;
 }
 
+.floating-add-button {
+  position: absolute;
+  top: 75px;
+  right: 24px;
+}
+
 mat-card-header {
   padding: 0
 }
@@ -132,5 +138,8 @@ mat-paginator {
   td.mat-cell {
     padding: 10px 6px !important;
     font-size: 0.95rem;
+  }
+  .button-label {
+    display: none;
   }
 }

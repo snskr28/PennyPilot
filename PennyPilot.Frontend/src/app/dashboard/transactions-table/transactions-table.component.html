@@ -3,6 +3,18 @@
     <mat-card-title class="table-title">Transactions Table</mat-card-title>
   </mat-card-header>
   <hr class="divider" />
+
+   <button
+    class="floating-add-button"
+    mat-flat-button
+    color="primary"
+    (click)="openAddTransactionDialog()"
+  >
+    <mat-icon>add</mat-icon>
+    <span class="button-label">
+    Add {{ activeTab === 'income' ? 'Income' : 'Expense' }}
+    </span>
+  </button>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Income">
       <div class="tab-content-wrapper">
