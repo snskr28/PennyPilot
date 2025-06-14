@@ -71,12 +71,6 @@ export class TransactionsTableComponent {
   }
 
   private setupIncomeTable() {
-    this.incomePaginator.page.subscribe(() => {
-      if (this.incomeSort.active) {
-        this.incomeSort.direction = '';
-      }
-    });
-
     merge(this.incomeSort.sortChange, this.incomePaginator.page)
       .pipe(
         startWith({}),
@@ -112,12 +106,6 @@ export class TransactionsTableComponent {
   }
 
   private setupExpenseTable() {
-    this.expensePaginator.page.subscribe(() => {
-      if (this.expenseSort.active) {
-        this.expenseSort.direction = '';
-      }
-    });
-
     merge(this.expenseSort.sortChange, this.expensePaginator.page)
       .pipe(
         startWith({}),
@@ -158,10 +146,14 @@ export class TransactionsTableComponent {
 
     if (this.activeTab === 'income') {
       this.incomePaginator.pageIndex = 0;
-      this.setupIncomeTable();
+      this.incomeSort.active = 'date';
+      this.incomeSort.direction = 'desc';
+      this.incomeSort.sortChange.emit(); // Triggers reload
     } else {
       this.expensePaginator.pageIndex = 0;
-      this.setupExpenseTable();
+      this.expenseSort.active = 'date';
+      this.expenseSort.direction = 'desc';
+      this.expenseSort.sortChange.emit(); // Triggers reload
     }
   }
   openAddTransactionDialog() {
@@ -173,8 +165,7 @@ export class TransactionsTableComponent {
     dialogRef.afterClosed().subscribe((refreshNeeded) => {
       if (refreshNeeded && this.activeTab === 'expense') {
         this.setupExpenseTable();
-      }
-      else if (refreshNeeded && this.activeTab === 'income') {
+      } else if (refreshNeeded && this.activeTab === 'income') {
         this.setupIncomeTable();
       }
     });
