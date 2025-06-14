@@ -33,19 +33,32 @@ export class TransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  getIncomeTable(request: TableRequest): Observable<ApiResponse<TableResponse<Income>>> {
-    return this.http.post<ApiResponse<TableResponse<Income>>>(`${this.apiUrl}/Income/IncomeTable`, request);
+  getIncomeTable(
+    request: TableRequest
+  ): Observable<ApiResponse<TableResponse<Income>>> {
+    return this.http.post<ApiResponse<TableResponse<Income>>>(
+      `${this.apiUrl}/Income/IncomeTable`,
+      request
+    );
   }
 
-  getExpenseTable(request: TableRequest): Observable<ApiResponse<TableResponse<Expense>>> {
-    return this.http.post<ApiResponse<TableResponse<Expense>>>(`${this.apiUrl}/Expense/ExpenseTable`, request);
+  getExpenseTable(
+    request: TableRequest
+  ): Observable<ApiResponse<TableResponse<Expense>>> {
+    return this.http.post<ApiResponse<TableResponse<Expense>>>(
+      `${this.apiUrl}/Expense/ExpenseTable`,
+      request
+    );
   }
 
   addIncomes(incomes: Income[]) {
     this.incomes = [...this.incomes, ...incomes];
   }
 
-  addExpenses(expenses: Expense[]) {
-    this.expenses = [...this.expenses, ...expenses];
+  addExpenses(expenses: Expense[]): Observable<ApiResponse<string[]>> {
+    return this.http.post<ApiResponse<string[]>>(
+      `${this.apiUrl}/Expense`,
+      expenses
+    );
   }
 }

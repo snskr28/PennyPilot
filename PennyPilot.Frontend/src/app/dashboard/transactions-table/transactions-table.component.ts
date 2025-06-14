@@ -151,7 +151,7 @@ export class TransactionsTableComponent {
         this.expenseDataSource.data = data;
       });
   }
-  
+
   onTabChange(event: any) {
     this.activeTab = event.index === 0 ? 'income' : 'expense';
     this.error = null;
@@ -165,9 +165,15 @@ export class TransactionsTableComponent {
     }
   }
   openAddTransactionDialog() {
-  this.dialog.open(AddTransactionDialogComponent, {
-    width: '600px',
-    data: { type: this.activeTab }
-  });
-}
+    const dialogRef = this.dialog.open(AddTransactionDialogComponent, {
+      width: '600px',
+      data: { type: this.activeTab },
+    });
+
+    dialogRef.afterClosed().subscribe((refreshNeeded) => {
+      if (refreshNeeded && this.activeTab === 'expense') {
+        this.setupExpenseTable();
+      }
+    });
+  }
 }

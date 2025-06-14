@@ -9,6 +9,8 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
+import { TransactionsService } from '../services/transactions.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-transaction-dialog',
@@ -26,7 +28,9 @@ export class AddTransactionDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddTransactionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { type: 'income' | 'expense' }
+    @Inject(MAT_DIALOG_DATA) public data: { type: 'income' | 'expense' },
+    private transactionsService: TransactionsService,
+    private snackBar: MatSnackBar
   ) {
     this.form = this.fb.group({
       entries: this.fb.array([this.createEntry()]),
@@ -65,8 +69,22 @@ export class AddTransactionDialogComponent {
   }
 
   submit() {
-    if (this.form.valid) {
-      this.dialogRef.close(this.entries.value);
+    if (this.form.invalid) return;
+    const entries = this.entries.value;
+
+    if (this.data.type === 'expense') {
+      this.transactionsService.addExpenses(entries).subscribe({
+        next: (res) => {
+          this.snackBar.open(res.message, 'Close', { duration: 3000 });
+          this.dialogRef.close(true); // Pass true to indicate refresh needed
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Failed to add expenses', 'Close', { duration: 3000 });
+        }
+      });
+    } else {
+      // ...existing code for income (if any)...
     }
   }
 
