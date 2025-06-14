@@ -28,9 +28,6 @@ export interface Expense {
 export class TransactionsService {
   private apiUrl = environment.apiUrl;
 
-  private incomes: Income[] = [];
-  private expenses: Expense[] = [];
-
   constructor(private http: HttpClient) {}
 
   getIncomeTable(
@@ -51,8 +48,11 @@ export class TransactionsService {
     );
   }
 
-  addIncomes(incomes: Income[]) {
-    this.incomes = [...this.incomes, ...incomes];
+  addIncomes(incomes: Income[]): Observable<ApiResponse<string[]>> {
+    return this.http.post<ApiResponse<string[]>>(
+      `${this.apiUrl}/Income`,
+      incomes
+    );
   }
 
   addExpenses(expenses: Expense[]): Observable<ApiResponse<string[]>> {

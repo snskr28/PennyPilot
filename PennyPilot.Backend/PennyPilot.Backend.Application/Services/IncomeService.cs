@@ -20,55 +20,96 @@ namespace PennyPilot.Backend.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> AddIncomeAsync(Guid userId, AddIncomeDto dto)
-        {
-            string formattedCategory = dto.Category.ToPascalCase();
-            var category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
 
-            if (category == null)
+        public async Task<ServerResponse<List<Guid>>> AddIncomesAsync(Guid userId, List<AddIncomeDto> requestDtos)
+        {
+            //Cache to avoid repeated DB calls within this request
+            var categoryLookup = new Dictionary<string, Category>(StringComparer.OrdinalIgnoreCase);
+            var mappedCategories = new HashSet<Guid>();
+
+            var incomesToAdd = new List<Income>();
+            var newCategoriesToAdd = new List<Category>();
+            var newUserCategoriesToAdd = new List<UserCategory>();
+
+            var response = new ServerResponse<List<Guid>>
             {
-                category = new Category
+                Data = new List<Guid>()
+            };
+
+            foreach (var dto in requestDtos)
+            {
+                string formattedCategory = dto.Category.ToPascalCase();
+
+                // Get or add category
+                if (!categoryLookup.TryGetValue(formattedCategory, out var category))
                 {
-                    CategoryId = Guid.NewGuid(),
-                    Name = formattedCategory,
-                    Type = "Income",
+                    category = await _unitOfWork.Categories.GetByNameAsync(formattedCategory);
+
+                    if (category == null)
+                    {
+                        category = new Category
+                        {
+                            CategoryId = Guid.NewGuid(),
+                            Name = formattedCategory,
+                            Type = "Income",
+                            IsEnabled = true,
+                            IsDeleted = false
+                        };
+                        newCategoriesToAdd.Add(category);
+                    }
+
+                    categoryLookup[formattedCategory] = category;
+                }
+
+                // Map user to category if not already
+                if (!mappedCategories.Contains(category.CategoryId))
+                {
+                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+                    if (!isMapped)
+                    {
+                        newUserCategoriesToAdd.Add(new UserCategory
+                        {
+                            UserCategoryId = Guid.NewGuid(),
+                            UserId = userId,
+                            CategoryId = category.CategoryId
+                        });
+                    }
+                    mappedCategories.Add(category.CategoryId);
+                }
+
+                // Prepare income entity
+                var income = new Income
+                {
+                    IncomeId = Guid.NewGuid(),
+                    UserId = userId,
+                    CategoryId = category.CategoryId,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    Amount = dto.Amount,
+                    Date = dto.Date,
+                    Source = dto.Source,
+                    CreatedAt = DateTime.UtcNow,
                     IsEnabled = true,
                     IsDeleted = false
                 };
-                await _unitOfWork.Categories.AddAsync(category);
+
+                incomesToAdd.Add(income);
             }
 
-            // Map User and Category
-            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
-            if (!isMapped)
-            {
-                var userCategory = new UserCategory
-                {
-                    UserCategoryId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId
-                };
-                await _unitOfWork.UserCategories.AddAsync(userCategory);
-            }
+            // Batch insert all
+            if (newCategoriesToAdd.Any())
+                await _unitOfWork.Categories.AddRangeAsync(newCategoriesToAdd);
 
-            var income = new Income
-            {
-                IncomeId = Guid.NewGuid(),
-                UserId = userId,
-                CategoryId = category.CategoryId,
-                Source = dto.Source,
-                Description = dto.Description,
-                Amount = dto.Amount,
-                Date = dto.Date,
-                CreatedAt = DateTime.UtcNow,
-                IsDeleted = false,
-                IsEnabled = true
-            };
+            if (newUserCategoriesToAdd.Any())
+                await _unitOfWork.UserCategories.AddRangeAsync(newUserCategoriesToAdd);
 
-            await _unitOfWork.Incomes.AddAsync(income);
+            if (incomesToAdd.Any())
+                await _unitOfWork.Incomes.AddRangeAsync(incomesToAdd);
+
             await _unitOfWork.SaveChangesAsync();
 
-            return income.IncomeId;
+            response.Data = incomesToAdd.Select(e => e.IncomeId).ToList();
+            return response;
         }
 
         public async Task UpdateIncomeAsync(Guid userId, UpdateIncomeDto dto)

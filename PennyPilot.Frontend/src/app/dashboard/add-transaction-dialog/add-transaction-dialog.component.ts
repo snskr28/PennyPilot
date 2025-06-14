@@ -84,7 +84,16 @@ export class AddTransactionDialogComponent {
         }
       });
     } else {
-      // ...existing code for income (if any)...
+      this.transactionsService.addIncomes(entries).subscribe({
+        next: (res) => {
+          this.snackBar.open(res.message, 'Close', { duration: 3000 });
+          this.dialogRef.close(true); // Pass true to indicate refresh needed
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Failed to add incomes', 'Close', { duration: 3000 });
+        }
+      });
     }
   }
 

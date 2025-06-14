@@ -174,6 +174,9 @@ export class TransactionsTableComponent {
       if (refreshNeeded && this.activeTab === 'expense') {
         this.setupExpenseTable();
       }
+      else if (refreshNeeded && this.activeTab === 'income') {
+        this.setupIncomeTable();
+      }
     });
   }
 }
