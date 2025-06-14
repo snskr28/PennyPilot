@@ -33,7 +33,7 @@ mat-tab-group {
   min-height: 440px;
   display: flex;
   flex-direction: column;
-  background-color: #fff8f8;
+  background-color: #ffffff;
 }
 
 .table-container {
@@ -73,18 +73,15 @@ mat-card-header {
 table {
   width: 100%;
   margin-bottom: 8px;
-  border-radius: 12px;
+  border-radius: 0px 12px 12px 12px;
   overflow: hidden;
+  background-color: white   ;
 }
 
 th.mat-header-cell,
 td.mat-cell {
   padding: 16px 12px !important;
   font-size: 1rem;
-}
-
-tr.mat-header-row {
-  background: #f3f4f6;
 }
 
 mat-paginator {
@@ -127,6 +124,12 @@ mat-paginator {
   border-radius: 0px 18px 18px 18px;
   height: 500px;;
 }
+
+::ng-deep .mat-mdc-header-row.cdk-header-row{
+  background-color: #fff8f8;
+}
+
+
 
 
 @media (max-width: 900px) {
