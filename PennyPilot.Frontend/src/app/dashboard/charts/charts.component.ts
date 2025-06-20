@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { ChartsService } from '../services/charts.service';
+import { ApiResponse } from '../../shared/api-response.model';
+import { PieChartsResponse } from '../models/pie-charts-response.model';
 
 @Component({
   selector: 'app-dashboard-charts',
@@ -12,6 +15,9 @@ import { BaseChartDirective } from 'ng2-charts';
   styleUrls: ['./charts.component.scss'],
 })
 export class ChartsComponent implements OnInit {
+  private chartsService = inject(ChartsService);
+  expCategoriesLoading = true;
+
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [
@@ -55,11 +61,11 @@ export class ChartsComponent implements OnInit {
   };
 
   // Pie Chart Configuration
-  pieChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: ['Groceries', 'Rent', 'Utilities', 'Entertainment', 'Transport'],
+  expenseCategoriesPieChart: ChartConfiguration<'pie'>['data'] = {
+    labels: [],
     datasets: [
       {
-        data: [300, 1200, 250, 200, 150],
+        data: [],
       },
     ],
   };
@@ -73,6 +79,20 @@ export class ChartsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // We'll fetch real data here later
+    this.chartsService.getPieChartsData().subscribe({
+      next: (res: ApiResponse<PieChartsResponse>) => {
+        const expenseCategories = res.data?.ExpenseCategories;
+        if (res.success && expenseCategories) {
+          this.expenseCategoriesPieChart = {
+            labels: Object.keys(expenseCategories),
+            datasets: [{ data: Object.values(expenseCategories) }],
+          };
+        } 
+        this.expCategoriesLoading = false;
+      },
+      error:() => {
+        this.expCategoriesLoading = false;
+      },
+    });
   }
 }

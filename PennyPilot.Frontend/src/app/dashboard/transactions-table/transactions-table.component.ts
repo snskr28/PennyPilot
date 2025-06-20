@@ -93,10 +93,7 @@ export class TransactionsTableComponent {
           throw new Error(response.message);
         }),
         catchError((error) => {
-          this.error =
-            error.message || 'An error occurred while fetching income data.';
-          console.error('Error fetching incomes:', error);
-          this.loading = false;
+             
           return [];
         })
       )
