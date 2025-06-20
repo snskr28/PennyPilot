@@ -75,6 +75,34 @@ mat-card-content {
   margin: 10px 24px;
 }
 
+.chart-error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 14rem;
+  width: 100%;
+  background: linear-gradient(135deg, #fff0f3 0%, #ffe0e3 100%);
+  border-radius: 1rem;
+  color: #e57373;
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 2px 8px 0 rgba(229, 115, 115, 0.07);
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.chart-error-message .material-icons,
+.chart-error-message mat-icon {
+  height: auto;
+  width: auto;
+  font-size: 4rem;
+  color: #e57373;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
+}
+
 @media (max-width: 900px) {
   .charts-container {
     flex-direction: column;
@@ -88,5 +116,9 @@ mat-card-content {
     height: 180px;
     min-height: 120px;
     max-height: 220px;
+  }
+  .chart-error-message{
+    min-height: 12rem;
+    padding: 1rem;
   }
 }

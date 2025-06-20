@@ -1,3 +1,3 @@
 export interface PieChartsResponse {
-    ExpenseCategories?: {[category: string]: number} ;
+    expenseCategories?: {[category: string]: number} ;
 }

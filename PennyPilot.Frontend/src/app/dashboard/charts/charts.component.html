@@ -24,11 +24,15 @@
     <mat-card-content>
       <div class="chart-wrapper">
         @if(expCategoriesLoading){
-          <div class="loading-overlay">
-          <mat-spinner diameter="50"></mat-spinner>
-          </div>
-        }
-        @else{
+        <div class="loading-overlay">
+          <mat-spinner diameter="80"></mat-spinner>
+        </div>
+        } @else if(expCategoriesError){
+        <div class="chart-error-message">
+          <mat-icon>error_outline</mat-icon>
+          {{ expCategoriesError }}
+        </div>
+        } @else{
         <canvas
           baseChart
           [data]="expenseCategoriesPieChart"
@@ -36,7 +40,7 @@
           [type]="'pie'"
         >
         </canvas>
-      }
+        }
       </div>
     </mat-card-content>
   </mat-card>

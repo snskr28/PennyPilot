@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import { ChartConfiguration, ChartType } from 'chart.js';
@@ -15,8 +15,29 @@ import { PieChartsResponse } from '../models/pie-charts-response.model';
   styleUrls: ['./charts.component.scss'],
 })
 export class ChartsComponent implements OnInit {
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+
   private chartsService = inject(ChartsService);
   expCategoriesLoading = true;
+  expCategoriesError: string | null = null;
+
+  private pieColors = [
+  "#FF6384", // Soft Red/Pink
+  "#FF9F40", // Orange
+  "#FFCD56", // Yellow-Orange
+  "#4BC0C0", // Teal
+  "#36A2EB", // Blue
+  "#9966FF", // Purple
+  "#C9CBCF", // Light Grey
+  "#FF6F91", // Pink
+  "#FF8C42", // Orange
+  "#F9F871", // Lemon
+  "#A1DE93", // Mint Green
+  "#62B6CB", // Sky Blue
+  "#845EC2", // Violet
+  "#FFC75F", // Gold
+  "#F67280", // Coral Pink
+];
 
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {
@@ -81,16 +102,37 @@ export class ChartsComponent implements OnInit {
   ngOnInit(): void {
     this.chartsService.getPieChartsData().subscribe({
       next: (res: ApiResponse<PieChartsResponse>) => {
-        const expenseCategories = res.data?.ExpenseCategories;
+        const expenseCategories = res.data?.expenseCategories;
         if (res.success && expenseCategories) {
+          let labels = Object.keys(expenseCategories);
+          let data = Object.values(expenseCategories);
+
           this.expenseCategoriesPieChart = {
-            labels: Object.keys(expenseCategories),
-            datasets: [{ data: Object.values(expenseCategories) }],
+            labels: [...labels],
+            datasets: [{ 
+              data: [...data],
+              backgroundColor: this.pieColors.slice(0, labels.length),
+            }],
           };
-        } 
+
+          setTimeout(() => this.chart?.update(), 0);
+
+          this.expCategoriesError = null;
+        } else {
+          this.expenseCategoriesPieChart = {
+            labels: [],
+            datasets: [{ data: [] }],
+          };
+          this.expCategoriesError = 'No expense category data available.';
+        }
         this.expCategoriesLoading = false;
       },
-      error:() => {
+      error: () => {
+        this.expenseCategoriesPieChart = {
+          labels: [],
+          datasets: [{ data: [] }],
+        };
+        this.expCategoriesError = 'Failed to load expense categories.';
         this.expCategoriesLoading = false;
       },
     });
