@@ -9,5 +9,6 @@ namespace PennyPilot.Backend.Application.DTOs
     public class DonutChartsDtoModel
     {
         public Dictionary<string, int>? ExpenseCategories { get; set; }
+        public Dictionary<string, int>? IncomeCategories { get; set; }
     }
 }

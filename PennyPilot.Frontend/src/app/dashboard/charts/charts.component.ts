@@ -20,24 +20,26 @@ export class ChartsComponent implements OnInit {
   private chartsService = inject(ChartsService);
   expCategoriesLoading = true;
   expCategoriesError: string | null = null;
+  incomeCategoriesLoading = true;
+  incomeCategoriesError: string | null = null;
 
   private pieColors = [
-  "#FF6384", // Soft Red/Pink
-  "#FF9F40", // Orange
-  "#FFCD56", // Yellow-Orange
-  "#4BC0C0", // Teal
-  "#36A2EB", // Blue
-  "#9966FF", // Purple
-  "#C9CBCF", // Light Grey
-  "#FF6F91", // Pink
-  "#FF8C42", // Orange
-  "#F9F871", // Lemon
-  "#A1DE93", // Mint Green
-  "#62B6CB", // Sky Blue
-  "#845EC2", // Violet
-  "#FFC75F", // Gold
-  "#F67280", // Coral Pink
-];
+    '#FF6384', // Soft Red/Pink
+    '#FF9F40', // Orange
+    '#FFCD56', // Yellow-Orange
+    '#4BC0C0', // Teal
+    '#36A2EB', // Blue
+    '#9966FF', // Purple
+    '#C9CBCF', // Light Grey
+    '#FF6F91', // Pink
+    '#FF8C42', // Orange
+    '#F9F871', // Lemon
+    '#A1DE93', // Mint Green
+    '#62B6CB', // Sky Blue
+    '#845EC2', // Violet
+    '#FFC75F', // Gold
+    '#F67280', // Coral Pink
+  ];
 
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {
@@ -81,8 +83,17 @@ export class ChartsComponent implements OnInit {
     },
   };
 
-  // Pie Chart Configuration
+  // Donut Chart Configuration
   expenseCategoriesDonutChart: ChartConfiguration<'doughnut'>['data'] = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+      },
+    ],
+  };
+
+  incomeCategoriesDonutChart: ChartConfiguration<'doughnut'>['data'] = {
     labels: [],
     datasets: [
       {
@@ -103,38 +114,69 @@ export class ChartsComponent implements OnInit {
     this.chartsService.getDonutChartsData().subscribe({
       next: (res: ApiResponse<DonutChartsResponse>) => {
         const expenseCategories = res.data?.expenseCategories;
-        if (res.success && expenseCategories) {
-          let labels = Object.keys(expenseCategories);
-          let data = Object.values(expenseCategories);
+        const incomeCategories = res.data?.incomeCategories;
+        if (res.success) {
+          if (expenseCategories && Object.keys(expenseCategories).length > 0) {
+            this.expenseCategoriesDonutChart = {
+              labels: Object.keys(expenseCategories),
+              datasets: [
+                {
+                  data: Object.values(expenseCategories),
+                  backgroundColor: this.pieColors.slice(
+                    0,
+                    Object.keys(expenseCategories).length
+                  ),
+                  hoverOffset: 8,
+                },
+              ],
+            };
 
-          this.expenseCategoriesDonutChart = {
-            labels: [...labels],
-            datasets: [{ 
-              data: [...data],
-              backgroundColor: this.pieColors.slice(0, labels.length),
-              hoverOffset: 8,
-            }],
-          };
+            this.expCategoriesError = null;
+          } else {
+            this.expenseCategoriesDonutChart = {
+              labels: [],
+              datasets: [{ data: [] }],
+            };
+            this.expCategoriesError = 'No expense category data available.';
+          }
 
-          setTimeout(() => this.chart?.update(), 0);
+          if (incomeCategories && Object.keys(incomeCategories).length > 0) {
+            this.incomeCategoriesDonutChart = {
+              labels: Object.keys(incomeCategories),
+              datasets: [
+                {
+                  data: Object.values(incomeCategories),
+                  hoverOffset: 8,
+                },
+              ],
+            };
 
-          this.expCategoriesError = null;
-        } else {
-          this.expenseCategoriesDonutChart = {
-            labels: [],
-            datasets: [{ data: [] }],
-          };
-          this.expCategoriesError = 'No expense category data available.';
+            this.incomeCategoriesError = null;
+          } else {
+            this.incomeCategoriesDonutChart = {
+              labels: [],
+              datasets: [{ data: [] }],
+            };
+            this.incomeCategoriesError = 'No income category data available.';
+          }
         }
         this.expCategoriesLoading = false;
+        this.incomeCategoriesLoading = false;
       },
       error: () => {
         this.expenseCategoriesDonutChart = {
           labels: [],
           datasets: [{ data: [] }],
-        };
+        };        
         this.expCategoriesError = 'Failed to load expense categories.';
         this.expCategoriesLoading = false;
+
+        this.incomeCategoriesDonutChart = {
+          labels: [],
+          datasets: [{ data: [] }],
+        };
+        this.incomeCategoriesError = 'Failed to load income categories.';
+        this.incomeCategoriesLoading = false;
       },
     });
   }
