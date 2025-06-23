@@ -18,14 +18,14 @@ namespace PennyPilot.Backend.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PieChartsDtoModel> GetPieChartsData(Guid userId)
+        public async Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId)
         {
             var expenseCategories = _unitOfWork.Expenses.AsQueryable()
                                     .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
                                     .GroupBy(x => x.Category.Name)
                                     .ToDictionary(x => x.Key, x => x.Count());
 
-            return new PieChartsDtoModel
+            return new DonutChartsDtoModel
             {
                 ExpenseCategories = expenseCategories
             };

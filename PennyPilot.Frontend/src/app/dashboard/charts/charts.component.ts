@@ -5,7 +5,7 @@ import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartsService } from '../services/charts.service';
 import { ApiResponse } from '../../shared/api-response.model';
-import { PieChartsResponse } from '../models/pie-charts-response.model';
+import { DonutChartsResponse } from '../models/donut-charts-response.model';
 
 @Component({
   selector: 'app-dashboard-charts',
@@ -82,7 +82,7 @@ export class ChartsComponent implements OnInit {
   };
 
   // Pie Chart Configuration
-  expenseCategoriesPieChart: ChartConfiguration<'pie'>['data'] = {
+  expenseCategoriesDonutChart: ChartConfiguration<'doughnut'>['data'] = {
     labels: [],
     datasets: [
       {
@@ -91,7 +91,7 @@ export class ChartsComponent implements OnInit {
     ],
   };
 
-  pieChartOptions: ChartConfiguration<'pie'>['options'] = {
+  donutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -100,18 +100,19 @@ export class ChartsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.chartsService.getPieChartsData().subscribe({
-      next: (res: ApiResponse<PieChartsResponse>) => {
+    this.chartsService.getDonutChartsData().subscribe({
+      next: (res: ApiResponse<DonutChartsResponse>) => {
         const expenseCategories = res.data?.expenseCategories;
         if (res.success && expenseCategories) {
           let labels = Object.keys(expenseCategories);
           let data = Object.values(expenseCategories);
 
-          this.expenseCategoriesPieChart = {
+          this.expenseCategoriesDonutChart = {
             labels: [...labels],
             datasets: [{ 
               data: [...data],
               backgroundColor: this.pieColors.slice(0, labels.length),
+              hoverOffset: 8,
             }],
           };
 
@@ -119,7 +120,7 @@ export class ChartsComponent implements OnInit {
 
           this.expCategoriesError = null;
         } else {
-          this.expenseCategoriesPieChart = {
+          this.expenseCategoriesDonutChart = {
             labels: [],
             datasets: [{ data: [] }],
           };
@@ -128,7 +129,7 @@ export class ChartsComponent implements OnInit {
         this.expCategoriesLoading = false;
       },
       error: () => {
-        this.expenseCategoriesPieChart = {
+        this.expenseCategoriesDonutChart = {
           labels: [],
           datasets: [{ data: [] }],
         };

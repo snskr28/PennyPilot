@@ -9,6 +9,6 @@ namespace PennyPilot.Backend.Application.Interfaces
 {
     public interface IChartsService
     {
-        Task<PieChartsDtoModel> GetPieChartsData(Guid userId);
+        Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId);
     }
 }

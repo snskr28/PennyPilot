@@ -1,3 +1,3 @@
-export interface PieChartsResponse {
+export interface DonutChartsResponse {
     expenseCategories?: {[category: string]: number} ;
 }

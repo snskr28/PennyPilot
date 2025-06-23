@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../../shared/api-response.model';
-import { PieChartsResponse } from '../models/pie-charts-response.model';
+import { DonutChartsResponse } from '../models/donut-charts-response.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,9 +13,9 @@ export class ChartsService {
   
   constructor(private http:HttpClient) { }
 
-  getPieChartsData(): Observable<ApiResponse<PieChartsResponse>>{
-    return this.http.get<ApiResponse<PieChartsResponse>>(
-      `${this.apiUrl}/Charts/PieCharts`
+  getDonutChartsData(): Observable<ApiResponse<DonutChartsResponse>>{
+    return this.http.get<ApiResponse<DonutChartsResponse>>(
+      `${this.apiUrl}/Charts/DonutCharts`
     );
   }
 }

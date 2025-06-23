@@ -17,10 +17,10 @@ namespace PennyPilot.Backend.Api.Controllers
             _chartsService = chartsService;
         }
 
-        [HttpGet("PieCharts")]
-        public async Task<IActionResult> GetPieChartsData()
+        [HttpGet("DonutCharts")]
+        public async Task<IActionResult> GetDonutChartsData()
         {
-            var response = new ServerResponse<PieChartsDtoModel>();
+            var response = new ServerResponse<DonutChartsDtoModel>();
             try
             {
                 var userId = User.GetUserId();
@@ -31,7 +31,7 @@ namespace PennyPilot.Backend.Api.Controllers
                     return Unauthorized(response);
                 }
 
-                response.Data = await _chartsService.GetPieChartsData(userId);
+                response.Data = await _chartsService.GetDonutChartsData(userId);
                 response.Success = true;
                 response.Message = "Charts fetched successfully.";
                 return Ok(response);
