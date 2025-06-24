@@ -25,15 +25,27 @@ namespace PennyPilot.Backend.Application.Services
                                     .GroupBy(x => x.Category.Name)
                                     .ToDictionary(x => x.Key, x => x.Count());
 
+            var userExpenses = _unitOfWork.Expenses.AsQueryable()
+                               .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
+                               .GroupBy(x => x.PaidBy)
+                               .ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
+
             var incomeCategories = _unitOfWork.Incomes.AsQueryable()
                                    .Where(i => i.UserId == userId && !i.IsDeleted && i.IsEnabled)
                                    .GroupBy(x => x.Category.Name)
                                    .ToDictionary(x => x.Key, x => x.Count());
 
+            var incomeSources = _unitOfWork.Incomes.AsQueryable()
+                                .Where(i => i.UserId == userId && !i.IsDeleted && i.IsEnabled)
+                                .GroupBy(x => x.Source)
+                                .ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount)); ;
+
             return new DonutChartsDtoModel
             {
                 ExpenseCategories = expenseCategories,
-                IncomeCategories = incomeCategories
+                UserExpenses = userExpenses,
+                IncomeCategories = incomeCategories,
+                IncomeSources = incomeSources
             };
         }
     }
