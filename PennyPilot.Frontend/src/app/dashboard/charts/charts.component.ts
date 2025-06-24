@@ -21,7 +21,7 @@ export class ChartsComponent implements OnInit {
   expCategoriesLoading = true;
   expCategoriesError: string | null = null;
   userExpensesLoading = true;
-  userExpensesError:string | null = null;
+  userExpensesError: string | null = null;
   incomeCategoriesLoading = true;
   incomeCategoriesError: string | null = null;
   incomeSourcesLoading = true;
@@ -233,17 +233,16 @@ export class ChartsComponent implements OnInit {
         this.expenseCategoriesDonutChart = {
           labels: [],
           datasets: [{ data: [] }],
-        };        
+        };
         this.expCategoriesError = 'Failed to load Expense Categories.';
         this.expCategoriesLoading = false;
 
         this.userExpensesDonutChart = {
           labels: [],
           datasets: [{ data: [] }],
-        };        
+        };
         this.userExpensesError = 'Failed to load User Expenses.';
         this.userExpensesLoading = false;
-
 
         this.incomeCategoriesDonutChart = {
           labels: [],
@@ -255,10 +254,9 @@ export class ChartsComponent implements OnInit {
         this.incomeSourcesDonutChart = {
           labels: [],
           datasets: [{ data: [] }],
-        };        
+        };
         this.incomeSourcesError = 'Failed to load Income Sources.';
         this.incomeSourcesLoading = false;
-
       },
     });
   }
