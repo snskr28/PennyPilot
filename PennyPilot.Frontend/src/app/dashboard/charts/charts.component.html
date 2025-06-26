@@ -1,4 +1,5 @@
 <div class="charts-container">
+  <div class="charts-section-a">
   <mat-card class="chart-card">
     <mat-card-header>
       <mat-card-title class="title">Income vs Expenses</mat-card-title>
@@ -16,6 +17,25 @@
       </div>
     </mat-card-content>
   </mat-card>
+  <mat-card class="chart-card">
+    <mat-card-header>
+      <mat-card-title class="title">Income vs Expenses</mat-card-title>
+    </mat-card-header>
+    <hr class="divider" />
+    <mat-card-content>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="'bar'"
+        >
+        </canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  </div>
+  <div class="charts-section-b">
   <mat-card class="chart-card">
     <mat-card-header>
       <mat-card-title class="title">Expense Categories</mat-card-title>
@@ -128,4 +148,5 @@
       </div>
     </mat-card-content>
   </mat-card>
+  </div>
 </div>
