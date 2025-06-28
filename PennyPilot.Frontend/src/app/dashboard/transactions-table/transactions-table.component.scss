@@ -1,4 +1,4 @@
-@import '../../../styles.scss';
+@import "../../../styles.scss";
 
 .table-header {
   display: flex;
@@ -67,7 +67,7 @@ mat-card {
 }
 
 mat-card-header {
-  padding: 0
+  padding: 0;
 }
 
 table {
@@ -75,7 +75,7 @@ table {
   margin-bottom: 8px;
   border-radius: 0px 12px 12px 12px;
   overflow: hidden;
-  background-color: white   ;
+  background-color: white;
 }
 
 th.mat-header-cell,
@@ -105,37 +105,39 @@ mat-paginator {
 }
 
 ::ng-deep .mat-mdc-tab-header {
-  width: 200px;
+  max-width: 300px;
+  width: 220px;
   flex-wrap: wrap;
   overflow-x: auto;
 }
 
-::ng-deep .mat-mdc-tab.mdc-tab--active{
-  background-color: $color-primary ;
+::ng-deep .mat-mdc-tab.mdc-tab--active {
+  background-color: $color-primary;
   border-radius: 12px 12px 0 0;
 }
 
-::ng-deep .mat-mdc-tab:hover{
+::ng-deep .mat-mdc-tab:hover {
   background-color: #c3c7ce;
   border-radius: 12px 12px 0 0;
 }
 
-::ng-deep .mat-mdc-tab-body-wrapper{
+::ng-deep .mat-mdc-tab-body-wrapper {
   border-radius: 0px 18px 18px 18px;
-  height: 500px;;
+  height: 500px;
 }
 
-::ng-deep .mat-mdc-header-row.cdk-header-row{
+::ng-deep .mat-mdc-header-row.cdk-header-row {
   background-color: #fff8f8;
 }
 
-
-
+:host ::ng-deep .mat-mdc-paginator-range-label {
+  margin: 0px;
+}
 
 @media (max-width: 900px) {
   .table-header,
   mat-paginator {
-    padding: 0 8px;
+    padding: 0 0px;
   }
   th.mat-header-cell,
   td.mat-cell {
