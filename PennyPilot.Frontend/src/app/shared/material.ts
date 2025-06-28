@@ -17,7 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatSelectModule } from '@angular/material/select';
 
 export const MATERIAL_IMPORTS = [
   MatButtonModule,
@@ -39,4 +39,6 @@ export const MATERIAL_IMPORTS = [
   MatSidenavModule,
   MatListModule,
   MatProgressSpinnerModule,
+  MatFormFieldModule,
+  MatSelectModule,
 ];

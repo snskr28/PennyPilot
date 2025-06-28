@@ -37,6 +37,9 @@
       <span class="dashboard-title">Dashboard</span>
     </div>
     <div class="dashboard-container">
+      <app-time-range-filter
+        (dateRangeChange)="onDateRangeChange($event)"
+      ></app-time-range-filter>
       <!-- Summary Cards -->
       <div class="summary-cards-flex">
         <mat-card class="summary-card" *ngFor="let card of summaryCards">

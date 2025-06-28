@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ChartsComponent } from './charts/charts.component';
 import { TransactionsTableComponent } from './transactions-table/transactions-table.component';
 import { AuthService } from '../auth/services/auth.service';
+import { TimeRangeFilterComponent } from './time-range-filter/time-range-filter.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,6 +12,7 @@ import { AuthService } from '../auth/services/auth.service';
     CommonModule,
     ChartsComponent,
     TransactionsTableComponent,
+    TimeRangeFilterComponent,
     ...MATERIAL_IMPORTS,
   ],
   templateUrl: './dashboard.component.html',
@@ -36,5 +38,9 @@ export class DashboardComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  onDateRangeChange(range: { start: Date | null; end: Date | null }) {
+    // Use the selected range for filtering
   }
 }
