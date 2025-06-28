@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../shared/material';
 import { CommonModule } from '@angular/common';
 import { ChartsComponent } from './charts/charts.component';
 import { TransactionsTableComponent } from './transactions-table/transactions-table.component';
 import { AuthService } from '../auth/services/auth.service';
 import { TimeRangeFilterComponent } from './time-range-filter/time-range-filter.component';
+import { DashboardFilter } from './models/dashboard-filter.model';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +21,18 @@ import { TimeRangeFilterComponent } from './time-range-filter/time-range-filter.
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
+  dashboardFilter: DashboardFilter = {
+    startDate: null,
+    endDate: null,
+    expenseCategory: null,
+    incomeCategory: null,
+    userExpense: null,
+    incomeSource: null,
+  };
+
+  @ViewChild(ChartsComponent) chartsComp!: ChartsComponent;
+  @ViewChild(TransactionsTableComponent) tableComp!: TransactionsTableComponent;
+
   summaryCards = [
     { title: 'Total Income', amount: 0, icon: 'trending_up', color: '#10B981' },
     {
@@ -41,6 +55,16 @@ export class DashboardComponent {
   }
 
   onDateRangeChange(range: { start: Date | null; end: Date | null }) {
-    // Use the selected range for filtering
+    this.dashboardFilter = { ...this.dashboardFilter, startDate: range.start, endDate: range.end };
+    this.reloadAllWidgets();
+  }
+
+   reloadAllWidgets() {
+    if (this.chartsComp) {
+      this.chartsComp.reloadCharts(this.dashboardFilter);
+    }
+    if (this.tableComp) {
+      this.tableComp.reloadTable(this.dashboardFilter);
+    }
   }
 }

@@ -57,12 +57,12 @@
 
       <!-- Charts Grid -->
       <div class="charts-grid">
-        <app-dashboard-charts></app-dashboard-charts>
+        <app-dashboard-charts [dashboardFilter]="dashboardFilter"></app-dashboard-charts>
       </div>
 
       <!-- Transactions Table -->
       <div class="transactions-section">
-        <app-transactions-table></app-transactions-table>
+        <app-transactions-table [dashboardFilter]="dashboardFilter"></app-transactions-table>
       </div>
       <ng-content></ng-content>
     </div>

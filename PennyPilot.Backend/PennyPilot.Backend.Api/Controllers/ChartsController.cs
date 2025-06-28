@@ -17,8 +17,8 @@ namespace PennyPilot.Backend.Api.Controllers
             _chartsService = chartsService;
         }
 
-        [HttpGet("DonutCharts")]
-        public async Task<IActionResult> GetDonutChartsData()
+        [HttpPost("DonutCharts")]
+        public async Task<IActionResult> GetDonutChartsData(DashboardFilterDto dashboardFilter)
         {
             var response = new ServerResponse<DonutChartsDtoModel>();
             try

@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, Input, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -20,6 +20,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
+import { DashboardFilter } from '../models/dashboard-filter.model';
 
 @Component({
   selector: 'app-transactions-table',
@@ -29,6 +30,8 @@ import {
   styleUrls: ['./transactions-table.component.scss'],
 })
 export class TransactionsTableComponent {
+  @Input() dashboardFilter!: DashboardFilter;
+
   private dialog = inject(MatDialog);
   private transactionsService = inject(TransactionsService);
 
@@ -70,6 +73,23 @@ export class TransactionsTableComponent {
     this.setupExpenseTable();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['filter'] && !changes['filter'].firstChange) {
+      this.reloadTable(this.dashboardFilter);
+    }
+  }
+
+  reloadTable(filter: DashboardFilter) {
+    // Reset paginators to first page
+    if (this.activeTab === 'income' && this.incomePaginator) {
+      this.incomePaginator.pageIndex = 0;
+      this.setupIncomeTable();
+    } else if (this.activeTab === 'expense' && this.expensePaginator) {
+      this.expensePaginator.pageIndex = 0;
+      this.setupExpenseTable();
+    }
+  }
+
   private setupIncomeTable() {
     merge(this.incomeSort.sortChange, this.incomePaginator.page)
       .pipe(
@@ -82,6 +102,7 @@ export class TransactionsTableComponent {
             pageSize: this.incomePaginator.pageSize,
             sortBy: this.incomeSort.active || 'date',
             sortOrder: this.incomeSort.direction || 'desc',
+            dashboardFilter: this.dashboardFilter,
           });
         }),
         map((response: any) => {
@@ -114,6 +135,7 @@ export class TransactionsTableComponent {
             pageSize: this.expensePaginator.pageSize,
             sortBy: this.expenseSort.active || 'date',
             sortOrder: this.expenseSort.direction || 'desc',
+            dashboardFilter: this.dashboardFilter,
           });
         }),
         map((response: any) => {

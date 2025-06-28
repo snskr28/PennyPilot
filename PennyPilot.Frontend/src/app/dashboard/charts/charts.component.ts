@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, ViewChild, SimpleChange, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import { ChartConfiguration, ChartType } from 'chart.js';
@@ -6,6 +6,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartsService } from '../services/charts.service';
 import { ApiResponse } from '../../shared/api-response.model';
 import { DonutChartsResponse } from '../models/donut-charts-response.model';
+import { DashboardFilter } from '../models/dashboard-filter.model';
 
 @Component({
   selector: 'app-dashboard-charts',
@@ -14,7 +15,9 @@ import { DonutChartsResponse } from '../models/donut-charts-response.model';
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss'],
 })
-export class ChartsComponent implements OnInit {
+export class ChartsComponent implements OnInit, OnChanges {
+  @Input() dashboardFilter!: DashboardFilter;
+
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   private chartsService = inject(ChartsService);
@@ -133,7 +136,18 @@ export class ChartsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.chartsService.getDonutChartsData().subscribe({
+    this.reloadCharts(this.dashboardFilter);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['filter']) {
+      this.reloadCharts(this.dashboardFilter);
+    }
+  }
+
+  reloadCharts(filter: DashboardFilter) {
+    // Call your service with the filter
+    this.chartsService.getDonutChartsData(filter).subscribe({
       next: (res: ApiResponse<DonutChartsResponse>) => {
         const expenseCategories = res.data?.expenseCategories;
         const userExpenses = res.data?.userExpenses;
