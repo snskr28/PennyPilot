@@ -12,33 +12,26 @@ namespace PennyPilot.Backend.Application.Services
     public class ChartsService : IChartsService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFilterService _filterService;
 
-        public ChartsService(IUnitOfWork unitOfWork)
+        public ChartsService(IUnitOfWork unitOfWork, IFilterService filterService)
         {
             _unitOfWork = unitOfWork;
+            _filterService = filterService;
         }
 
-        public async Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId)
+        public async Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId, DashboardFilterDto dashboardFilter)
         {
-            var expenseCategories = _unitOfWork.Expenses.AsQueryable()
-                                    .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
-                                    .GroupBy(x => x.Category.Name)
-                                    .ToDictionary(x => x.Key, x => x.Count());
+            var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, dashboardFilter);
+            var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, dashboardFilter);
 
-            var userExpenses = _unitOfWork.Expenses.AsQueryable()
-                               .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
-                               .GroupBy(x => x.PaidBy)
-                               .ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
+            var expenseCategories = expenses.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
 
-            var incomeCategories = _unitOfWork.Incomes.AsQueryable()
-                                   .Where(i => i.UserId == userId && !i.IsDeleted && i.IsEnabled)
-                                   .GroupBy(x => x.Category.Name)
-                                   .ToDictionary(x => x.Key, x => x.Count());
+            var userExpenses = expenses.GroupBy(x => x.PaidBy).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
-            var incomeSources = _unitOfWork.Incomes.AsQueryable()
-                                .Where(i => i.UserId == userId && !i.IsDeleted && i.IsEnabled)
-                                .GroupBy(x => x.Source)
-                                .ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount)); ;
+            var incomeCategories = incomes.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
+
+            var incomeSources =  incomes.GroupBy(x => x.Source).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
             return new DonutChartsDtoModel
             {

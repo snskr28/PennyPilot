@@ -21,6 +21,7 @@ namespace PennyPilot.Backend.Application
             services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IChartsService, ChartsService>();
+            services.AddScoped<IFilterService, FilterService>();   
 
             return services;
         }

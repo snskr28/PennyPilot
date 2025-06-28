@@ -146,6 +146,10 @@ export class ChartsComponent implements OnInit, OnChanges {
   }
 
   reloadCharts(filter: DashboardFilter) {
+    this.expCategoriesLoading = true;
+    this.userExpensesLoading = true;
+    this.incomeCategoriesLoading = true;
+    this.incomeSourcesLoading = true;
     // Call your service with the filter
     this.chartsService.getDonutChartsData(filter).subscribe({
       next: (res: ApiResponse<DonutChartsResponse>) => {

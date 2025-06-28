@@ -14,10 +14,12 @@ namespace PennyPilot.Backend.Application.Services
     public class IncomeService : IIncomeService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFilterService _filterService;
 
-        public IncomeService(IUnitOfWork unitOfWork)
+        public IncomeService(IUnitOfWork unitOfWork, IFilterService filterService)
         {
             _unitOfWork = unitOfWork;
+            _filterService = filterService;
         }
 
 
@@ -179,17 +181,16 @@ namespace PennyPilot.Backend.Application.Services
 
         public async Task<TableResponseDto<IncomeTableDto>> GetUserIncomesAsync(Guid userId, TableRequestDto requestDto)
         {
-            var incomes = _unitOfWork.Incomes.AsQueryable()
-                           .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
-                           .Select(e => new IncomeTableDto
-                           {
+            var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, requestDto.DashboardFilter)
+                          .Select(e => new IncomeTableDto
+                          {
                               Amount = e.Amount,
                               Date = e.Date,
                               Category = e.Category.Name,
                               Description = e.Description,
                               Source = e.Source,
                               Title = e.Title
-                           });
+                          }); ;
 
             bool descending = requestDto.SortOrder?.ToLower() == "desc";
 

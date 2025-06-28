@@ -14,10 +14,12 @@ namespace PennyPilot.Backend.Application.Services
     public class ExpenseService : IExpenseService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFilterService _filterService;
 
-        public ExpenseService(IUnitOfWork unitOfWork)
+        public ExpenseService(IUnitOfWork unitOfWork, IFilterService filterService)
         {
             _unitOfWork = unitOfWork;
+            _filterService = filterService;
         }
 
         public async Task<ServerResponse<List<Guid>>> AddExpensesAsync(Guid userId, List<AddExpenseDto> requestDtos)
@@ -183,18 +185,17 @@ namespace PennyPilot.Backend.Application.Services
 
         public async Task<TableResponseDto<ExpenseTableDto>> GetUserExpensesAsync(Guid userId, TableRequestDto requestDto)
         {
-            var expenses = _unitOfWork.Expenses.AsQueryable()
-                           .Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled)
-                           .Select(e => new ExpenseTableDto
-                           {
-                               Title = e.Title,
-                               Description = e.Description,
-                               Amount = e.Amount,
-                               Category = e.Category.Name,
-                               PaymentMode = e.PaymentMode,
-                               PaidBy = e.PaidBy ?? "N/A",
-                               Date = e.Date
-                           });
+            var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, requestDto.DashboardFilter)
+                            .Select(e => new ExpenseTableDto
+                            {
+                                Title = e.Title,
+                                Description = e.Description,
+                                Amount = e.Amount,
+                                Category = e.Category.Name,
+                                PaymentMode = e.PaymentMode,
+                                PaidBy = e.PaidBy ?? "N/A",
+                                Date = e.Date
+                            });
 
             bool descending = requestDto.SortOrder?.ToLower() == "desc";
 

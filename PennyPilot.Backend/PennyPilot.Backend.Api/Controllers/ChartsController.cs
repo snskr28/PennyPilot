@@ -31,7 +31,7 @@ namespace PennyPilot.Backend.Api.Controllers
                     return Unauthorized(response);
                 }
 
-                response.Data = await _chartsService.GetDonutChartsData(userId);
+                response.Data = await _chartsService.GetDonutChartsData(userId, dashboardFilter);
                 response.Success = true;
                 response.Message = "Charts fetched successfully.";
                 return Ok(response);

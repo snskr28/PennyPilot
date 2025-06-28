@@ -12,6 +12,6 @@ namespace PennyPilot.Backend.Application.DTOs
         public int PageSize { get; set; } = 10;
         public string? SortBy { get; set; }
         public string SortOrder { get; set; } = "asc"; // or "desc"
-        public DashboardFilterDto? DashboardFilter { get; set; }
+        public DashboardFilterDto DashboardFilter { get; set; }
     }
 }
