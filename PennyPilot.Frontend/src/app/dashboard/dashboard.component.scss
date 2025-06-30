@@ -186,7 +186,16 @@ mat-list-item.active {
   color: #374151;
 }
 
+app-time-range-filter {
+  display: flex;
+  justify-content: end;
+}
+
 @media (max-width: 900px) {
+  app-time-range-filter {
+    display: block;
+  }
+
   .dashboard-sidenav {
     width: 80vw;
     min-width: 180px;
