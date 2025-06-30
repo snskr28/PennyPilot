@@ -87,7 +87,8 @@ td.mat-cell {
 mat-paginator {
   margin-top: auto;
   padding: 0 24px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid $color-primary;
+  background-color: $color-primary;
 }
 
 .loading-overlay {
@@ -127,7 +128,7 @@ mat-paginator {
 }
 
 ::ng-deep .mat-mdc-header-row.cdk-header-row {
-  background-color: #fff8f8;
+  background-color: $color-primary;
 }
 
 :host ::ng-deep .mat-mdc-paginator-range-label {
