@@ -1,4 +1,10 @@
-import { Component, Input, SimpleChanges, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  SimpleChanges,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -74,7 +80,7 @@ export class TransactionsTableComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['filter'] && !changes['filter'].firstChange) {
+    if (changes['dashboardFilter'] && !changes['dashboardFilter'].firstChange) {
       this.reloadTable(this.dashboardFilter);
     }
   }
@@ -114,7 +120,6 @@ export class TransactionsTableComponent {
           throw new Error(response.message);
         }),
         catchError((error) => {
-             
           return [];
         })
       )

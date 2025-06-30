@@ -31,6 +31,7 @@ export class TimeRangeFilterComponent {
   }>();
 
   timeRanges: TimeRangeOption[] = [
+    { label: 'All', value: 'all' },
     { label: 'Last 7 Days', value: 'last7' },
     { label: 'Last 30 Days', value: 'last30' },
     { label: 'This Month', value: 'thisMonth' },
@@ -43,7 +44,7 @@ export class TimeRangeFilterComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      range: ['last7'],
+      range: ['all'],
       start: [null],
       end: [null],
     });
@@ -60,6 +61,10 @@ export class TimeRangeFilterComponent {
 
     const today = new Date();
     switch (range) {
+      case 'all':
+        startDate = null;
+        endDate = null;
+        break;
       case 'last7':
         startDate = new Date(today);
         startDate.setDate(today.getDate() - 6);
@@ -95,6 +100,6 @@ export class TimeRangeFilterComponent {
   }
 
   clear() {
-    this.form.patchValue({ range: 'last7', start: null, end: null });
+    this.form.patchValue({ range: 'all', start: null, end: null });
   }
 }
