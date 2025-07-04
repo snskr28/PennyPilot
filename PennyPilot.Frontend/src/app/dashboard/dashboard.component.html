@@ -37,9 +37,17 @@
       <span class="dashboard-title">Dashboard</span>
     </div>
     <div class="dashboard-container">
-      <app-time-range-filter
-        (dateRangeChange)="onDateRangeChange($event)"
-      ></app-time-range-filter>
+      <div class="header-section">
+        <div class="logo">
+          <!-- <mat-icon class="logo-icon">flight</mat-icon> -->
+          <img src="assets/logo.png" alt="PennyPilotLogo" class="logo-img" />
+          <span class="logo-text">PennyPilot</span>
+        </div>
+
+        <app-time-range-filter
+          (dateRangeChange)="onDateRangeChange($event)"
+        ></app-time-range-filter>
+      </div>
       <!-- Summary Cards -->
       <div class="summary-cards-flex">
         <mat-card class="summary-card" *ngFor="let card of summaryCards">
@@ -57,12 +65,16 @@
 
       <!-- Charts Grid -->
       <div class="charts-grid">
-        <app-dashboard-charts [dashboardFilter]="dashboardFilter"></app-dashboard-charts>
+        <app-dashboard-charts
+          [dashboardFilter]="dashboardFilter"
+        ></app-dashboard-charts>
       </div>
 
       <!-- Transactions Table -->
       <div class="transactions-section">
-        <app-transactions-table [dashboardFilter]="dashboardFilter"></app-transactions-table>
+        <app-transactions-table
+          [dashboardFilter]="dashboardFilter"
+        ></app-transactions-table>
       </div>
       <ng-content></ng-content>
     </div>

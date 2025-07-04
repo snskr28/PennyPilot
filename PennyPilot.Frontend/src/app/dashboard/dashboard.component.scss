@@ -186,14 +186,33 @@ mat-list-item.active {
   color: #374151;
 }
 
-app-time-range-filter {
+.header-section {
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.logo-img{
+  width: auto;
+  height: 90px;;
+}
+
+.logo-text {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 @media (max-width: 900px) {
   app-time-range-filter {
     display: block;
+    width: -webkit-fill-available;
   }
 
   .dashboard-sidenav {
@@ -214,5 +233,10 @@ app-time-range-filter {
   .summary-card {
     max-width: 100%;
     min-width: 0;
+  }
+  .header-section {
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
   }
 }
