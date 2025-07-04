@@ -28,6 +28,7 @@ export class TimeRangeFilterComponent {
   @Output() dateRangeChange = new EventEmitter<{
     start: Date | null;
     end: Date | null;
+    granularity: string;
   }>();
 
   timeRanges: TimeRangeOption[] = [
@@ -40,6 +41,14 @@ export class TimeRangeFilterComponent {
     { label: 'Custom', value: 'custom' },
   ];
 
+  granularities = [
+    { label: 'Daily', value: 'daily' },
+    { label: 'Weekly', value: 'weekly' },
+    { label: 'Monthly', value: 'monthly' },
+    { label: 'Quarterly', value: 'quarterly' },
+    { label: 'Yearly', value: 'yearly' },
+  ];
+
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
@@ -47,6 +56,7 @@ export class TimeRangeFilterComponent {
       range: ['all'],
       start: [null],
       end: [null],
+      granularity: ['yearly'],
     });
 
     this.form.valueChanges.subscribe((val) => {
@@ -55,7 +65,7 @@ export class TimeRangeFilterComponent {
   }
 
   emitRange() {
-    const { range, start, end } = this.form.value;
+    const { range, start, end, granularity } = this.form.value;
     let startDate: Date | null = null;
     let endDate: Date | null = null;
 
@@ -92,7 +102,7 @@ export class TimeRangeFilterComponent {
         endDate = end;
         break;
     }
-    this.dateRangeChange.emit({ start: startDate, end: endDate });
+    this.dateRangeChange.emit({ start: startDate, end: endDate, granularity });
   }
 
   showCustom(): boolean {
@@ -100,6 +110,6 @@ export class TimeRangeFilterComponent {
   }
 
   clear() {
-    this.form.patchValue({ range: 'all', start: null, end: null });
+    this.form.patchValue({ range: 'all', start: null, end: null, granularity: 'yearly' });
   }
 }

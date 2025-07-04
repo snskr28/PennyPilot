@@ -1,5 +1,14 @@
 <div class="time-range-filter-container mat-elevation-z1">
-  <form [formGroup]="form" class="time-range-filter-form">
+  <form [formGroup]="form" class="time-range-filter-form">    
+    <mat-form-field appearance="outline" class="range-select">
+      <mat-label>Granularity</mat-label>
+      <mat-select formControlName="granularity">
+        <mat-option *ngFor="let option of granularities" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="range-select">
       <mat-label>Time Range</mat-label>
       <mat-select formControlName="range">
@@ -33,7 +42,7 @@
 
     <span class="spacer"></span>
     <button mat-button type="button" color="primary" class="clear-btn" (click)="clear()">
-      Clear
+      Reset
     </button>
   </form>
 </div>

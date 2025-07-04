@@ -24,6 +24,7 @@ export class DashboardComponent {
   dashboardFilter: DashboardFilter = {
     startDate: null,
     endDate: null,
+    granularity: 'yearly',
     expenseCategory: null,
     incomeCategory: null,
     userExpense: null,
@@ -54,8 +55,8 @@ export class DashboardComponent {
     this.authService.logout();
   }
 
-  onDateRangeChange(range: { start: Date | null; end: Date | null }) {
-    this.dashboardFilter = { ...this.dashboardFilter, startDate: range.start, endDate: range.end };
+  onDateRangeChange(range: { start: Date | null; end: Date | null; granularity: string }) {
+    this.dashboardFilter = { ...this.dashboardFilter, startDate: range.start, endDate: range.end,granularity: range.granularity };
     this.reloadAllWidgets();
   }
 
