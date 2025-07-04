@@ -24,6 +24,7 @@ import {
   merge,
   Observable,
   startWith,
+  Subscription,
   switchMap,
 } from 'rxjs';
 import { DashboardFilter } from '../models/dashboard-filter.model';
@@ -40,6 +41,9 @@ export class TransactionsTableComponent {
 
   private dialog = inject(MatDialog);
   private transactionsService = inject(TransactionsService);
+
+  private incomeTableSub?: Subscription;
+  private expenseTableSub?: Subscription;
 
   activeTab: 'income' | 'expense' = 'income';
   loading = false;
@@ -89,15 +93,19 @@ export class TransactionsTableComponent {
     // Reset paginators to first page
     if (this.activeTab === 'income' && this.incomePaginator) {
       this.incomePaginator.pageIndex = 0;
-      this.setupIncomeTable();
+      this.incomeSort.sortChange.emit(); 
     } else if (this.activeTab === 'expense' && this.expensePaginator) {
       this.expensePaginator.pageIndex = 0;
-      this.setupExpenseTable();
+      this.expenseSort.sortChange.emit();
     }
   }
 
   private setupIncomeTable() {
-    merge(this.incomeSort.sortChange, this.incomePaginator.page)
+    this.incomeTableSub?.unsubscribe();
+    this.incomeTableSub = merge(
+      this.incomeSort.sortChange,
+      this.incomePaginator.page
+    )
       .pipe(
         startWith({}),
         switchMap(() => {
@@ -129,7 +137,11 @@ export class TransactionsTableComponent {
   }
 
   private setupExpenseTable() {
-    merge(this.expenseSort.sortChange, this.expensePaginator.page)
+    this.expenseTableSub?.unsubscribe();
+    this.expenseTableSub = merge(
+      this.expenseSort.sortChange,
+      this.expensePaginator.page
+    )
       .pipe(
         startWith({}),
         switchMap(() => {
@@ -193,5 +205,10 @@ export class TransactionsTableComponent {
         this.setupIncomeTable();
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.incomeTableSub?.unsubscribe();
+    this.expenseTableSub?.unsubscribe();
   }
 }
