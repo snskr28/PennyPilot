@@ -9,6 +9,8 @@
   display: flex;
   align-items: center;
   width: auto;
+  transition: all 0.4s ease;
+  overflow: hidden;
 }
 
 .time-range-filter-form {
@@ -27,7 +29,19 @@
 .custom-dates {
   display: flex;
   align-items: baseline;
-  gap: 0px;
+  gap: 8px;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+  
+  &.show {
+    width: 360px; /* Width for both date fields + "to" label */
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .date-field {
@@ -72,4 +86,23 @@
     align-self: flex-end;
     width: 100%;
   }
+  .custom-dates {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+  
+  &.show {
+    height: auto;
+    width: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 }

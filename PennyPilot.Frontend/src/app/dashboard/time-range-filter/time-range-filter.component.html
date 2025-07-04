@@ -1,4 +1,4 @@
-<div class="time-range-filter-container mat-elevation-z1">
+<div class="time-range-filter-container mat-elevation-z1" [class.expanded]="showCustom()">
   <form [formGroup]="form" class="time-range-filter-form">    
     <mat-form-field appearance="outline" class="range-select">
       <mat-label>Granularity</mat-label>
@@ -18,7 +18,7 @@
       </mat-select>
     </mat-form-field>
 
-    <div class="custom-dates" *ngIf="showCustom()">
+    <div class="custom-dates" [class.show]="showCustom()">
       <mat-form-field appearance="outline" class="date-field">
         <mat-label>Start Date</mat-label>
         <input matInput [matDatepicker]="startPicker" formControlName="start" placeholder="MM/dd/yyyy" />
