@@ -207,6 +207,7 @@ mat-list-item.active {
   display: flex;
   align-items: center;
   gap: 16px;
+  margin-right: 20px;
 }
 
 @media (max-width: 900px) {
@@ -238,5 +239,8 @@ mat-list-item.active {
   flex-direction: column;
   gap: 16px;
   align-items: center;
+  }
+  .logo{
+    margin: auto;
   }
 }
