@@ -9,6 +9,6 @@ namespace PennyPilot.Backend.Application.Interfaces
 {
     public interface ICardsService
     {
-        Task<CardsResponseDto> GetCards(Guid userId, DashboardFilterDto dashboardFilter);
+        Task<SummaryCardsResponseDto> GetSummaryCards(Guid userId, DashboardFilterDto dashboardFilter);
     }
 }

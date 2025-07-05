@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PennyPilot.Backend.Api.Helpers;
 using PennyPilot.Backend.Application.DTOs;
@@ -9,6 +10,7 @@ namespace PennyPilot.Backend.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CardsController : ControllerBase
     {
         private readonly ICardsService _cardsService;
@@ -17,10 +19,10 @@ namespace PennyPilot.Backend.Api.Controllers
             _cardsService = cardsService;
         }
 
-        [HttpPost("Cards")]
-        public async Task<IActionResult> GetCardsData(DashboardFilterDto dashboardFilter)
+        [HttpPost]
+        public async Task<IActionResult> GetSummaryCardsData(DashboardFilterDto dashboardFilter)
         {
-            var response = new ServerResponse<CardsResponseDto>();
+            var response = new ServerResponse<SummaryCardsResponseDto>();
             try
             {
                 var userId = User.GetUserId();
@@ -31,7 +33,7 @@ namespace PennyPilot.Backend.Api.Controllers
                     return Unauthorized(response);
                 }
 
-                response.Data = await _cardsService.GetCards(userId, dashboardFilter);
+                response.Data = await _cardsService.GetSummaryCards(userId, dashboardFilter);
                 response.Success = true;
                 response.Message = "Cards fetched successfully.";
                 return Ok(response);

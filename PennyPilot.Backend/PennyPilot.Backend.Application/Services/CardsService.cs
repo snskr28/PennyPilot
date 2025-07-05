@@ -21,7 +21,7 @@ namespace PennyPilot.Backend.Application.Services
             _filterService = filterService;
         }
 
-        public async Task<CardsResponseDto> GetCards(Guid userId, DashboardFilterDto dashboardFilter)
+        public async Task<SummaryCardsResponseDto> GetSummaryCards(Guid userId, DashboardFilterDto dashboardFilter)
         {
             var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, dashboardFilter);
             var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, dashboardFilter);
@@ -40,7 +40,7 @@ namespace PennyPilot.Backend.Application.Services
 
             var netSavings = totalIncome - totalExpenses;
 
-            return new CardsResponseDto
+            return new SummaryCardsResponseDto
             {
                 TotalIncome = new CardDto { Name = CardsNameConstant.TotalIncome, Value = totalIncome },
                 TotalExpenses = new CardDto { Name = CardsNameConstant.TotalExpenses, Value = totalExpenses },

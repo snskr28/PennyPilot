@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PennyPilot.Backend.Api.Helpers;
 using PennyPilot.Backend.Application.DTOs;
@@ -9,6 +10,7 @@ namespace PennyPilot.Backend.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ChartsController : ControllerBase
     {
         private readonly IChartsService _chartsService;

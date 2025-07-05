@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PennyPilot.Backend.Application.DTOs
 {
-    public class CardsResponseDto
+    public class SummaryCardsResponseDto
     {
         public CardDto? TotalIncome { get; set; }
         public CardDto? TotalExpenses { get; set; }
