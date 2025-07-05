@@ -32,7 +32,6 @@ namespace PennyPilot.Backend.Api.Controllers
                     response.Message = "Invalid user token.";
                     return Unauthorized(response);
                 }
-                throw new Exception();
                 response.Data = await _cardsService.GetSummaryCards(userId, dashboardFilter);
                 response.Success = true;
                 response.Message = "Cards fetched successfully.";
