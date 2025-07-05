@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../shared/material';
 import { CommonModule } from '@angular/common';
 import { ChartsComponent } from './charts/charts.component';
@@ -7,6 +7,9 @@ import { AuthService } from '../auth/services/auth.service';
 import { TimeRangeFilterComponent } from './time-range-filter/time-range-filter.component';
 import { DashboardFilter } from './models/dashboard-filter.model';
 import { Chart } from 'chart.js';
+import { CardsService } from './services/cards.service';
+import { ApiResponse } from '../shared/api-response.model';
+import { SummaryCardsResponse } from './models/summary-cards-response.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,6 +37,10 @@ export class DashboardComponent {
   @ViewChild(ChartsComponent) chartsComp!: ChartsComponent;
   @ViewChild(TransactionsTableComponent) tableComp!: TransactionsTableComponent;
 
+  private cardsService = inject(CardsService);
+  summaryCardsLoading = true;
+  summaryCardsError: string | null = null;
+
   summaryCards = [
     { title: 'Total Income', amount: 0, icon: 'trending_up', color: '#10B981' },
     {
@@ -48,11 +55,34 @@ export class DashboardComponent {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // We'll fetch data here later
+   this.reloadSummaryCards();
   }
 
   logout() {
     this.authService.logout();
+  }
+
+  reloadSummaryCards(){
+    this.summaryCardsLoading = true;
+    this.cardsService.getSummaryCardsData(this.dashboardFilter).subscribe({
+      next: (res: ApiResponse<SummaryCardsResponse>) => {
+        const totalIncome = res.data?.totalIncome?.value;
+        const totalExpenses = res.data?.totalExpenses?.value;
+        const netSavings = res.data?.netSavings?.value;
+
+        if(res.success){
+          this.summaryCards = [
+            { title: 'Total Income', amount: totalIncome || 0, icon: 'trending_up', color: '#10B981' },
+            { title: 'Total Expenses', amount: totalExpenses || 0, icon: 'trending_down', color: '#EF4444' },
+            { title: 'Net Savings', amount: netSavings || 0, icon: 'savings', color: '#6366F1' },
+          ];
+        }
+      },
+      error: () => {
+        this.summaryCardsError = 'Failed to load summary cards data';
+        this.summaryCardsLoading = false;
+      }
+    });
   }
 
   onDateRangeChange(range: { start: Date | null; end: Date | null; granularity: string }) {
@@ -67,5 +97,6 @@ export class DashboardComponent {
     if (this.tableComp) {
       this.tableComp.reloadTable(this.dashboardFilter);
     }
+    this.reloadSummaryCards();
   }
 }
