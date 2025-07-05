@@ -64,5 +64,10 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         {
             await _dbSet.AddRangeAsync(entities);
         }
+
+        public async Task<List<T>> ToListAsync(IQueryable<T> entities)
+        {
+            return await entities.ToListAsync();            
+        }
     }
 }

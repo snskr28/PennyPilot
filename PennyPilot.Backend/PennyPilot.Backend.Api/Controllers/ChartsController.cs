@@ -43,5 +43,32 @@ namespace PennyPilot.Backend.Api.Controllers
                 return StatusCode(500, response);
             }
         }
+
+        [HttpPost("IncomeExpenseBarChart")]
+        public async Task<IActionResult> GetIncomeExpenseBarChartsData(DashboardFilterDto dashboardFilter)
+        {
+            var response = new ServerResponse<BarChartResponseDto>();
+            try
+            {
+                var userId = User.GetUserId();
+                if (userId == Guid.Empty)
+                {
+                    response.Success = false;
+                    response.Message = "Invalid user token.";
+                    return Unauthorized(response);
+                }
+
+                response.Data = await _chartsService.GetIncomeExpenseBarChartData(userId, dashboardFilter);
+                response.Success = true;
+                response.Message = "Bar Chart fetched successfully.";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return StatusCode(500, response);
+            }
+        }
     }
 }
