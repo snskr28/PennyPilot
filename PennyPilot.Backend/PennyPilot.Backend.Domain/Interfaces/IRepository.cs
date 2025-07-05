@@ -15,5 +15,6 @@ namespace PennyPilot.Backend.Domain.Interfaces
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
+        Task AddRangeAsync(IEnumerable<T> entities);
     }
 }

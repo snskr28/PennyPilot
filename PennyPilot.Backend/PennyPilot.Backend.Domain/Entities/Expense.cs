@@ -19,7 +19,7 @@ public partial class Expense
 
     public string PaymentMode { get; set; } = null!;
 
-    public string? PaidBy { get; set; }
+    public string PaidBy { get; set; }
 
     public DateTime Date { get; set; }
 

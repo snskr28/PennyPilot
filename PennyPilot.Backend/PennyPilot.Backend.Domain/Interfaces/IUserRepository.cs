@@ -12,5 +12,6 @@ namespace PennyPilot.Backend.Domain.Interfaces
         Task<IEnumerable<User>> GetActiveUsersAsync();
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByUsernameAsync(string username);
+        Task<User?> GetByPasswordResetTokenAsync(string token);
     }
 }

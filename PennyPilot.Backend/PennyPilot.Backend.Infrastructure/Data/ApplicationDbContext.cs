@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using PennyPilot.Backend.Domain.Entities;
 using PennyPilot.Backend.Infrastructure;
+using PennyPilot.Backend.Domain.Entities;
 
 namespace PennyPilot.Backend.Infrastructure.Data;
 
@@ -27,10 +27,10 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<UserCategory> UserCategories { get; set; }
 
-    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=SANSKAR\\SQLEXPRESS;Integrated Security=true;Initial Catalog=PennyPilot;TrustServerCertificate=True");
-*/
+        => optionsBuilder.UseSqlServer("Server=SANSKAR\\MSSQLEXPRESS2025;Integrated Security=true;Initial Catalog=PennyPilot;TrustServerCertificate=True");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
@@ -97,6 +97,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Source)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Incomes)
                 .HasForeignKey(d => d.CategoryId)
@@ -134,6 +137,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.PasswordHash).IsUnicode(false);
+            entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .IsUnicode(false);

@@ -62,5 +62,16 @@ namespace PennyPilot.Backend.Application.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public string GenerateSecureToken()
+        {
+            var tokenBytes = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(tokenBytes);
+            return Convert.ToBase64String(tokenBytes)
+                .Replace("+", "")
+                .Replace("/", "")
+                .Replace("=", "");
+        }
     }
 }

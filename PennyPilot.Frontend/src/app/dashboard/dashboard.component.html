@@ -1,26 +1,90 @@
-<div class="dashboard-container">
-  <!-- Summary Cards -->
-  <div class="summary-cards-flex">
-    <mat-card class="summary-card" *ngFor="let card of summaryCards">
-      <mat-card-content>
-        <div class="card-icon" [style.background-color]="card.color + '15'">
-          <mat-icon [style.color]="card.color">{{card.icon}}</mat-icon>
-        </div>
-        <div class="card-info">
-          <h3>{{card.title}}</h3>
-          <h2>${{card.amount | number:'1.2-2'}}</h2>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+<mat-sidenav-container class="dashboard-sidenav-container">
+  <mat-sidenav
+    #drawer
+    mode="over"
+    class="dashboard-sidenav"
+    [autoFocus]="false"
+  >
+    <div class="sidebar-header">
+      <img class="avatar" src="assets/profile.jpg" alt="Profile" />
+      <span class="sidebar-title">Your Name</span>
+    </div>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" (click)="drawer.close()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </a>
+      <a mat-list-item routerLink="/reports" (click)="drawer.close()">
+        <mat-icon>bar_chart</mat-icon>
+        <span>Reports</span>
+      </a>
+      <a mat-list-item routerLink="/profile" (click)="drawer.close()">
+        <mat-icon>person</mat-icon>
+        <span>View Profile</span>
+      </a>
+      <a mat-list-item (click)="logout(); drawer.close()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
 
-  <!-- Charts Grid -->
-  <div class="charts-grid">
-    <app-dashboard-charts></app-dashboard-charts>
-  </div>
+  <mat-sidenav-content>
+    <div class="dashboard-toolbar">
+      <button mat-icon-button (click)="drawer.toggle()" class="hamburger-btn">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="dashboard-title">Dashboard</span>
+    </div>
+    <div class="dashboard-container">
+      <div class="header-section">
+        <div class="logo">
+          <!-- <mat-icon class="logo-icon">flight</mat-icon> -->
+          <img src="assets/logo.png" alt="PennyPilotLogo" class="logo-img" />
+          <span class="logo-text">PennyPilot</span>
+        </div>
 
-  <!-- Transactions Table -->
-  <div class="transactions-section">
-    <app-transactions-table></app-transactions-table>
-  </div>
-</div>
+        <app-time-range-filter
+          (dateRangeChange)="onDateRangeChange($event)"
+        ></app-time-range-filter>
+      </div>
+      <!-- Summary Cards -->
+      <div class="summary-cards-flex">
+        <mat-card class="summary-card" *ngFor="let card of summaryCards">
+          <mat-card-content>
+            <div class="card-icon" [style.background-color]="card.color + '15'">
+              <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+            </div>
+            <div class="card-info">
+              <h3>{{ card.title }}</h3>
+              <h2
+                [style.color]="
+                  card.title === 'Net Savings'
+                    ? getNetSavingsColor(card.amount)
+                    : '#111827'
+                "
+              >
+                {{ card.amount | currency : "INR" : "symbol" : "1.2-2" }}
+              </h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <app-dashboard-charts
+          [dashboardFilter]="dashboardFilter"
+        ></app-dashboard-charts>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="transactions-section">
+        <app-transactions-table
+          [dashboardFilter]="dashboardFilter"
+        ></app-transactions-table>
+      </div>
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

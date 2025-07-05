@@ -12,6 +12,7 @@ namespace PennyPilot.Backend.Application.Interfaces
         string HashPassword(string password);
         bool VerifyPassword(string password, string hashedPassword);
         string GenerateJwtToken(User user);
+        string GenerateSecureToken();
 
     }
 }

@@ -1,9 +1,11 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PennyPilot.Backend.Application;
 using PennyPilot.Backend.Application.Settings;
+using PennyPilot.Backend.Domain.Services;
 using PennyPilot.Backend.Infrastructure;
 using System.Text;
 
@@ -67,6 +69,11 @@ namespace PennyPilot.Backend.Api
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+            //Register Email Services
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddSingleton(resolver =>
+                resolver.GetRequiredService<IOptions<EmailSettings>>().Value);
 
             var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
 

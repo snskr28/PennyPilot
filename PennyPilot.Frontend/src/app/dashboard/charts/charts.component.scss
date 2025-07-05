@@ -4,25 +4,80 @@
   width: 100%;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.charts-section-a, .charts-section-b{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #374151;
 }
 
 .chart-card {
   flex: 1 1 0;
-  min-width: 0;
+  min-width: 20rem;
+  width: 20rem;
   min-height: 18rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.07);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.07);
   background: #fff;
   display: flex;
   flex-direction: column;
   width: 0; /* Ensures flex:1 works as expected */
   max-width: 100%;
-  overflow:hidden;
+  overflow: hidden;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
 }
 
 mat-card-header {
   padding: 20px 24px 0 24px;
+  position: relative;
+  
+  .scroll-indicator {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+    opacity: 0.8;
+    
+    .scroll-icon {
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      color: #6b7280;
+    }
+    
+    .scroll-text {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  }
 }
+
 
 mat-card-content {
   flex: 1 1 auto;
@@ -41,6 +96,18 @@ mat-card-content {
   align-items: center;
   justify-content: center;
 }
+
+.scrollable-chart-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
+}
+
 .chart-wrapper canvas {
   width: 100% !important;
   height: 100% !important;
@@ -49,10 +116,38 @@ mat-card-content {
   display: block;
 }
 
-.divider{
+.divider {
   border: none;
   border-top: 2px solid #e5e7eb; /* Tailwind gray-200 */
   margin: 10px 24px;
+}
+
+.chart-error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 14rem;
+  width: 100%;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e5ff 100%);
+  border-radius: 1rem;
+  color: #667eea;
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 2px 8px 0 rgba(229, 115, 115, 0.07);
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.chart-error-message .material-icons,
+.chart-error-message mat-icon {
+  height: auto;
+  width: auto;
+  font-size: 4rem;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
 }
 
 @media (max-width: 900px) {
@@ -68,5 +163,14 @@ mat-card-content {
     height: 180px;
     min-height: 120px;
     max-height: 220px;
+  }
+  .chart-error-message{
+    min-height: 12rem;
+    padding: 1rem;
+  }
+  mat-card-header .scroll-indicator {
+    position: static;
+    justify-content: center;
+    margin-top: 0.5rem;
   }
 }

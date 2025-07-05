@@ -21,9 +21,9 @@ namespace PennyPilot.Backend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddIncome([FromBody] AddIncomeDto dto)
+        public async Task<IActionResult> AddIncomes([FromBody] List<AddIncomeDto> dto)
         {
-            var response = new ServerResponse<Guid>();
+            var response = new ServerResponse<List<Guid>>();
             try
             {
                 var userId = User.GetUserId();
@@ -34,15 +34,14 @@ namespace PennyPilot.Backend.Api.Controllers
                     return Unauthorized(response);
                 }
 
-                var incomeId = await _incomeService.AddIncomeAsync(userId, dto);
-                response.Data = incomeId;
-                response.Message = "Income added successfully.";
+                response = await _incomeService.AddIncomesAsync(userId, dto);          
+                response.Message = "Incomes added successfully.";
                 response.Success = true;
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                response.Data = Guid.Empty;
+                response.Data = null;
                 response.Message = ex.Message;
                 response.Success = false;
                 return StatusCode(500, response);
@@ -104,7 +103,7 @@ namespace PennyPilot.Backend.Api.Controllers
         }
 
         [HttpPost("IncomeTable")]
-        public async Task<IActionResult> GetExpensesTable([FromBody] TableRequestDto requestDto)
+        public async Task<IActionResult> GetIncomeTable([FromBody] TableRequestDto requestDto)
         {
             var response = new ServerResponse<TableResponseDto<IncomeTableDto>>();
             try

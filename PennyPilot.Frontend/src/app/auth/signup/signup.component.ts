@@ -6,6 +6,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -24,30 +25,43 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
-
 export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   hidePassword = true;
   hideConfirmPassword = true;
   authService = inject(AuthService);
+  signupError: string | null = null;
+  loading = false;
+  maxDate = new Date();
+  minDate = new Date(1900, 0, 1);
 
   constructor(private fb: FormBuilder, private router: Router) {
-    this.signupForm = this.fb.group({
-      username: ['', [
-        Validators.required, 
-        this.usernameValidator  // Add the custom validator
-      ]],
-      email: ['', [Validators.required, Validators.email]],
-      firstName: ['', [Validators.required]],
-      middleName: [null],
-      lastName: ['', [Validators.required]],
-      password: ['', [
-        Validators.required, 
-        Validators.minLength(8),
-        this.passwordStrengthValidator
-      ]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
+    this.signupForm = this.fb.group(
+      {
+        username: [
+          '',
+          [
+            Validators.required,
+            this.usernameValidator, // Add the custom validator
+          ],
+        ],
+        email: ['', [Validators.required, Validators.email]],
+        firstName: ['', [Validators.required]],
+        middleName: [null],
+        lastName: ['', [Validators.required]],
+        dob: [null, [Validators.required, this.dobValidator]], // Add this
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            this.passwordStrengthValidator,
+          ],
+        ],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   ngOnInit() {}
@@ -56,9 +70,9 @@ export class SignupComponent implements OnInit {
   passwordMatchValidator(form: AbstractControl) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-    
+
     if (!password || !confirmPassword) return null;
-    
+
     if (confirmPassword.value && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
     } else if (confirmPassword.hasError('passwordMismatch')) {
@@ -67,14 +81,14 @@ export class SignupComponent implements OnInit {
         confirmPassword.setErrors(null);
       }
     }
-    
+
     return null;
   }
 
   // Custom validator for username
   usernameValidator(control: AbstractControl) {
     const forbidden = /[!@#$%^&*()+\=\[\]{};':"\\|,.<>\/?]+/;
-    return forbidden.test(control.value) ? { 'specialCharacters': true } : null;
+    return forbidden.test(control.value) ? { specialCharacters: true } : null;
   }
 
   // Update the passwordStrengthValidator function
@@ -82,8 +96,8 @@ export class SignupComponent implements OnInit {
     const value = control.value;
     if (!value) return null;
 
-    const hasLetter = /[a-zA-Z]+/.test(value);    // at least one letter
-    const hasNumber = /[0-9]+/.test(value);        // at least one number
+    const hasLetter = /[a-zA-Z]+/.test(value); // at least one letter
+    const hasNumber = /[0-9]+/.test(value); // at least one number
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]+/.test(value); // at least one special char
 
     const passwordValid = hasLetter && hasNumber && hasSpecialChar;
@@ -91,17 +105,33 @@ export class SignupComponent implements OnInit {
     return !passwordValid ? { passwordStrength: true } : null;
   }
 
-  onSubmit() {
-    // if (this.signupForm.valid) {
-    //   console.log('Signup submitted:', this.signupForm.value);
-    //   // Handle signup logic here
-    // }
-    if (this.signupForm.invalid) return;
+  // Add this validator
+  private dobValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const date = new Date(control.value);
+    const min = new Date(1900, 0, 1);
+    const max = new Date();
 
-  this.authService.signup(this.signupForm.value).subscribe({
-    next: () => this.router.navigate(['/login']),
-    error: (err) => console.error('Signup failed', err)
-  });
+    if (date < min || date > max) {
+      return { invalidDob: true };
+    }
+    return null;
+  }
+
+  onSubmit() {
+    if (this.signupForm.invalid) return;
+    this.loading = true;
+    this.authService.signup(this.signupForm.value).subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.signupError =
+          err.error?.message || 'Signup failed. Please try again.';
+        this.loading = false;
+      },
+    });
   }
 
   togglePassword() {
