@@ -1,4 +1,13 @@
-import { Component, inject, Input, OnChanges, OnInit, ViewChild, SimpleChange, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  ViewChild,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
 import { ChartConfiguration, ChartType } from 'chart.js';
@@ -7,6 +16,27 @@ import { ChartsService } from '../services/charts.service';
 import { ApiResponse } from '../../shared/api-response.model';
 import { DonutChartsResponse } from '../models/donut-charts-response.model';
 import { DashboardFilter } from '../models/dashboard-filter.model';
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
+
+// Register Chart.js components
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  zoomPlugin
+);
 
 @Component({
   selector: 'app-dashboard-charts',
@@ -70,6 +100,22 @@ export class ChartsComponent implements OnInit, OnChanges {
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' },
+      zoom: {
+        pan: {
+          enabled: false,
+          mode: 'x',
+          threshold: 10,
+        },
+        limits: {
+          x: { min: 0, max: 'original' },
+        },
+      },
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+      },
     },
   };
 
@@ -123,9 +169,43 @@ export class ChartsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['filter']) {
+    if (changes['filter']) {
       this.reloadCharts(this.dashboardFilter);
     }
+  }
+
+   private configureBarChartOptions(dataLength: number): void {
+    const shouldEnableScrolling = dataLength > 12;
+    
+    this.barChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        zoom: {
+          pan: {
+            enabled: shouldEnableScrolling,
+            mode: 'x',
+            threshold: 10,
+          },
+          limits: {
+            x: { 
+              min: 0, 
+              max: shouldEnableScrolling ? dataLength - 1 : undefined 
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          min: shouldEnableScrolling ? 0 : undefined,
+          max: shouldEnableScrolling ? 11 : undefined, // Show first 12 bars (0-11)
+        },
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
   }
 
   reloadCharts(filter: DashboardFilter) {
@@ -265,7 +345,13 @@ export class ChartsComponent implements OnInit, OnChanges {
     this.expenseIncomeBarChartLoading = true;
     this.chartsService.getIncomeExpenseBarChartData(filter).subscribe({
       next: (res) => {
-        if (res.success && res.data?.labels.length > 0 && res.data?.datasets.length > 0) {
+        if (
+          res.success &&
+          res.data?.labels.length > 0 &&
+          res.data?.datasets.length > 0
+        ) {
+          this.configureBarChartOptions(res.data.labels.length);
+
           this.barChartData = {
             labels: res.data.labels,
             datasets: res.data.datasets.map((ds, i) => ({
@@ -275,6 +361,7 @@ export class ChartsComponent implements OnInit, OnChanges {
           };
           this.expenseIncomeBarChartError = null;
         } else {
+          this.configureBarChartOptions(0);
           this.barChartData = {
             labels: [],
             datasets: [
@@ -287,6 +374,7 @@ export class ChartsComponent implements OnInit, OnChanges {
         this.expenseIncomeBarChartLoading = false;
       },
       error: () => {
+        this.configureBarChartOptions(0);
         this.barChartData = {
           labels: [],
           datasets: [
