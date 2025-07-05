@@ -22,7 +22,7 @@ namespace PennyPilot.Backend.Application.Services
             _filterService = filterService;
         }
 
-        public async Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId, DashboardFilterDto dashboardFilter)
+        public async Task<DonutChartsDto> GetDonutChartsData(Guid userId, DashboardFilterDto dashboardFilter)
         {
             var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, dashboardFilter);
             var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, dashboardFilter);
@@ -35,7 +35,7 @@ namespace PennyPilot.Backend.Application.Services
 
             var incomeSources =  incomes.GroupBy(x => x.Source).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
-            return new DonutChartsDtoModel
+            return new DonutChartsDto
             {
                 ExpenseCategories = expenseCategories,
                 UserExpenses = userExpenses,

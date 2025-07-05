@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PennyPilot.Backend.Application.DTOs
 {
-    public class DonutChartsDtoModel
+    public class DonutChartsDto
     {
         public Dictionary<string, int>? ExpenseCategories { get; set; }        
         public Dictionary<string, decimal>? UserExpenses { get; set; }

@@ -20,7 +20,7 @@ namespace PennyPilot.Backend.Api.Controllers
         [HttpPost("DonutCharts")]
         public async Task<IActionResult> GetDonutChartsData(DashboardFilterDto dashboardFilter)
         {
-            var response = new ServerResponse<DonutChartsDtoModel>();
+            var response = new ServerResponse<DonutChartsDto>();
             try
             {
                 var userId = User.GetUserId();
