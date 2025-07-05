@@ -61,6 +61,8 @@ export class ChartsComponent implements OnInit, OnChanges {
   incomeSourcesError: string | null = null;
   expenseIncomeBarChartLoading = true;
   expenseIncomeBarChartError: string | null = null;
+  expenseIncomeLineChartLoading = true;
+  expenseIncomeLineChartError: string | null = null;
 
   private pieColors = [
     '#FF6384', // Soft Red/Pink
@@ -96,6 +98,49 @@ export class ChartsComponent implements OnInit, OnChanges {
   };
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top' },
+      zoom: {
+        pan: {
+          enabled: false,
+          mode: 'x',
+          threshold: 10,
+        },
+        limits: {
+          x: { min: 0, max: 'original' },
+        },
+      },
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  //Line Chart Configuration
+   lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: 'Income',
+        fill: true,
+        tension: 0.5,
+      },
+      {
+        data: [],
+        label: 'Expenses',
+        fill: true,
+        tension: 0.5,
+      },
+    ],
+  };
+
+  lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -174,9 +219,9 @@ export class ChartsComponent implements OnInit, OnChanges {
     }
   }
 
-   private configureBarChartOptions(dataLength: number): void {
+  private configureBarChartOptions(dataLength: number): void {
     const shouldEnableScrolling = dataLength > 12;
-    
+
     this.barChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -189,9 +234,9 @@ export class ChartsComponent implements OnInit, OnChanges {
             threshold: 10,
           },
           limits: {
-            x: { 
-              min: 0, 
-              max: shouldEnableScrolling ? dataLength - 1 : undefined 
+            x: {
+              min: 0,
+              max: shouldEnableScrolling ? dataLength - 1 : undefined,
             },
           },
         },
@@ -200,6 +245,39 @@ export class ChartsComponent implements OnInit, OnChanges {
         x: {
           min: shouldEnableScrolling ? 0 : undefined,
           max: shouldEnableScrolling ? 11 : undefined, // Show first 12 bars (0-11)
+        },
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+  }
+  private configureLineChartOptions(dataLength: number): void {
+    const shouldEnableScrolling = dataLength > 10;
+
+    this.lineChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        zoom: {
+          pan: {
+            enabled: shouldEnableScrolling,
+            mode: 'x',
+            threshold: 8,
+          },
+          limits: {
+            x: {
+              min: 0,
+              max: shouldEnableScrolling ? dataLength - 1 : undefined,
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          min: shouldEnableScrolling ? 0 : undefined,
+          max: shouldEnableScrolling ? 9 : undefined, // Show first 12 bars (0-11)
         },
         y: {
           beginAtZero: true,
@@ -341,7 +419,7 @@ export class ChartsComponent implements OnInit, OnChanges {
       },
     });
 
-    //Income and Expense Bar Chart
+    //Income and Expense Bar Chart and Line Chart
     this.expenseIncomeBarChartLoading = true;
     this.chartsService.getIncomeExpenseBarChartData(filter).subscribe({
       next: (res) => {
@@ -384,6 +462,55 @@ export class ChartsComponent implements OnInit, OnChanges {
         };
         this.expenseIncomeBarChartError = 'Failed to load bar chart data.';
         this.expenseIncomeBarChartLoading = false;
+      },
+    });
+
+    // Income and Expense Line Chart
+    this.expenseIncomeLineChartLoading = true;
+    this.chartsService.getIncomeExpenseLineChartData(filter).subscribe({
+      next: (res) => {
+        if (
+          res.success &&
+          res.data?.labels.length > 0 &&
+          res.data?.datasets.length > 0
+        ) {
+          this.configureLineChartOptions(res.data.labels.length);
+
+          this.lineChartData = {
+            labels: res.data.labels,
+            datasets: res.data.datasets.map((ds, i) => ({
+              ...ds,
+              backgroundColor: i === 0 ? 'rgba(255, 99, 132, 0.4)' : 'rgba(54, 162, 235, 0.4)', // Expenses, Income
+              borderColor: i === 0 ? '#FF6384' : '#36A2EB', // Expenses, Income
+              tension: 0.5,
+              fill: true,
+            })),
+          };
+          this.expenseIncomeLineChartError = null;
+        } else {
+          this.configureLineChartOptions(0);
+          this.lineChartData = {
+            labels: [],
+            datasets: [
+              { data: [], label: 'Income', backgroundColor: '#36A2EB' },
+              { data: [], label: 'Expenses', backgroundColor: '#FF6384' },
+            ],
+          };
+          this.expenseIncomeLineChartError = 'No line chart data available.';
+        }
+        this.expenseIncomeLineChartLoading = false;
+      },
+      error: () => {
+        this.configureLineChartOptions(0);
+        this.lineChartData = {
+          labels: [],
+          datasets: [
+            { data: [], label: 'Income', backgroundColor: '#36A2EB' },
+            { data: [], label: 'Expenses', backgroundColor: '#FF6384' },
+          ],
+        };
+        this.expenseIncomeLineChartError = 'Failed to load line chart data.';
+        this.expenseIncomeLineChartLoading = false;
       },
     });
   }

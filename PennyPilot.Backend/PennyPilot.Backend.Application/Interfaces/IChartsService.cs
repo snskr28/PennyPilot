@@ -11,5 +11,6 @@ namespace PennyPilot.Backend.Application.Interfaces
     {
         Task<DonutChartsDtoModel> GetDonutChartsData(Guid userId, DashboardFilterDto dashboardFilter);
         Task<BarChartResponseDto> GetIncomeExpenseBarChartData(Guid userId, DashboardFilterDto dashboardFilter);
+        Task<LineChartResponseDto> GetIncomeExpenseLineChartData(Guid userId, DashboardFilterDto dashboardFilter);
     }
 }

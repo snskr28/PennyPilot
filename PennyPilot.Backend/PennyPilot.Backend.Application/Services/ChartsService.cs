@@ -97,6 +97,61 @@ namespace PennyPilot.Backend.Application.Services
             };
         }
 
+        public async Task<LineChartResponseDto> GetIncomeExpenseLineChartData(Guid userId, DashboardFilterDto dashboardFilter)
+        {
+            var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, dashboardFilter);
+            var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, dashboardFilter);
+
+            // Get date ranges for both expenses and incomes
+            var expenseData = expenses.ToList();
+            var incomeData = incomes.ToList();
+
+            // Determine the date range
+            var allDates = new List<DateTime>();
+            if (expenseData.Any()) allDates.AddRange(expenseData.Select(e => e.Date));
+            if (incomeData.Any()) allDates.AddRange(incomeData.Select(i => i.Date));
+
+            if (!allDates.Any())
+            {
+                // No data available
+                return new LineChartResponseDto
+                {
+                    Labels = new List<string>(),
+                    Datasets = new List<LineChartDatasetDto>
+                    {
+                        new LineChartDatasetDto { Label = "Expenses", Data = new List<decimal>() },
+                        new LineChartDatasetDto { Label = "Income", Data = new List<decimal>() }
+                    }
+                };
+            }
+
+            var minDate = allDates.Min();
+            var maxDate = allDates.Max();
+
+            // Generate labels and group data based on granularity
+            var (labels, expenseValues, incomeValues) = GenerateChartData(expenseData, incomeData, minDate, maxDate, dashboardFilter.Granularity);
+
+            return new LineChartResponseDto
+            {
+                Labels = labels,
+                Datasets = new List<LineChartDatasetDto>
+                {
+                    new LineChartDatasetDto
+                    {
+                        Label = "Expenses",
+                        Data = expenseValues
+                    },
+                    new LineChartDatasetDto
+                    {
+                        Label = "Income",
+                        Data = incomeValues
+                    }
+                }
+            };
+        }
+
+
+
         private (List<string> labels, List<decimal> expenseValues, List<decimal> incomeValues) GenerateChartData(List<Expense> expenses, List<Income> incomes, DateTime minDate, DateTime maxDate, string granularity)
         {
             var labels = new List<string>();
