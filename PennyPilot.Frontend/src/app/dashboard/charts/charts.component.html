@@ -7,13 +7,24 @@
       <hr class="divider" />
       <mat-card-content>
         <div class="chart-wrapper">
-          <canvas
-            baseChart
-            [data]="barChartData"
-            [options]="barChartOptions"
-            [type]="'bar'"
-          >
-          </canvas>
+          @if(expenseIncomeBarChartLoading){
+            <div class="loading-overlay">
+              <mat-spinner diameter="80"></mat-spinner>
+            </div>
+          } @else if(expenseIncomeBarChartError){
+            <div class="chart-error-message">
+              <mat-icon>error_outline</mat-icon>
+              {{ expenseIncomeBarChartError }}
+            </div>
+          } @else{
+            <canvas
+              baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              [type]="'bar'"
+            >
+            </canvas>
+          }
         </div>
       </mat-card-content>
     </mat-card>

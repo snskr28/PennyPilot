@@ -29,6 +29,8 @@ export class ChartsComponent implements OnInit, OnChanges {
   incomeCategoriesError: string | null = null;
   incomeSourcesLoading = true;
   incomeSourcesError: string | null = null;
+  expenseIncomeBarChartLoading = true;
+  expenseIncomeBarChartError: string | null = null;
 
   private pieColors = [
     '#FF6384', // Soft Red/Pink
@@ -50,33 +52,14 @@ export class ChartsComponent implements OnInit, OnChanges {
 
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
+    labels: [],
     datasets: [
       {
-        data: [
-          2100, 1800, 2400, 1900, 2600, 2200, 1000, 2500, 5900, 2800, 2500,
-          3000,
-        ],
+        data: [],
         label: 'Income',
       },
       {
-        data: [
-          1500, 1300, 1900, 1600, 2000, 1800, 1200, 1800, 1700, 2200, 1100,
-          2500,
-        ],
+        data: [],
         label: 'Expenses',
       },
     ],
@@ -275,6 +258,44 @@ export class ChartsComponent implements OnInit, OnChanges {
         };
         this.incomeSourcesError = 'Failed to load Income Sources.';
         this.incomeSourcesLoading = false;
+      },
+    });
+
+    //Income and Expense Bar Chart
+    this.expenseIncomeBarChartLoading = true;
+    this.chartsService.getIncomeExpenseBarChartData(filter).subscribe({
+      next: (res) => {
+        if (res.success && res.data?.labels.length > 0 && res.data?.datasets.length > 0) {
+          this.barChartData = {
+            labels: res.data.labels,
+            datasets: res.data.datasets.map((ds, i) => ({
+              ...ds,
+              backgroundColor: i === 0 ? '#FF6384' : '#36A2EB', // Expenses, Income
+            })),
+          };
+          this.expenseIncomeBarChartError = null;
+        } else {
+          this.barChartData = {
+            labels: [],
+            datasets: [
+              { data: [], label: 'Income', backgroundColor: '#36A2EB' },
+              { data: [], label: 'Expenses', backgroundColor: '#FF6384' },
+            ],
+          };
+          this.expenseIncomeBarChartError = 'No bar chart data available.';
+        }
+        this.expenseIncomeBarChartLoading = false;
+      },
+      error: () => {
+        this.barChartData = {
+          labels: [],
+          datasets: [
+            { data: [], label: 'Income', backgroundColor: '#36A2EB' },
+            { data: [], label: 'Expenses', backgroundColor: '#FF6384' },
+          ],
+        };
+        this.expenseIncomeBarChartError = 'Failed to load bar chart data.';
+        this.expenseIncomeBarChartLoading = false;
       },
     });
   }

@@ -5,6 +5,7 @@ import { ApiResponse } from '../../shared/api-response.model';
 import { DonutChartsResponse } from '../models/donut-charts-response.model';
 import { Observable } from 'rxjs';
 import { DashboardFilter } from '../models/dashboard-filter.model';
+import { BarChartsResponse } from '../models/bar-charts-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,15 @@ export class ChartsService {
   ): Observable<ApiResponse<DonutChartsResponse>> {
     return this.http.post<ApiResponse<DonutChartsResponse>>(
       `${this.apiUrl}/Charts/DonutCharts`,
+      dashboardFilter
+    );
+  }
+
+  getIncomeExpenseBarChartData(
+    dashboardFilter: DashboardFilter
+  ): Observable<ApiResponse<BarChartsResponse>>{
+    return this.http.post<ApiResponse<BarChartsResponse>>(
+      `${this.apiUrl}/Charts/IncomeExpenseBarChart`,
       dashboardFilter
     );
   }
