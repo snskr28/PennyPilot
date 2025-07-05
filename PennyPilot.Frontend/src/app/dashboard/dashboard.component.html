@@ -57,7 +57,15 @@
             </div>
             <div class="card-info">
               <h3>{{ card.title }}</h3>
-              <h2>${{ card.amount | number : "1.2-2" }}</h2>
+              <h2
+                [style.color]="
+                  card.title === 'Net Savings'
+                    ? getNetSavingsColor(card.amount)
+                    : '#111827'
+                "
+              >
+                {{ card.amount | currency : "INR" : "symbol" : "1.2-2" }}
+              </h2>
             </div>
           </mat-card-content>
         </mat-card>
