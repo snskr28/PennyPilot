@@ -1,90 +1,101 @@
-<mat-sidenav-container class="dashboard-sidenav-container">
-  <mat-sidenav
-    #drawer
-    mode="over"
-    class="dashboard-sidenav"
-    [autoFocus]="false"
-  >
-    <div class="sidebar-header">
-      <img class="avatar" src="assets/profile.jpg" alt="Profile" />
-      <span class="sidebar-title">Your Name</span>
-    </div>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard" (click)="drawer.close()">
-        <mat-icon>dashboard</mat-icon>
-        <span>Dashboard</span>
-      </a>
-      <a mat-list-item routerLink="/reports" (click)="drawer.close()">
-        <mat-icon>bar_chart</mat-icon>
-        <span>Reports</span>
-      </a>
-      <a mat-list-item routerLink="/profile" (click)="drawer.close()">
-        <mat-icon>person</mat-icon>
-        <span>View Profile</span>
-      </a>
-      <a mat-list-item (click)="logout(); drawer.close()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <div class="dashboard-toolbar">
-      <button mat-icon-button (click)="drawer.toggle()" class="hamburger-btn">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="dashboard-title">Dashboard</span>
-    </div>
-    <div class="dashboard-container">
-      <div class="header-section">
-        <div class="logo">
-          <!-- <mat-icon class="logo-icon">flight</mat-icon> -->
-          <img src="assets/logo.png" alt="PennyPilotLogo" class="logo-img" />
-          <span class="logo-text">PennyPilot</span>
+<div class="dashboard-container">
+  <!-- Top Navigation Bar -->
+  <div class="dashboard-toolbar">
+    <span class="dashboard-title">Dashboard</span>
+    
+    <!-- Profile Menu -->
+    <div class="profile-menu-container">
+      <button class="profile-button" (click)="toggleProfileMenu()" [class.active]="isProfileMenuOpen">
+        <div class="profile-info">
+          <img 
+            *ngIf="user.photoUrl" 
+            [src]="user.photoUrl" 
+            alt="Profile" 
+            class="profile-avatar"
+          />
+          <div 
+            *ngIf="!user.photoUrl" 
+            class="profile-avatar-placeholder"
+          >
+            <mat-icon>person</mat-icon>
+          </div>
+          <span class="profile-name">{{ user.name }}</span>
+          <mat-icon class="dropdown-icon" [class.rotated]="isProfileMenuOpen">keyboard_arrow_down</mat-icon>
         </div>
+      </button>
 
-        <app-time-range-filter
-          (dateRangeChange)="onDateRangeChange($event)"
-        ></app-time-range-filter>
+      <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
+        <div class="dropdown-content">
+          <button class="dropdown-item" (click)="onProfileMenu('profile')">
+            <mat-icon>person</mat-icon>
+            <span>View/Edit Profile</span>
+          </button>
+          <button class="dropdown-item" (click)="onProfileMenu('password')">
+            <mat-icon>lock</mat-icon>
+            <span>Change Password</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-item" (click)="onProfileMenu('logout')">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
-      <!-- Summary Cards -->
-      <div class="summary-cards-flex">
-        <mat-card class="summary-card" *ngFor="let card of summaryCards">
-          <mat-card-content>
-            <div class="card-icon" [style.background-color]="card.color + '15'">
-              <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
-            </div>
-            <div class="card-info">
-              <h3>{{ card.title }}</h3>
-              <h2
-                [style.color]="
-                  card.title === 'Net Savings'
-                    ? getNetSavingsColor(card.amount)
-                    : '#111827'
-                "
-              >
-                {{ card.amount | currency : "INR" : "symbol" : "1.2-2" }}
-              </h2>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <!-- Charts Grid -->
-      <div class="charts-grid">
-        <app-dashboard-charts
-          [dashboardFilter]="dashboardFilter"
-        ></app-dashboard-charts>
-      </div>
-
-      <!-- Transactions Table -->
-      <div class="transactions-section">
-        <app-transactions-table
-          [dashboardFilter]="dashboardFilter"
-        ></app-transactions-table>
-      </div>
-      <ng-content></ng-content>
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+
+    <!-- Backdrop for closing menu -->
+    <div class="menu-backdrop" [class.active]="isProfileMenuOpen" (click)="closeProfileMenu()"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header-section">
+      <div class="logo">
+        <img src="assets/logo.png" alt="PennyPilotLogo" class="logo-img" />
+        <span class="logo-text">PennyPilot</span>
+      </div>
+
+      <app-time-range-filter
+        (dateRangeChange)="onDateRangeChange($event)"
+      ></app-time-range-filter>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards-flex">
+      <mat-card class="summary-card" *ngFor="let card of summaryCards">
+        <mat-card-content>
+          <div class="card-icon" [style.background-color]="card.color + '15'">
+            <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+          </div>
+          <div class="card-info">
+            <h3>{{ card.title }}</h3>
+            <h2
+              [style.color]="
+                card.title === 'Net Savings'
+                  ? getNetSavingsColor(card.amount)
+                  : '#111827'
+              "
+            >
+              {{ card.amount | currency : "INR" : "symbol" : "1.2-2" }}
+            </h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <app-dashboard-charts
+        [dashboardFilter]="dashboardFilter"
+      ></app-dashboard-charts>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="transactions-section">
+      <app-transactions-table
+        [dashboardFilter]="dashboardFilter"
+      ></app-transactions-table>
+    </div>
+    <ng-content></ng-content>
+  </div>
+</div>

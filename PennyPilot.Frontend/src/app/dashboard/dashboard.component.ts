@@ -10,6 +10,7 @@ import { Chart } from 'chart.js';
 import { CardsService } from './services/cards.service';
 import { ApiResponse } from '../shared/api-response.model';
 import { SummaryCardsResponse } from './models/summary-cards-response.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,6 +41,13 @@ export class DashboardComponent {
   private cardsService = inject(CardsService);
   summaryCardsLoading = true;
   summaryCardsError: string | null = null;
+  isProfileMenuOpen = false;
+
+  // Mock user data
+  user = {
+    name: 'John Doe',
+    photoUrl: '', // Leave empty to use default icon
+  };
 
   summaryCards = [
     { title: 'Total Income', amount: 0, icon: 'trending_up', color: '#10B981' },
@@ -57,7 +65,7 @@ export class DashboardComponent {
     return amount >= 0 ? 'rgb(25 153 30)' : 'rgb(221 27 27)'; // green or red
   }
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.reloadSummaryCards();
@@ -65,6 +73,29 @@ export class DashboardComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  closeProfileMenu() {
+    this.isProfileMenuOpen = false;
+  }
+
+  onProfileMenu(action: string) {
+    this.closeProfileMenu();
+    switch (action) {
+      case 'profile':
+        this.router.navigate(['/profile']);
+        break;
+      case 'password':
+        this.router.navigate(['/change-password']);
+        break;
+      case 'logout':
+        this.logout();
+        break;
+    }
   }
 
   reloadSummaryCards() {
