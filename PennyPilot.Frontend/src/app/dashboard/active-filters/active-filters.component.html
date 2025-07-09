@@ -1,0 +1,20 @@
+<div class="active-filters-container" *ngIf="activeFilters.length > 0">
+  <div class="filters-header">
+    <mat-icon class="filters-icon">filter_list</mat-icon>
+    <h3 class="filters-title">Active Filters</h3>
+    <span class="filters-count">{{ activeFilters.length }}</span>
+  </div>
+  
+  <div class="filters-chips-container">
+    <ng-container *ngFor="let filter of activeFilters">
+      <mat-chip
+        class="active-filter-chip"
+        (removed)="clearFilter(filter.key)"
+      >
+        <span class="chip-label">{{ filter.label }}:</span>
+        <span class="chip-value">{{ filter.value }}</span>
+        <mat-icon matChipRemove>close</mat-icon>
+      </mat-chip>
+    </ng-container>
+  </div>
+</div>

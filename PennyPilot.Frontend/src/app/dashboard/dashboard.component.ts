@@ -11,6 +11,7 @@ import { CardsService } from './services/cards.service';
 import { ApiResponse } from '../shared/api-response.model';
 import { SummaryCardsResponse } from './models/summary-cards-response.model';
 import { Router } from '@angular/router';
+import { ActiveFiltersComponent } from './active-filters/active-filters.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +20,7 @@ import { Router } from '@angular/router';
     ChartsComponent,
     TransactionsTableComponent,
     TimeRangeFilterComponent,
+    ActiveFiltersComponent,
     ...MATERIAL_IMPORTS,
   ],
   templateUrl: './dashboard.component.html',
@@ -159,4 +161,29 @@ export class DashboardComponent {
     }
     this.reloadSummaryCards();
   }
+
+  onActiveFilterCleared(key: string) {
+  switch (key) {
+    case 'date':
+      this.dashboardFilter.startDate = null;
+      this.dashboardFilter.endDate = null;
+      break;
+    case 'granularity':
+      this.dashboardFilter.granularity = 'yearly';
+      break;
+    case 'expenseCategory':
+      this.dashboardFilter.expenseCategory = null;
+      break;
+    case 'incomeCategory':
+      this.dashboardFilter.incomeCategory = null;
+      break;
+    case 'userExpense':
+      this.dashboardFilter.userExpense = null;
+      break;
+    case 'incomeSource':
+      this.dashboardFilter.incomeSource = null;
+      break;
+  }
+  this.reloadAllWidgets();
+}
 }
