@@ -11,8 +11,8 @@
         class="active-filter-chip"
         (removed)="clearFilter(filter.key)"
       >
-        <span class="chip-label">{{ filter.label }}:</span>
-        <span class="chip-value">{{ filter.value }}</span>
+        <span class="chip-label">{{ filter.label }}: </span>
+        <span class="chip-value">{{ filter.value | pascalCase}}</span>
         <mat-icon matChipRemove>close</mat-icon>
       </mat-chip>
     </ng-container>
