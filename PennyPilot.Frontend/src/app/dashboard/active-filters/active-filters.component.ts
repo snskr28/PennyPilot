@@ -34,37 +34,6 @@ export class ActiveFiltersComponent {
         label: 'Granularity',
         value: f.granularity,
       });
-      filters.push({
-        key: 'granularity',
-        label: 'Granularity',
-        value: f.granularity,
-      });
-      filters.push({
-        key: 'granularity',
-        label: 'Granularity',
-        value: f.granularity,
-      });
-      filters.push({
-        key: 'granularity',
-        label: 'Granularity',
-        value: f.granularity,
-      });
-      filters.push({
-        key: 'granularity',
-        label: 'Granularity',
-        value: f.granularity,
-      });
-      // filters.push({
-      //   key: 'granularity',
-      //   label: 'Granularity',
-      //   value: f.granularity,
-      // });
-      // filters.push({
-      //   key: 'granularity',
-      //   label: 'Granularity',
-      //   value: f.granularity,
-      // });
-
     }
     if (f.expenseCategory) {
       filters.push({
