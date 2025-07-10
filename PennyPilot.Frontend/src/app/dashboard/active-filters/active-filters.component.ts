@@ -3,7 +3,7 @@ import { MATERIAL_IMPORTS } from '../../shared/material';
 import { DashboardFilter } from '../models/dashboard-filter.model';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { PascalCasePipe } from '../../shared/Pipes/pascal-case.pipe';
+   import { PascalCasePipe } from '../../shared/Pipes/pascal-case.pipe';
 
 @Component({
   selector: 'app-active-filters',
