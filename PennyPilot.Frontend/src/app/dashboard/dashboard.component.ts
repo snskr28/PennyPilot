@@ -47,7 +47,7 @@ export class DashboardComponent {
 
   // Mock user data
   user = {
-    name: 'John Doe',
+    name: localStorage.getItem('username'),
     photoUrl: '', // Leave empty to use default icon
   };
 
@@ -92,7 +92,7 @@ export class DashboardComponent {
         this.router.navigate(['/profile']);
         break;
       case 'password':
-        this.router.navigate(['/change-password']);
+        this.router.navigate(['/reset-password']);
         break;
       case 'logout':
         this.logout();
