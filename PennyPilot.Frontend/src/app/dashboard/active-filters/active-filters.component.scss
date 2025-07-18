@@ -73,44 +73,55 @@
 }
 
 .active-filter-chip {
-  background: #f8fafc !important;
-  color: #374151 !important;
-  border: 1px solid #e2e8f0 !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  padding: 8px 12px !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease !important;
-  flex-shrink: 0; // Prevent chips from shrinking too much
-  
+  display: inline-flex;
+  align-items: center;
+  background: #f8fafc;
+  color: #374151;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 16px;
+  margin: 4px 8px 4px 0;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.07);
+  transition: box-shadow 0.2s, background 0.2s;
+  min-height: 32px;
+  line-height: 1.2;
+  cursor: default;
   &:hover {
-    background: #f1f5f9 !important;
-    border-color: #cbd5e1 !important;
-    transform: translateY(-1px);
+    background: #f1f5f9;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.10);
   }
-  
-  .chip-label {
-    color: #6b7280;
-    font-weight: 400;
-  }
-  
-  .chip-value {
-    color: #374151;
-    font-weight: 600;
-  }
-  
-  mat-icon {
-    color: #9ca3af !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-    margin-left: 8px !important;
-    transition: color 0.2s ease !important;
-    
-    &:hover {
-      color: #ef4444 !important;
-    }
-  }
+}
+
+.chip-label {
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.chip-value {
+  color: #374151;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.chip-remove-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 4px;
+  padding: 2px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, background 0.2s;
+  line-height: 1;
+}
+.chip-remove-btn:hover {
+  color: #ef4444;
+  background: #f1f5f9;
 }
 
 // Empty state when no filters

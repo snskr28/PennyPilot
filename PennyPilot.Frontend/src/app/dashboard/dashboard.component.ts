@@ -163,27 +163,30 @@ export class DashboardComponent {
   }
 
   onActiveFilterCleared(key: string) {
+    console.log('Parent received filter clear for:', key);
+    const updatedFilter = { ...this.dashboardFilter };
     switch (key) {
       case 'date':
-        this.dashboardFilter.startDate = null;
-        this.dashboardFilter.endDate = null;
+        updatedFilter.startDate = null;
+        updatedFilter.endDate = null;
         break;
       case 'granularity':
-        this.dashboardFilter.granularity = 'yearly';
+        updatedFilter.granularity = 'monthly';
         break;
       case 'expenseCategory':
-        this.dashboardFilter.expenseCategory = null;
+        updatedFilter.expenseCategory = null;
         break;
       case 'incomeCategory':
-        this.dashboardFilter.incomeCategory = null;
+        updatedFilter.incomeCategory = null;
         break;
       case 'userExpense':
-        this.dashboardFilter.userExpense = null;
+        updatedFilter.userExpense = null;
         break;
       case 'incomeSource':
-        this.dashboardFilter.incomeSource = null;
+        updatedFilter.incomeSource = null;
         break;
     }
+    this.dashboardFilter = updatedFilter;
     this.reloadAllWidgets();
   }
   onChartFilterChanged(updatedFilter: DashboardFilter) {

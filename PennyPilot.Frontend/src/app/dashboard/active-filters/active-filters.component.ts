@@ -3,11 +3,12 @@ import { MATERIAL_IMPORTS } from '../../shared/material';
 import { DashboardFilter } from '../models/dashboard-filter.model';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
-   import { PascalCasePipe } from '../../shared/Pipes/pascal-case.pipe';
+import { PascalCasePipe } from '../../shared/Pipes/pascal-case.pipe';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-active-filters',
-  imports: [CommonModule, PascalCasePipe,...MATERIAL_IMPORTS],
+  imports: [CommonModule, PascalCasePipe, MatChipsModule, ...MATERIAL_IMPORTS],
   templateUrl: './active-filters.component.html',
   styleUrl: './active-filters.component.scss',
 })
@@ -68,6 +69,7 @@ export class ActiveFiltersComponent {
   }
 
   clearFilter(key: string) {
+    console.log('Clear filter called for:', key);
     this.filterCleared.emit(key);
   }
 }
