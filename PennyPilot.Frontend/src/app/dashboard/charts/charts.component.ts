@@ -7,6 +7,8 @@ import {
   ViewChild,
   SimpleChange,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
@@ -53,6 +55,7 @@ type DonutFilterKey =
 })
 export class ChartsComponent implements OnInit, OnChanges {
   @Input() dashboardFilter!: DashboardFilter;
+  @Output() filterChange = new EventEmitter<DashboardFilter>();
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   @ViewChild('expenseCategoriesCanvas')
@@ -365,22 +368,27 @@ export class ChartsComponent implements OnInit, OnChanges {
     };
   }
 
-  private getColorsForLabels(labels: string[], filterKey: DonutFilterKey, colorPalette: string[]): string[] {
+  private getColorsForLabels(
+    labels: string[],
+    filterKey: DonutFilterKey,
+    colorPalette: string[]
+  ): string[] {
     const colors: string[] = [];
-    
-    labels.forEach(label => {
+
+    labels.forEach((label) => {
       if (this.originalColorMappings[filterKey].has(label)) {
         // Use the original color if we have it mapped
         colors.push(this.originalColorMappings[filterKey].get(label)!);
       } else {
         // Assign a new color and store the mapping
-        const colorIndex = this.originalColorMappings[filterKey].size % colorPalette.length;
+        const colorIndex =
+          this.originalColorMappings[filterKey].size % colorPalette.length;
         const newColor = colorPalette[colorIndex];
         this.originalColorMappings[filterKey].set(label, newColor);
         colors.push(newColor);
       }
     });
-    
+
     return colors;
   }
 
@@ -404,7 +412,11 @@ export class ChartsComponent implements OnInit, OnChanges {
               datasets: [
                 {
                   data: Object.values(expenseCategories),
-                  backgroundColor: this.getColorsForLabels(labels, 'expenseCategory', this.expenseCategoriesColors),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'expenseCategory',
+                    this.expenseCategoriesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -426,7 +438,11 @@ export class ChartsComponent implements OnInit, OnChanges {
               datasets: [
                 {
                   data: Object.values(userExpenses),
-                  backgroundColor: this.getColorsForLabels(labels, 'userExpense', this.userExpensesColors),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'userExpense',
+                    this.userExpensesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -448,7 +464,11 @@ export class ChartsComponent implements OnInit, OnChanges {
               datasets: [
                 {
                   data: Object.values(incomeCategories),
-                  backgroundColor: this.getColorsForLabels(labels, 'incomeCategory', this.incomeCategoriesColors),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'incomeCategory',
+                    this.incomeCategoriesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -470,7 +490,11 @@ export class ChartsComponent implements OnInit, OnChanges {
               datasets: [
                 {
                   data: Object.values(incomeSources),
-                  backgroundColor: this.getColorsForLabels(labels, 'incomeSource', this.incomeSourcesColors),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'incomeSource',
+                    this.incomeSourcesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -618,10 +642,7 @@ export class ChartsComponent implements OnInit, OnChanges {
     });
   }
 
-  onDonutSegmentClick(
-    filterKey: DonutFilterKey,
-    event: any
-  ): void {
+  onDonutSegmentClick(filterKey: DonutFilterKey, event: any): void {
     const activePoints = event.active;
 
     if (!activePoints?.length) return;
@@ -641,6 +662,6 @@ export class ChartsComponent implements OnInit, OnChanges {
       this.dashboardFilter[filterKey] = label;
     }
 
-    this.reloadCharts(this.dashboardFilter);
+    this.filterChange.emit(this.dashboardFilter);
   }
 }

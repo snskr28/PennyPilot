@@ -163,27 +163,31 @@ export class DashboardComponent {
   }
 
   onActiveFilterCleared(key: string) {
-  switch (key) {
-    case 'date':
-      this.dashboardFilter.startDate = null;
-      this.dashboardFilter.endDate = null;
-      break;
-    case 'granularity':
-      this.dashboardFilter.granularity = 'yearly';
-      break;
-    case 'expenseCategory':
-      this.dashboardFilter.expenseCategory = null;
-      break;
-    case 'incomeCategory':
-      this.dashboardFilter.incomeCategory = null;
-      break;
-    case 'userExpense':
-      this.dashboardFilter.userExpense = null;
-      break;
-    case 'incomeSource':
-      this.dashboardFilter.incomeSource = null;
-      break;
+    switch (key) {
+      case 'date':
+        this.dashboardFilter.startDate = null;
+        this.dashboardFilter.endDate = null;
+        break;
+      case 'granularity':
+        this.dashboardFilter.granularity = 'yearly';
+        break;
+      case 'expenseCategory':
+        this.dashboardFilter.expenseCategory = null;
+        break;
+      case 'incomeCategory':
+        this.dashboardFilter.incomeCategory = null;
+        break;
+      case 'userExpense':
+        this.dashboardFilter.userExpense = null;
+        break;
+      case 'incomeSource':
+        this.dashboardFilter.incomeSource = null;
+        break;
+    }
+    this.reloadAllWidgets();
   }
-  this.reloadAllWidgets();
-}
+  onChartFilterChanged(updatedFilter: DashboardFilter) {
+    this.dashboardFilter = updatedFilter;
+    this.reloadAllWidgets();
+  }
 }

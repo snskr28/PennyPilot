@@ -101,6 +101,7 @@
     <div class="charts-grid">
       <app-dashboard-charts
         [dashboardFilter]="dashboardFilter"
+        (filterChange)="onChartFilterChanged($event)"
       ></app-dashboard-charts>
     </div>
 
