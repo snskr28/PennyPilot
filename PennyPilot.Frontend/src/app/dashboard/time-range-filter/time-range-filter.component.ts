@@ -43,7 +43,6 @@ export class TimeRangeFilterComponent {
 
   granularities = [
     { label: 'Daily', value: 'daily' },
-    { label: 'Weekly', value: 'weekly' },
     { label: 'Monthly', value: 'monthly' },
     { label: 'Quarterly', value: 'quarterly' },
     { label: 'Yearly', value: 'yearly' },
@@ -56,7 +55,7 @@ export class TimeRangeFilterComponent {
       range: ['all'],
       start: [null],
       end: [null],
-      granularity: ['yearly'],
+      granularity: ['monthly'],
     });
 
     this.form.valueChanges.subscribe((val) => {
@@ -110,6 +109,6 @@ export class TimeRangeFilterComponent {
   }
 
   clear() {
-    this.form.patchValue({ range: 'all', start: null, end: null, granularity: 'yearly' });
+    this.form.patchValue({ range: 'all', start: null, end: null, granularity: 'monthly' });
   }
 }

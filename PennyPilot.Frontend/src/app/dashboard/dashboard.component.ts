@@ -30,7 +30,7 @@ export class DashboardComponent {
   dashboardFilter: DashboardFilter = {
     startDate: null,
     endDate: null,
-    granularity: 'yearly',
+    granularity: 'monthly',
     expenseCategory: null,
     incomeCategory: null,
     userExpense: null,
