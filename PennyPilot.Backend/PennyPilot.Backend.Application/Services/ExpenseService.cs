@@ -30,7 +30,7 @@ namespace PennyPilot.Backend.Application.Services
 
             var expensesToAdd = new List<Expense>();
             var newCategoriesToAdd = new List<Category>();
-            var newUserCategoriesToAdd = new List<UserCategory>();
+            var newUserCategoriesToAdd = new List<Usercategory>();
 
             var response = new ServerResponse<List<Guid>>
             {
@@ -50,11 +50,11 @@ namespace PennyPilot.Backend.Application.Services
                     {
                         category = new Category
                         {
-                            CategoryId = Guid.NewGuid(),
+                            Categoryid = Guid.NewGuid(),
                             Name = formattedCategory,
                             Type = "Expense",
-                            IsEnabled = true,
-                            IsDeleted = false
+                            Isenabled = true,
+                            Isdeleted = false
                         };
                         newCategoriesToAdd.Add(category);
                     }
@@ -63,37 +63,37 @@ namespace PennyPilot.Backend.Application.Services
                 }
 
                 // Map user to category if not already
-                if (!mappedCategories.Contains(category.CategoryId))
+                if (!mappedCategories.Contains(category.Categoryid))
                 {
-                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.Categoryid);
                     if (!isMapped)
                     {
-                        newUserCategoriesToAdd.Add(new UserCategory
+                        newUserCategoriesToAdd.Add(new Usercategory
                         {
-                            UserCategoryId = Guid.NewGuid(),
-                            UserId = userId,
-                            CategoryId = category.CategoryId
+                            Usercategoryid = Guid.NewGuid(),
+                            Userid = userId,
+                            Categoryid = category.Categoryid
                         });
                     }
-                    mappedCategories.Add(category.CategoryId);
+                    mappedCategories.Add(category.Categoryid);
                 }
 
                 // Prepare expense entity
                 var expense = new Expense
                 {
-                    ExpenseId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId,
+                    Expenseid = Guid.NewGuid(),
+                    Userid = userId,
+                    Categoryid = category.Categoryid,
                     Title = dto.Title,
                     Description = dto.Description,
                     Amount = dto.Amount,
-                    PaymentMode = dto.PaymentMode,
-                    PaidBy = dto.PaidBy,
+                    Paymentmode = dto.PaymentMode,
+                    Paidby = dto.PaidBy,
                     Date = dto.Date,
-                    ReceiptImage = dto.ReceiptImage,
-                    CreatedAt = DateTime.UtcNow,
-                    IsEnabled = true,
-                    IsDeleted = false
+                    Receiptimage = dto.ReceiptImage,
+                    Createdat = DateTime.UtcNow,
+                    Isenabled = true,
+                    Isdeleted = false
                 };
 
                 expensesToAdd.Add(expense);
@@ -111,7 +111,7 @@ namespace PennyPilot.Backend.Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            response.Data = expensesToAdd.Select(e => e.ExpenseId).ToList();
+            response.Data = expensesToAdd.Select(e => e.Expenseid).ToList();
             return response;
         }
 
@@ -120,12 +120,12 @@ namespace PennyPilot.Backend.Application.Services
             var expense = await _unitOfWork.Expenses.GetByIdAsync(requestDto.ExpenseId)
                 ?? throw new Exception("Expense not found");
 
-            if(expense.IsDeleted == true)
+            if(expense.Isdeleted == true)
             {
                 throw new Exception("Expense not found");
             }
 
-            if (expense.UserId != userId)
+            if (expense.Userid != userId)
                 throw new UnauthorizedAccessException();
 
             string formattedCategory = requestDto.Category.ToPascalCase();
@@ -134,23 +134,23 @@ namespace PennyPilot.Backend.Application.Services
             {
                 category = new Category
                 {
-                    CategoryId = Guid.NewGuid(),
+                    Categoryid = Guid.NewGuid(),
                     Name = formattedCategory,
                     Type = "Expense",
-                    IsEnabled = true,
-                    IsDeleted = false
+                    Isenabled = true,
+                    Isdeleted = false
                 };
                 await _unitOfWork.Categories.AddAsync(category);
             }
 
-            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.Categoryid);
             if (!isMapped)
             {
-                var userCategory = new UserCategory
+                var userCategory = new Usercategory
                 {
-                    UserCategoryId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId
+                    Usercategoryid = Guid.NewGuid(),
+                    Userid = userId,
+                    Categoryid = category.Categoryid
                 };
                 await _unitOfWork.UserCategories.AddAsync(userCategory);
             }
@@ -158,12 +158,12 @@ namespace PennyPilot.Backend.Application.Services
             expense.Title = requestDto.Title;
             expense.Description = requestDto.Description;
             expense.Amount = requestDto.Amount;
-            expense.PaymentMode = requestDto.PaymentMode;
-            expense.PaidBy = requestDto.PaidBy;
+            expense.Paymentmode = requestDto.PaymentMode;
+            expense.Paidby = requestDto.PaidBy;
             expense.Date = requestDto.Date;
-            expense.ReceiptImage = requestDto.ReceiptImage;
-            expense.CategoryId = category.CategoryId;
-            expense.UpdatedAt = DateTime.UtcNow;
+            expense.Receiptimage = requestDto.ReceiptImage;
+            expense.Categoryid = category.Categoryid;
+            expense.Updatedat = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -173,12 +173,12 @@ namespace PennyPilot.Backend.Application.Services
             var expense = await _unitOfWork.Expenses.GetByIdAsync(expenseId)
                 ?? throw new Exception("Expense not found");
 
-            if (expense.UserId != userId)
+            if (expense.Userid != userId)
                 throw new UnauthorizedAccessException();
 
-            expense.IsDeleted = true;
-            expense.IsEnabled = false;
-            expense.UpdatedAt = DateTime.UtcNow;
+            expense.Isdeleted = true;
+            expense.Isenabled = false;
+            expense.Updatedat = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -192,8 +192,8 @@ namespace PennyPilot.Backend.Application.Services
                                 Description = e.Description,
                                 Amount = e.Amount,
                                 Category = e.Category.Name,
-                                PaymentMode = e.PaymentMode,
-                                PaidBy = e.PaidBy ?? "N/A",
+                                PaymentMode = e.Paymentmode,
+                                PaidBy = e.Paidby ?? "N/A",
                                 Date = e.Date
                             });
 

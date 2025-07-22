@@ -31,7 +31,7 @@ namespace PennyPilot.Backend.Application.Services
 
             var incomesToAdd = new List<Income>();
             var newCategoriesToAdd = new List<Category>();
-            var newUserCategoriesToAdd = new List<UserCategory>();
+            var newUserCategoriesToAdd = new List<Usercategory>();
 
             var response = new ServerResponse<List<Guid>>
             {
@@ -51,11 +51,11 @@ namespace PennyPilot.Backend.Application.Services
                     {
                         category = new Category
                         {
-                            CategoryId = Guid.NewGuid(),
+                            Categoryid = Guid.NewGuid(),
                             Name = formattedCategory,
                             Type = "Income",
-                            IsEnabled = true,
-                            IsDeleted = false
+                            Isenabled = true,
+                            Isdeleted = false
                         };
                         newCategoriesToAdd.Add(category);
                     }
@@ -64,35 +64,35 @@ namespace PennyPilot.Backend.Application.Services
                 }
 
                 // Map user to category if not already
-                if (!mappedCategories.Contains(category.CategoryId))
+                if (!mappedCategories.Contains(category.Categoryid))
                 {
-                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+                    bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.Categoryid);
                     if (!isMapped)
                     {
-                        newUserCategoriesToAdd.Add(new UserCategory
+                        newUserCategoriesToAdd.Add(new Usercategory
                         {
-                            UserCategoryId = Guid.NewGuid(),
-                            UserId = userId,
-                            CategoryId = category.CategoryId
+                            Usercategoryid = Guid.NewGuid(),
+                            Userid = userId,
+                            Categoryid = category.Categoryid
                         });
                     }
-                    mappedCategories.Add(category.CategoryId);
+                    mappedCategories.Add(category.Categoryid);
                 }
 
                 // Prepare income entity
                 var income = new Income
                 {
-                    IncomeId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId,
+                    Incomeid = Guid.NewGuid(),
+                    Userid = userId,
+                    Categoryid = category.Categoryid,
                     Title = dto.Title,
                     Description = dto.Description,
                     Amount = dto.Amount,
                     Date = dto.Date,
                     Source = dto.Source,
-                    CreatedAt = DateTime.UtcNow,
-                    IsEnabled = true,
-                    IsDeleted = false
+                    Createdat = DateTime.UtcNow,
+                    Isenabled = true,
+                    Isdeleted = false
                 };
 
                 incomesToAdd.Add(income);
@@ -110,21 +110,21 @@ namespace PennyPilot.Backend.Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            response.Data = incomesToAdd.Select(e => e.IncomeId).ToList();
+            response.Data = incomesToAdd.Select(e => e.Incomeid).ToList();
             return response;
         }
 
         public async Task UpdateIncomeAsync(Guid userId, UpdateIncomeDto dto)
         {
-            var income = await _unitOfWork.Incomes.GetByIdAsync(dto.IncomeId)
+            var income = await _unitOfWork.Incomes.GetByIdAsync(dto.Incomeid)
                 ?? throw new Exception("Income not found");
 
-            if(income.IsDeleted == true)
+            if(income.Isdeleted == true)
             {
                 throw new Exception("Income not found");
             }
 
-            if (income.UserId != userId)
+            if (income.Userid != userId)
                 throw new UnauthorizedAccessException();
 
             string formattedCategory = dto.Category.ToPascalCase();
@@ -133,33 +133,33 @@ namespace PennyPilot.Backend.Application.Services
             {
                 category = new Category
                 {
-                    CategoryId = Guid.NewGuid(),
+                    Categoryid = Guid.NewGuid(),
                     Name = formattedCategory,
                     Type = "Income",
-                    IsEnabled = true,
-                    IsDeleted = false
+                    Isenabled = true,
+                    Isdeleted = false
                 };
                 await _unitOfWork.Categories.AddAsync(category);
             }
 
-            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.CategoryId);
+            bool isMapped = await _unitOfWork.UserCategories.ExistsAsync(userId, category.Categoryid);
             if (!isMapped)
             {
-                var userCategory = new UserCategory
+                var userCategory = new Usercategory
                 {
-                    UserCategoryId = Guid.NewGuid(),
-                    UserId = userId,
-                    CategoryId = category.CategoryId
+                    Usercategoryid = Guid.NewGuid(),
+                    Userid = userId,
+                    Categoryid = category.Categoryid
                 };
                 await _unitOfWork.UserCategories.AddAsync(userCategory);
             }
 
-            income.CategoryId = category.CategoryId;
+            income.Categoryid = category.Categoryid;
             income.Source = dto.Source;
             income.Description = dto.Description;
             income.Amount = dto.Amount;
             income.Date = dto.Date;
-            income.UpdatedAt = DateTime.UtcNow;
+            income.Updatedat = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -169,12 +169,12 @@ namespace PennyPilot.Backend.Application.Services
             var income = await _unitOfWork.Incomes.GetByIdAsync(incomeId)
                 ?? throw new Exception("Income not found");
 
-            if (income.UserId != userId)
+            if (income.Userid != userId)
                 throw new UnauthorizedAccessException();
 
-            income.IsDeleted = true;
-            income.IsEnabled = false;
-            income.UpdatedAt = DateTime.UtcNow;
+            income.Isdeleted = true;
+            income.Isenabled = false;
+            income.Updatedat = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
         }

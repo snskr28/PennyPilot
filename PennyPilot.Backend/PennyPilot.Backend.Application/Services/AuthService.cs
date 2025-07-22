@@ -46,17 +46,17 @@ namespace PennyPilot.Backend.Application.Services
 
             var newUser = new User
             {
-                UserId = Guid.NewGuid(),
+                Userid = Guid.NewGuid(),
                 Username = requestDto.Username,
-                FirstName = requestDto.FirstName,
-                MiddleName = requestDto.MiddleName,
-                LastName = requestDto.LastName,
+                Firstname = requestDto.FirstName,
+                Middlename = requestDto.MiddleName,
+                Lastname = requestDto.LastName,
                 Dob = requestDto.DOB,
                 Email = requestDto.Email,
-                PasswordHash = _securityService.HashPassword(requestDto.Password), 
-                CreatedAt = DateTime.UtcNow,
-                IsEnabled = true,
-                IsDeleted = false
+                Passwordhash = _securityService.HashPassword(requestDto.Password), 
+                Createdat = DateTime.UtcNow,
+                Isenabled = true,
+                Isdeleted = false
             };
 
             var createdUser = await _unitOfWork.Users.AddAsync(newUser);
@@ -65,11 +65,11 @@ namespace PennyPilot.Backend.Application.Services
             var userDto = new UserDto
             {
                 Username = createdUser.Username,
-                FirstName = createdUser.FirstName,
-                LastName = createdUser.LastName,
+                FirstName = createdUser.Firstname,
+                LastName = createdUser.Lastname,
                 Email = createdUser.Email,
-                DOB = createdUser.Dob,
-                CreatedAt = createdUser.CreatedAt
+                DOB = createdUser.Dob.GetValueOrDefault(),
+                CreatedAt = createdUser.Createdat
             };
 
             await SendWelcomeEmail(userDto);
@@ -88,7 +88,7 @@ namespace PennyPilot.Backend.Application.Services
                 var user = await _unitOfWork.Users.GetUserByEmailAsync(requestDto.Identifier)
                            ?? await _unitOfWork.Users.GetUserByUsernameAsync(requestDto.Identifier);
 
-                if (user == null || !_securityService.VerifyPassword(requestDto.Password, user.PasswordHash))
+                if (user == null || !_securityService.VerifyPassword(requestDto.Password, user.Passwordhash))
                 {
                     return new ServerResponse<LoginResponseDto>
                     {
@@ -132,8 +132,8 @@ namespace PennyPilot.Backend.Application.Services
             // Generate token (secure random string)
             var token = _securityService.GenerateSecureToken();
 
-            user.PasswordResetToken = token;
-            user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+            user.Passwordresettoken = token;
+            user.Passwordresettokenexpiry = DateTime.UtcNow.AddHours(1);
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
@@ -173,7 +173,7 @@ namespace PennyPilot.Backend.Application.Services
         public async Task<ServerResponse<string>> ResetPasswordAsync(ResetPasswordRequestDto request)
         {
             var user = await _unitOfWork.Users.GetByPasswordResetTokenAsync(request.Token);
-            if (user == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            if (user == null || user.Passwordresettokenexpiry < DateTime.UtcNow)
                 return new ServerResponse<string>
                 {
                     Data = "Token Expired or Invalid",
@@ -182,9 +182,9 @@ namespace PennyPilot.Backend.Application.Services
                 };
 
             // Hash new password - (replace with your password hasher)
-            user.PasswordHash = _securityService.HashPassword(request.NewPassword);
-            user.PasswordResetToken = null;
-            user.PasswordResetTokenExpiry = null;
+            user.Passwordhash = _securityService.HashPassword(request.NewPassword);
+            user.Passwordresettoken = null;
+            user.Passwordresettokenexpiry = null;
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();

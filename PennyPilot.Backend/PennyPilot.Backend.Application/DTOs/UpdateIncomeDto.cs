@@ -8,6 +8,6 @@ namespace PennyPilot.Backend.Application.DTOs
 {
     public class UpdateIncomeDto : AddIncomeDto
     {
-        public Guid IncomeId { get; set; }
+        public Guid Incomeid { get; set; }
     }
 }

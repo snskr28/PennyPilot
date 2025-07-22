@@ -29,7 +29,7 @@ namespace PennyPilot.Backend.Application.Services
 
             var expenseCategories = expenses.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
 
-            var userExpenses = expenses.GroupBy(x => x.PaidBy).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
+            var userExpenses = expenses.GroupBy(x => x.Paidby).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
             var incomeCategories = incomes.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
 
