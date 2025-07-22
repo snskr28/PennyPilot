@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PennyPilot.Backend.Domain.Interfaces
 {
-    public interface IUserCategoryRepository : IRepository<UserCategory>
+    public interface IUserCategoryRepository : IRepository<Usercategory>
     {
         Task<bool> ExistsAsync(Guid userId, Guid categoryId);
     }

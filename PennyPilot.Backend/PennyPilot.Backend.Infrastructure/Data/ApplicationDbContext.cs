@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using PennyPilot.Backend.Infrastructure;
 using PennyPilot.Backend.Domain.Entities;
+using PennyPilot.Backend.Infrastructure;
 
 namespace PennyPilot.Backend.Infrastructure.Data;
 
@@ -25,141 +25,240 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserCategory> UserCategories { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=SANSKAR\\MSSQLEXPRESS2025;Integrated Security=true;Initial Catalog=PennyPilot;TrustServerCertificate=True");
+    public virtual DbSet<Usercategory> Usercategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("uuid-ossp");
+
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0B65C63C4A");
+            entity.HasKey(e => e.Categoryid).HasName("pk_categories");
 
-            entity.HasIndex(e => e.Name, "UQ__Categori__737584F6386C8557").IsUnique();
+            entity.ToTable("categories", tb => tb.HasComment("Stores income and expense categories"));
 
-            entity.Property(e => e.CategoryId).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
+            entity.HasIndex(e => new { e.Isenabled, e.Isdeleted }, "idx_categories_enabled_deleted");
+
+            entity.HasIndex(e => e.Name, "uq_categories_name").IsUnique();
+
+            entity.Property(e => e.Categoryid)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("categoryid");
+            entity.Property(e => e.Isdeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("isdeleted");
+            entity.Property(e => e.Isenabled)
+                .HasDefaultValue(true)
+                .HasColumnName("isenabled");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .HasColumnName("name");
             entity.Property(e => e.Type)
                 .HasMaxLength(20)
-                .IsUnicode(false);
+                .HasColumnName("type");
         });
 
         modelBuilder.Entity<Expense>(entity =>
         {
-            entity.HasKey(e => e.ExpenseId).HasName("PK__Expenses__1445CFD38EBFA6BF");
+            entity.HasKey(e => e.Expenseid).HasName("pk_expenses");
 
-            entity.Property(e => e.ExpenseId).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.ToTable("expenses", tb => tb.HasComment("Stores expense transactions"));
+
+            entity.HasIndex(e => e.Categoryid, "idx_expenses_categoryid");
+
+            entity.HasIndex(e => e.Date, "idx_expenses_date");
+
+            entity.HasIndex(e => new { e.Isenabled, e.Isdeleted }, "idx_expenses_enabled_deleted");
+
+            entity.HasIndex(e => e.Userid, "idx_expenses_userid");
+
+            entity.Property(e => e.Expenseid)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("expenseid");
+            entity.Property(e => e.Amount)
+                .HasPrecision(18, 2)
+                .HasColumnName("amount");
+            entity.Property(e => e.Categoryid).HasColumnName("categoryid");
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Date)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
-            entity.Property(e => e.PaidBy)
+                .HasColumnName("description");
+            entity.Property(e => e.Isdeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("isdeleted");
+            entity.Property(e => e.Isenabled)
+                .HasDefaultValue(true)
+                .HasColumnName("isenabled");
+            entity.Property(e => e.Paidby)
                 .HasMaxLength(100)
-                .IsUnicode(false);
-            entity.Property(e => e.PaymentMode)
+                .HasColumnName("paidby");
+            entity.Property(e => e.Paymentmode)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .HasColumnName("paymentmode");
+            entity.Property(e => e.Receiptimage).HasColumnName("receiptimage");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .HasColumnName("title");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("updatedat");
+            entity.Property(e => e.Userid).HasColumnName("userid");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Expenses)
-                .HasForeignKey(d => d.CategoryId)
+                .HasForeignKey(d => d.Categoryid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Expenses_Categories");
+                .HasConstraintName("fk_expenses_categories");
 
             entity.HasOne(d => d.User).WithMany(p => p.Expenses)
-                .HasForeignKey(d => d.UserId)
+                .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Expenses_Users");
+                .HasConstraintName("fk_expenses_users");
         });
 
         modelBuilder.Entity<Income>(entity =>
         {
-            entity.HasKey(e => e.IncomeId).HasName("PK__Income__60DFC60CD782BCD4");
+            entity.HasKey(e => e.Incomeid).HasName("pk_income");
 
-            entity.ToTable("Income");
+            entity.ToTable("income", tb => tb.HasComment("Stores income transactions"));
 
-            entity.Property(e => e.IncomeId).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.HasIndex(e => e.Categoryid, "idx_income_categoryid");
+
+            entity.HasIndex(e => e.Date, "idx_income_date");
+
+            entity.HasIndex(e => new { e.Isenabled, e.Isdeleted }, "idx_income_enabled_deleted");
+
+            entity.HasIndex(e => e.Userid, "idx_income_userid");
+
+            entity.Property(e => e.Incomeid)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("incomeid");
+            entity.Property(e => e.Amount)
+                .HasPrecision(18, 2)
+                .HasColumnName("amount");
+            entity.Property(e => e.Categoryid).HasColumnName("categoryid");
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Date)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
+                .HasColumnName("description");
+            entity.Property(e => e.Isdeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("isdeleted");
+            entity.Property(e => e.Isenabled)
+                .HasDefaultValue(true)
+                .HasColumnName("isenabled");
             entity.Property(e => e.Source)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .HasColumnName("source");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .HasColumnName("title");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("updatedat");
+            entity.Property(e => e.Userid).HasColumnName("userid");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Incomes)
-                .HasForeignKey(d => d.CategoryId)
+                .HasForeignKey(d => d.Categoryid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Income_Categories");
+                .HasConstraintName("fk_income_categories");
 
             entity.HasOne(d => d.User).WithMany(p => p.Incomes)
-                .HasForeignKey(d => d.UserId)
+                .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Income_Users");
+                .HasConstraintName("fk_income_users");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C04312A12");
+            entity.HasKey(e => e.Userid).HasName("pk_users");
 
-            entity.HasIndex(e => e.Username, "UQ__Users__536C85E45524C5FC").IsUnique();
+            entity.ToTable("users", tb => tb.HasComment("Stores user account information"));
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D105349EB40F67").IsUnique();
+            entity.HasIndex(e => new { e.Isenabled, e.Isdeleted }, "idx_users_enabled_deleted");
 
-            entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Dob).HasColumnName("DOB");
+            entity.HasIndex(e => e.Email, "uq_users_email").IsUnique();
+
+            entity.HasIndex(e => e.Username, "uq_users_username").IsUnique();
+
+            entity.Property(e => e.Userid)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("userid");
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Dob)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("dob");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
-                .IsUnicode(false);
-            entity.Property(e => e.FirstName)
+                .HasColumnName("email");
+            entity.Property(e => e.Firstname)
                 .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
-            entity.Property(e => e.LastName)
+                .HasColumnName("firstname");
+            entity.Property(e => e.Isdeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("isdeleted");
+            entity.Property(e => e.Isenabled)
+                .HasDefaultValue(true)
+                .HasColumnName("isenabled");
+            entity.Property(e => e.Lastname)
                 .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.MiddleName)
+                .HasColumnName("lastname");
+            entity.Property(e => e.Middlename)
                 .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.PasswordHash).IsUnicode(false);
-            entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
+                .HasColumnName("middlename");
+            entity.Property(e => e.Passwordhash).HasColumnName("passwordhash");
+            entity.Property(e => e.Passwordresettoken)
+                .HasMaxLength(255)
+                .HasColumnName("passwordresettoken");
+            entity.Property(e => e.Passwordresettokenexpiry)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("passwordresettokenexpiry");
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .HasColumnName("username");
         });
 
-        modelBuilder.Entity<UserCategory>(entity =>
+        modelBuilder.Entity<Usercategory>(entity =>
         {
-            entity.HasKey(e => e.UserCategoryId).HasName("PK__UserCate__2421C38480E13F6B");
+            entity.HasKey(e => e.Usercategoryid).HasName("pk_usercategories");
 
-            entity.HasIndex(e => new { e.UserId, e.CategoryId }, "UQ_UserCategory").IsUnique();
+            entity.ToTable("usercategories", tb => tb.HasComment("Junction table linking users to their custom categories"));
 
-            entity.Property(e => e.UserCategoryId).HasDefaultValueSql("(newid())");
+            entity.HasIndex(e => e.Categoryid, "idx_usercategories_categoryid");
 
-            entity.HasOne(d => d.Category).WithMany(p => p.UserCategories)
-                .HasForeignKey(d => d.CategoryId)
+            entity.HasIndex(e => e.Userid, "idx_usercategories_userid");
+
+            entity.HasIndex(e => new { e.Userid, e.Categoryid }, "uq_usercategory").IsUnique();
+
+            entity.Property(e => e.Usercategoryid)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("usercategoryid");
+            entity.Property(e => e.Categoryid).HasColumnName("categoryid");
+            entity.Property(e => e.Userid).HasColumnName("userid");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Usercategories)
+                .HasForeignKey(d => d.Categoryid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserCategories_Categories");
+                .HasConstraintName("fk_usercategories_categories");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserCategories)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.User).WithMany(p => p.Usercategories)
+                .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserCategories_Users");
+                .HasConstraintName("fk_usercategories_users");
         });
 
         OnModelCreatingPartial(modelBuilder);

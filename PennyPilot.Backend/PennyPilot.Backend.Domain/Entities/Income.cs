@@ -3,13 +3,16 @@ using System.Collections.Generic;
 
 namespace PennyPilot.Backend.Domain.Entities;
 
+/// <summary>
+/// Stores income transactions
+/// </summary>
 public partial class Income
 {
-    public Guid IncomeId { get; set; }
+    public Guid Incomeid { get; set; }
 
-    public Guid UserId { get; set; }
+    public Guid Userid { get; set; }
 
-    public Guid CategoryId { get; set; }
+    public Guid Categoryid { get; set; }
 
     public string Source { get; set; } = null!;
 
@@ -19,13 +22,13 @@ public partial class Income
 
     public DateTime Date { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? Createdat { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? Updatedat { get; set; }
 
-    public bool IsEnabled { get; set; }
+    public bool Isenabled { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool Isdeleted { get; set; }
 
     public string Title { get; set; } = null!;
 

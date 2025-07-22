@@ -19,7 +19,7 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetActiveUsersAsync()
         {
             return await _context.Users
-                .Where(u => u.IsEnabled)
+                .Where(u => u.Isenabled)
                 .ToListAsync();
         }
 
@@ -37,7 +37,7 @@ namespace PennyPilot.Backend.Infrastructure.Repositories
 
         public async Task<User?> GetByPasswordResetTokenAsync(string token)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Passwordresettoken == token);
         }
     }
 }

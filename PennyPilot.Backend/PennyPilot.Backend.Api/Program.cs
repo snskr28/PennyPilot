@@ -15,6 +15,8 @@ namespace PennyPilot.Backend.Api
     {
         public static void Main(string[] args)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container
@@ -115,18 +117,28 @@ namespace PennyPilot.Backend.Api
             var app = builder.Build();
 
             // Configure the HTTP request pipeline
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // Only use HTTPS redirect in development
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
+            // For Render deployment
+            if (app.Environment.IsProduction())
+            {
+                var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+                app.Urls.Add($"http://0.0.0.0:{port}");
+            }
 
             app.Run();
         }

@@ -42,11 +42,11 @@ namespace PennyPilot.Backend.Application.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Userid.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim("userId", user.UserId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Userid.ToString()),
+                new Claim("userId", user.Userid.ToString()),
                 // Add roles or other claims if needed
             };
 

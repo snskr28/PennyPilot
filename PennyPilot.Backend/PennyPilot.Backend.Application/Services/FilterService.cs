@@ -14,7 +14,7 @@ namespace PennyPilot.Backend.Application.Services
         public IQueryable<Expense> GetFilteredExpenses(IQueryable<Expense> expenses, Guid userId, DashboardFilterDto dashboardFilter)
         {
             //Base Filter
-            expenses = expenses.Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled);
+            expenses = expenses.Where(e => e.Userid == userId && !e.Isdeleted && e.Isenabled);
 
             //Date Range Filters
             if (dashboardFilter.StartDate.HasValue)
@@ -28,7 +28,7 @@ namespace PennyPilot.Backend.Application.Services
                 expenses = expenses.Where(e => e.Category.Name == dashboardFilter.ExpenseCategory);
 
             if (!string.IsNullOrWhiteSpace(dashboardFilter.UserExpense))
-                expenses = expenses.Where(e => e.PaidBy == dashboardFilter.UserExpense);
+                expenses = expenses.Where(e => e.Paidby == dashboardFilter.UserExpense);
 
             return expenses;
         }
@@ -36,7 +36,7 @@ namespace PennyPilot.Backend.Application.Services
         public IQueryable<Income> GetFilteredIncomes(IQueryable<Income> incomes, Guid userId, DashboardFilterDto dashboardFilter)
         {
             //Base Filter
-            incomes = incomes.Where(e => e.UserId == userId && !e.IsDeleted && e.IsEnabled);
+            incomes = incomes.Where(e => e.Userid == userId && !e.Isdeleted && e.Isenabled);
 
             //Date Range Filters
             if (dashboardFilter.StartDate.HasValue)
