@@ -123,12 +123,22 @@ namespace PennyPilot.Backend.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // Only use HTTPS redirect in development
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
+            // For Render deployment
+            if (app.Environment.IsProduction())
+            {
+                var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+                app.Urls.Add($"http://0.0.0.0:{port}");
+            }
 
             app.Run();
         }
