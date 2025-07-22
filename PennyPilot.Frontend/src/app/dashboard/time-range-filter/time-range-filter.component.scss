@@ -5,10 +5,8 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.07);
   padding: 16px 16px 0px;
-  margin-bottom: 24px;
   display: flex;
   align-items: center;
-  width: auto;
   transition: all 0.4s ease;
   overflow: hidden;
 }
@@ -18,12 +16,13 @@
   align-items: center;
   width: 100%;
   gap: 16px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .range-select {
-  min-width: 180px;
-  //   max-width: 220px;
+  min-width: 150px;
+  max-width: 200px;
+  flex-shrink: 0;
 }
 
 .custom-dates {
@@ -38,7 +37,7 @@
   flex-shrink: 0;
   
   &.show {
-    width: 360px; /* Width for both date fields + "to" label */
+    width: 380px;
     opacity: 1;
     transform: translateX(0);
   }
@@ -46,13 +45,15 @@
 
 .date-field {
   min-width: 140px;
-  max-width: 180px;
+  max-width: 160px;
+  flex-shrink: 0;
 }
 
 .to-label {
   color: #6b7280;
   font-size: 1rem;
   margin: 0 4px;
+  white-space: nowrap;
 }
 
 .spacer {
@@ -66,43 +67,117 @@
   border-radius: 8px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: rgba(255, 255, 255, 0.95) !important;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 6px 16px;
 }
 
-@media (max-width: 700px) {
-  .date-field {
-    max-width: 100px;
+// Responsive breakpoints
+@media (max-width: 1200px) {
+  
+  .range-select {
+    min-width: 140px;
+    max-width: 180px;
   }
+  
+  .custom-dates {
+    &.show {
+      width: 320px;
+    }
+  }
+  
+  .date-field {
+    min-width: 130px;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 900px) {
   .time-range-filter-form {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  .custom-dates {
-    flex-direction: row;
-    gap: 8px;
-  }
-  .clear-btn {
-    margin-left: 0;
-    align-self: flex-end;
+  
+  .range-select {
+    min-width: unset;
+    max-width: unset;
     width: 100%;
   }
-  .custom-dates {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.4s ease;
-  flex-shrink: 0;
   
-  &.show {
-    height: auto;
-    width: auto;
-    opacity: 1;
-    transform: translateY(0);
+  .custom-dates {
+    flex-direction: column;
+    gap: 12px;
+    width: 0;
+    height: 0;
+    transform: translateY(-20px);
+    
+    &.show {
+      height: auto;
+      width: 100%;
+      transform: translateY(0);
+    }
+  }
+  
+  .date-field {
+    min-width: unset;
+    max-width: unset;
+    width: 100%;
+  }
+  
+  .to-label {
+    text-align: center;
+    margin: 0;
+  }
+  
+  .clear-btn {
+    margin-left: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .time-range-filter-container {
+    padding: 12px 12px 0px;
+  }
+  
+  .time-range-filter-form {
+    gap: 10px;
+  }
+  
+  .custom-dates {
+    &.show {
+      gap: 10px;
+    }
+  }
+  
+  .clear-btn {
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .time-range-filter-container {
+    padding: 10px 10px 0px;
+  }
+  
+  .time-range-filter-form {
+    gap: 8px;
+  }
+  
+  .custom-dates {
+    &.show {
+      gap: 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .time-range-filter-container {
+    padding: 8px 8px 0px;
+  }
+  
+  .clear-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
 }

@@ -10,6 +10,8 @@ import { Chart } from 'chart.js';
 import { CardsService } from './services/cards.service';
 import { ApiResponse } from '../shared/api-response.model';
 import { SummaryCardsResponse } from './models/summary-cards-response.model';
+import { Router } from '@angular/router';
+import { ActiveFiltersComponent } from './active-filters/active-filters.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +20,7 @@ import { SummaryCardsResponse } from './models/summary-cards-response.model';
     ChartsComponent,
     TransactionsTableComponent,
     TimeRangeFilterComponent,
+    ActiveFiltersComponent,
     ...MATERIAL_IMPORTS,
   ],
   templateUrl: './dashboard.component.html',
@@ -27,7 +30,7 @@ export class DashboardComponent {
   dashboardFilter: DashboardFilter = {
     startDate: null,
     endDate: null,
-    granularity: 'yearly',
+    granularity: 'monthly',
     expenseCategory: null,
     incomeCategory: null,
     userExpense: null,
@@ -40,6 +43,13 @@ export class DashboardComponent {
   private cardsService = inject(CardsService);
   summaryCardsLoading = true;
   summaryCardsError: string | null = null;
+  isProfileMenuOpen = false;
+
+  // Mock user data
+  user = {
+    name: localStorage.getItem('username'),
+    photoUrl: '', // Leave empty to use default icon
+  };
 
   summaryCards = [
     { title: 'Total Income', amount: 0, icon: 'trending_up', color: '#10B981' },
@@ -57,7 +67,7 @@ export class DashboardComponent {
     return amount >= 0 ? 'rgb(25 153 30)' : 'rgb(221 27 27)'; // green or red
   }
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.reloadSummaryCards();
@@ -65,6 +75,29 @@ export class DashboardComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  closeProfileMenu() {
+    this.isProfileMenuOpen = false;
+  }
+
+  onProfileMenu(action: string) {
+    this.closeProfileMenu();
+    switch (action) {
+      case 'profile':
+        this.router.navigate(['/profile']);
+        break;
+      case 'password':
+        this.router.navigate(['/reset-password']);
+        break;
+      case 'logout':
+        this.logout();
+        break;
+    }
   }
 
   reloadSummaryCards() {
@@ -127,5 +160,37 @@ export class DashboardComponent {
       this.tableComp.reloadTable(this.dashboardFilter);
     }
     this.reloadSummaryCards();
+  }
+
+  onActiveFilterCleared(key: string) {
+    console.log('Parent received filter clear for:', key);
+    const updatedFilter = { ...this.dashboardFilter };
+    switch (key) {
+      case 'date':
+        updatedFilter.startDate = null;
+        updatedFilter.endDate = null;
+        break;
+      case 'granularity':
+        updatedFilter.granularity = 'monthly';
+        break;
+      case 'expenseCategory':
+        updatedFilter.expenseCategory = null;
+        break;
+      case 'incomeCategory':
+        updatedFilter.incomeCategory = null;
+        break;
+      case 'userExpense':
+        updatedFilter.userExpense = null;
+        break;
+      case 'incomeSource':
+        updatedFilter.incomeSource = null;
+        break;
+    }
+    this.dashboardFilter = updatedFilter;
+    this.reloadAllWidgets();
+  }
+  onChartFilterChanged(updatedFilter: DashboardFilter) {
+    this.dashboardFilter = updatedFilter;
+    this.reloadAllWidgets();
   }
 }

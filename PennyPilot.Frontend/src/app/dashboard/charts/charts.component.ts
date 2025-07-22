@@ -7,6 +7,8 @@ import {
   ViewChild,
   SimpleChange,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_IMPORTS } from '../../shared/material';
@@ -38,6 +40,12 @@ Chart.register(
   zoomPlugin
 );
 
+type DonutFilterKey =
+  | 'expenseCategory'
+  | 'userExpense'
+  | 'incomeCategory'
+  | 'incomeSource';
+
 @Component({
   selector: 'app-dashboard-charts',
   standalone: true,
@@ -47,8 +55,15 @@ Chart.register(
 })
 export class ChartsComponent implements OnInit, OnChanges {
   @Input() dashboardFilter!: DashboardFilter;
+  @Output() filterChange = new EventEmitter<DashboardFilter>();
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+  @ViewChild('expenseCategoriesCanvas')
+  expenseCategoriesCanvas?: BaseChartDirective;
+  @ViewChild('userExpensesCanvas') userExpensesCanvas?: BaseChartDirective;
+  @ViewChild('incomeCategoriesCanvas')
+  incomeCategoriesCanvas?: BaseChartDirective;
+  @ViewChild('incomeSourcesCanvas') incomeSourcesCanvas?: BaseChartDirective;
 
   private chartsService = inject(ChartsService);
   expCategoriesLoading = true;
@@ -64,22 +79,89 @@ export class ChartsComponent implements OnInit, OnChanges {
   expenseIncomeLineChartLoading = true;
   expenseIncomeLineChartError: string | null = null;
 
-  private pieColors = [
-    '#FF6384', // Soft Red/Pink
-    '#FF9F40', // Orange
-    '#FFCD56', // Yellow-Orange
-    '#4BC0C0', // Teal
-    '#36A2EB', // Blue
-    '#9966FF', // Purple
-    '#C9CBCF', // Light Grey
-    '#FF6F91', // Pink
-    '#FF8C42', // Orange
-    '#F9F871', // Lemon
-    '#A1DE93', // Mint Green
-    '#62B6CB', // Sky Blue
-    '#845EC2', // Violet
-    '#FFC75F', // Gold
-    '#F67280', // Coral Pink
+  selectedSegments: Record<DonutFilterKey, string | null> = {
+    expenseCategory: null,
+    userExpense: null,
+    incomeCategory: null,
+    incomeSource: null,
+  };
+
+  // Store original color mappings to maintain colors when filtering
+  private originalColorMappings: Record<DonutFilterKey, Map<string, string>> = {
+    expenseCategory: new Map(),
+    userExpense: new Map(),
+    incomeCategory: new Map(),
+    incomeSource: new Map(),
+  };
+
+  // Different color palettes for each donut chart
+  private expenseCategoriesColors = [
+    '#FF6B6B', // Coral Red
+    '#FF8E53', // Orange
+    '#FF6B9D', // Pink
+    '#C44569', // Dark Pink
+    '#F8B500', // Golden Yellow
+    '#FF4757', // Red
+    '#FF3838', // Bright Red
+    '#FF6348', // Tomato
+    '#FF7675', // Light Red
+    '#FD79A8', // Pink
+    '#E84393', // Magenta
+    '#A29BFE', // Light Purple
+    '#6C5CE7', // Purple
+    '#74B9FF', // Sky Blue
+    '#0984E3', // Blue
+  ];
+
+  private userExpensesColors = [
+    '#00D2D3', // Turquoise
+    '#55A3FF', // Light Blue
+    '#6C5CE7', // Purple
+    '#74B9FF', // Sky Blue
+    '#0984E3', // Blue
+    '#A29BFE', // Light Purple
+    '#00B894', // Mint
+    '#00A085', // Dark Teal
+    '#26DE81', // Green
+    '#2ECC71', // Emerald
+    '#00A8FF', // Dodger Blue
+    '#0097E6', // Blue
+    '#8C7AE6', // Soft Purple
+    '#7B68EE', // Medium Slate Blue
+  ];
+
+  private incomeCategoriesColors = [
+    '#26DE81', // Bright Green
+    '#00A085', // Dark Teal
+    '#55A3FF', // Light Blue
+    '#74B9FF', // Sky Blue
+    '#0984E3', // Blue
+    '#00CEC9', // Teal
+    '#00D2D3', // Turquoise
+    '#1DD1A1', // Sea Green
+    '#10AC84', // Green
+    '#00A8FF', // Dodger Blue
+    '#0097E6', // Blue
+    '#8C7AE6', // Soft Purple
+    '#7B68EE', // Medium Slate Blue
+  ];
+
+  private incomeSourcesColors = [
+    '#8854D0', // Purple
+    '#F0932B', // Orange
+    '#EB4D4B', // Red
+    '#6AB04C', // Green
+    '#22A6B3', // Teal
+    '#3867D6', // Blue
+    '#F79F1F', // Amber
+    '#EE5A52', // Coral
+    '#5F9EA0', // Cadet Blue
+    '#40739E', // Steel Blue
+    '#487EB0', // Air Force Blue
+    '#8C7AE6', // Soft Purple
+    '#00A8FF', // Dodger Blue
+    '#9C88FF', // Light Purple
+    '#FF9FF3', // Pink
   ];
 
   // Bar Chart Configuration
@@ -122,7 +204,7 @@ export class ChartsComponent implements OnInit, OnChanges {
   };
 
   //Line Chart Configuration
-   lineChartData: ChartConfiguration<'line'>['data'] = {
+  lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: [
       {
@@ -286,6 +368,30 @@ export class ChartsComponent implements OnInit, OnChanges {
     };
   }
 
+  private getColorsForLabels(
+    labels: string[],
+    filterKey: DonutFilterKey,
+    colorPalette: string[]
+  ): string[] {
+    const colors: string[] = [];
+
+    labels.forEach((label) => {
+      if (this.originalColorMappings[filterKey].has(label)) {
+        // Use the original color if we have it mapped
+        colors.push(this.originalColorMappings[filterKey].get(label)!);
+      } else {
+        // Assign a new color and store the mapping
+        const colorIndex =
+          this.originalColorMappings[filterKey].size % colorPalette.length;
+        const newColor = colorPalette[colorIndex];
+        this.originalColorMappings[filterKey].set(label, newColor);
+        colors.push(newColor);
+      }
+    });
+
+    return colors;
+  }
+
   reloadCharts(filter: DashboardFilter) {
     this.expCategoriesLoading = true;
     this.userExpensesLoading = true;
@@ -300,14 +406,16 @@ export class ChartsComponent implements OnInit, OnChanges {
         const incomeSources = res.data?.incomeSources;
         if (res.success) {
           if (expenseCategories && Object.keys(expenseCategories).length > 0) {
+            const labels = Object.keys(expenseCategories);
             this.expenseCategoriesDonutChart = {
-              labels: Object.keys(expenseCategories),
+              labels: labels,
               datasets: [
                 {
                   data: Object.values(expenseCategories),
-                  backgroundColor: this.pieColors.slice(
-                    0,
-                    Object.keys(expenseCategories).length
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'expenseCategory',
+                    this.expenseCategoriesColors
                   ),
                   hoverOffset: 8,
                 },
@@ -324,11 +432,17 @@ export class ChartsComponent implements OnInit, OnChanges {
           }
 
           if (userExpenses && Object.keys(userExpenses).length > 0) {
+            const labels = Object.keys(userExpenses);
             this.userExpensesDonutChart = {
-              labels: Object.keys(userExpenses),
+              labels: labels,
               datasets: [
                 {
                   data: Object.values(userExpenses),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'userExpense',
+                    this.userExpensesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -340,15 +454,21 @@ export class ChartsComponent implements OnInit, OnChanges {
               labels: [],
               datasets: [{ data: [] }],
             };
-            this.userExpensesError = 'No income category data available.';
+            this.userExpensesError = 'No user expenses data available.';
           }
 
           if (incomeCategories && Object.keys(incomeCategories).length > 0) {
+            const labels = Object.keys(incomeCategories);
             this.incomeCategoriesDonutChart = {
-              labels: Object.keys(incomeCategories),
+              labels: labels,
               datasets: [
                 {
                   data: Object.values(incomeCategories),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'incomeCategory',
+                    this.incomeCategoriesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -364,11 +484,17 @@ export class ChartsComponent implements OnInit, OnChanges {
           }
 
           if (incomeSources && Object.keys(incomeSources).length > 0) {
+            const labels = Object.keys(incomeSources);
             this.incomeSourcesDonutChart = {
-              labels: Object.keys(incomeSources),
+              labels: labels,
               datasets: [
                 {
                   data: Object.values(incomeSources),
+                  backgroundColor: this.getColorsForLabels(
+                    labels,
+                    'incomeSource',
+                    this.incomeSourcesColors
+                  ),
                   hoverOffset: 8,
                 },
               ],
@@ -380,7 +506,7 @@ export class ChartsComponent implements OnInit, OnChanges {
               labels: [],
               datasets: [{ data: [] }],
             };
-            this.incomeSourcesError = 'No income category data available.';
+            this.incomeSourcesError = 'No income sources data available.';
           }
         }
         this.expCategoriesLoading = false;
@@ -480,7 +606,8 @@ export class ChartsComponent implements OnInit, OnChanges {
             labels: res.data.labels,
             datasets: res.data.datasets.map((ds, i) => ({
               ...ds,
-              backgroundColor: i === 0 ? 'rgba(255, 99, 132, 0.4)' : 'rgba(54, 162, 235, 0.4)', // Expenses, Income
+              backgroundColor:
+                i === 0 ? 'rgba(255, 99, 132, 0.4)' : 'rgba(54, 162, 235, 0.4)', // Expenses, Income
               borderColor: i === 0 ? '#FF6384' : '#36A2EB', // Expenses, Income
               tension: 0.5,
               fill: true,
@@ -513,5 +640,28 @@ export class ChartsComponent implements OnInit, OnChanges {
         this.expenseIncomeLineChartLoading = false;
       },
     });
+  }
+
+  onDonutSegmentClick(filterKey: DonutFilterKey, event: any): void {
+    const activePoints = event.active;
+
+    if (!activePoints?.length) return;
+
+    const chart = activePoints[0].element.$context.chart;
+    const index = activePoints[0].index;
+    const label = chart.data.labels?.[index];
+
+    if (!label || typeof label !== 'string') return;
+
+    // Toggle logic
+    if (this.selectedSegments[filterKey] === label) {
+      this.selectedSegments[filterKey] = null;
+      this.dashboardFilter[filterKey] = null;
+    } else {
+      this.selectedSegments[filterKey] = label;
+      this.dashboardFilter[filterKey] = label;
+    }
+
+    this.filterChange.emit(this.dashboardFilter);
   }
 }

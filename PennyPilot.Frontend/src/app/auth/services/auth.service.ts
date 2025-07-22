@@ -17,9 +17,13 @@ export class AuthService {
   private apiUrl = 'https://localhost:7098/api/auth';
 
   login(payload: LoginRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, payload)
-      .pipe(tap((res) => this.tokenService.saveToken(res.data.token)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, payload).pipe(
+      tap((res) => {
+        this.tokenService.saveToken(res.data.token);
+        localStorage.setItem('username', res.data.username);
+        localStorage.setItem('email', res.data.email);
+      })
+    );
   }
 
   signup(payload: SignupRequest): Observable<any> {
@@ -28,6 +32,8 @@ export class AuthService {
 
   logout(): void {
     this.tokenService.removeToken();
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
     this.router.navigate(['/login']);
   }
 
