@@ -139,7 +139,7 @@ namespace PennyPilot.Backend.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             // Compose reset link
-            var resetLink = $"http://localhost:4200/reset-password?token={token}";
+            var resetLink = $"https://pennypilotapp.netlify.app/reset-password?token={token}";
 
             var subject = "Reset Your PennyPilot Password";
             var emailBody = $@"
