@@ -6,11 +6,11 @@ PennyPilot is a full-stack web application designed to help users manage their p
 
 **Tech Stack:**
 
-* Frontend: Angular with Angular Material
+* Frontend: Angular 19
 * Backend: ASP.NET Core Web API
-* Database: SQL Server (or SQLite for development)
+* Database: PostgreSQL
 * Authentication: JWT-based login/signup
-* Charts: Chart.js or ngx-charts
+* Charts: Chart.js, ngx-charts
 
 ---
 
@@ -37,8 +37,8 @@ PennyPilot is a full-stack web application designed to help users manage their p
 * Category management (user-defined, editable list)
 * Analytics:
 
-  * Pie chart: Category-wise distribution
-  * Line/Area chart: Trends over time
+  * Donut chart: Category-wise distribution
+  * Line/Bar chart: Trends over time
 * Date range filter for analytics
 
 ---
@@ -53,98 +53,103 @@ PennyPilot is a full-stack web application designed to help users manage their p
 * MiddleName (string?)
 * LastName (string)
 * Email (string, unique)
+* DOB (DateTime)
 * PasswordHash (string)
 * CreatedAt (DateTime)
+* IsEnabled (bool)
+* IsDeleted (bool)
+* PasswordResetToken (string?)
+* PasswordResetTokenExpiry (DateTime?)
 
 ### 💸 Expense
 
 * ExpenseId (GUID)
 * UserId (GUID, FK)
+* CategoryId (GUID, FK)
 * Title (string)
 * Description (string?)
 * Amount (decimal)
-* Category (string)
 * PaymentMode (string)
 * PaidBy (string)
 * Date (DateTime)
 * ReceiptImage (string or byte\[])
 * CreatedAt (DateTime)
 * UpdatedAt (DateTime?)
+* IsEnabled (bool)
+* IsDeleted (bool)
 
 ### 💰 Income
 
 * IncomeId (GUID)
 * UserId (GUID, FK)
+* CategoryId (GUID, FK)
+* Title (string)
 * Source (string)
 * Description (string?)
 * Amount (decimal)
 * Date (DateTime)
 * CreatedAt (DateTime)
 * UpdatedAt (DateTime?)
+* IsEnabled (bool)
+* IsDeleted (bool)
 
 ### 🏷️ Category
 
 * CategoryId (GUID)
-* UserId (GUID, FK)
 * Name (string, case-insensitive)
 * Type (string) — 'Expense' or 'Income'
+* IsEnabled (bool)
+* IsDeleted (bool)
+
+### 🏷️ UserCategory
+
+* UserCategoryId (GUID)
+* UserId (GUID, FK)
+* CategoryID (GUID, FK)
 
 ---
 
-## 🌐 API Endpoints (Planned)
+## 🌐 API Endpoints
 
 ### 🔐 Authentication
 
 * `POST /api/auth/register` – Register a new user
 * `POST /api/auth/login` – Login and receive JWT token
+* `POST /api/auth/forgot-password` – Generate password reset token
+* `POST /api/auth/reset-password` – Reset password using reset token
+
+### 📊 Charts
+* `POST /api/Charts/DonutCharts` – Gets donut charts data
+* `POST /api/Charts/IncomeExpenseBarChart` – Gets Bar chart data
+* `POST /api/Charts/IncomeExpenseLineChart` – Gets Line chart data
 
 ### 💸 Expense
 
-* `GET /api/expenses` – Get paginated expenses
-* `GET /api/expenses/{id}` – Get a specific expense
-* `POST /api/expenses` – Add new expense
-* `PUT /api/expenses/{id}` – Update expense
-* `DELETE /api/expenses/{id}` – Delete expense
+* `POST /api/expense` – Add List of expenses
+* `POST /api/expense/ExpenseTable` – Gets list of paginated expenses
 
 ### 💰 Income
 
-* `GET /api/income` – Get paginated incomes
-* `POST /api/income` – Add income
-* `PUT /api/income/{id}` – Update income
-* `DELETE /api/income/{id}` – Delete income
-
-### 🏷️ Categories
-
-* `GET /api/categories` – Get all user-defined categories
-* `POST /api/categories` – Add category
-* `DELETE /api/categories/{id}` – Delete category
-
-### 📊 Analytics
-
-* `GET /api/analytics/category-distribution` – Pie chart data
-* `GET /api/analytics/date-trend` – Line/area chart data (date range supported)
+* `POST /api/income` – Add List of income
+* `POST /api/income/ExpenseTable` – Gets list of paginated incomes
 
 ---
 
 ## 🖼️ Frontend Pages (Angular)
 
-* Login Page
-* Register Page
+* Login/Signup Page
 * Dashboard (analytics + summary)
-* Expense List + Filters
-* Add/Edit Expense
-* Income List + Filters
-* Add/Edit Income
-* Category Management
-* User Profile (optional)
 
 ---
 
 ## 📊 Charts & Analytics
 
-* **Pie Chart** – Expense category distribution
-* **Line/Area Chart** – Spending trend by date
-* Date range selector (last 7 days, this month, custom)
+* **Donut Chart - Expense Categories** – Expense category distribution
+* **Donut Chart - User Expenses** – Expense user distribution
+* **Donut Chart - Income Categories** – Income category distribution
+* **Donut Chart - Income Sources** – Income source distribution
+* **Line/Bar Chart** – Spending trend by date
+* Date range selector (last 7 days, last 30 days,this month, last month, this year, custom, all)
 
 ---
 
@@ -157,15 +162,13 @@ PennyPilot is a full-stack web application designed to help users manage their p
   * Dialogs (Add/Edit forms)
   * Datepickers, Inputs, Dropdowns
   * Cards, Tabs, Icons
-* Responsive layout using `mat-grid` and `flex-layout`
+* Responsive layout 
 
 ---
 
 ## 🚀 Future Enhancements
 
 * File uploads (receipt images)
-* Budget vs. actual category tracking
-* Shared accounts/family mode
 * Export to Excel/PDF
 * Monthly email summary/reminders
 
