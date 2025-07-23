@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:7098/api',
+  production: true,
+  apiUrl: 'https://pennypilot-api.onrender.com/api',
 };

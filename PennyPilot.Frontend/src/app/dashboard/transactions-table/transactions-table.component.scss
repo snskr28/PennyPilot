@@ -1,4 +1,4 @@
-@import "../../../styles.scss";
+@use "../../../styles.scss" as styles;
 
 .table-header {
   display: flex;
@@ -89,8 +89,8 @@ td.mat-cell {
 mat-paginator {
   margin-top: auto;
   padding: 0 24px;
-  border-top: 1px solid $color-primary;
-  background-color: $color-primary;
+  border-top: 1px solid styles.$color-primary;
+  background-color: styles.$color-primary;
 }
 
 .loading-overlay {
@@ -115,7 +115,7 @@ mat-paginator {
 }
 
 ::ng-deep .mat-mdc-tab.mdc-tab--active {
-  background-color: $color-primary;
+  background-color: styles.$color-primary;
   border-radius: 12px 12px 0 0;
 }
 
@@ -130,7 +130,7 @@ mat-paginator {
 }
 
 ::ng-deep .mat-mdc-header-row.cdk-header-row {
-  background-color: $color-primary;
+  background-color: styles.$color-primary;
 }
 
 :host ::ng-deep .mat-mdc-paginator-range-label {
