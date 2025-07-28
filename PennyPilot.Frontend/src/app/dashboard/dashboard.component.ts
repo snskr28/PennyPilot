@@ -39,6 +39,7 @@ export class DashboardComponent {
 
   @ViewChild(ChartsComponent) chartsComp!: ChartsComponent;
   @ViewChild(TransactionsTableComponent) tableComp!: TransactionsTableComponent;
+  @ViewChild(TimeRangeFilterComponent) timeRangeFilterComp!: TimeRangeFilterComponent;
 
   private cardsService = inject(CardsService);
   summaryCardsLoading = true;
@@ -159,7 +160,6 @@ export class DashboardComponent {
     if (this.tableComp) {
       this.tableComp.reloadTable(this.dashboardFilter);
     }
-    this.reloadSummaryCards();
   }
 
   onActiveFilterCleared(key: string) {
@@ -169,9 +169,11 @@ export class DashboardComponent {
       case 'date':
         updatedFilter.startDate = null;
         updatedFilter.endDate = null;
+        this.timeRangeFilterComp.clearDateRange();
         break;
       case 'granularity':
         updatedFilter.granularity = 'monthly';
+        this.timeRangeFilterComp.clearGranularity();
         break;
       case 'expenseCategory':
         updatedFilter.expenseCategory = null;

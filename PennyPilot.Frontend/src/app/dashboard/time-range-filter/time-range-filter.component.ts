@@ -111,4 +111,12 @@ export class TimeRangeFilterComponent {
   clear() {
     this.form.patchValue({ range: 'all', start: null, end: null, granularity: 'monthly' });
   }
+
+  clearGranularity() {
+    this.form.patchValue({ granularity: 'monthly' });
+  }
+
+  clearDateRange() {
+    this.form.patchValue({ range: 'all', start: null, end: null });
+  }
 }
