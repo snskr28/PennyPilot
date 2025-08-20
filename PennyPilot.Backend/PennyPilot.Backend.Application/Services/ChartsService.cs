@@ -27,11 +27,11 @@ namespace PennyPilot.Backend.Application.Services
             var expenses = _filterService.GetFilteredExpenses(_unitOfWork.Expenses.AsQueryable(), userId, dashboardFilter);
             var incomes = _filterService.GetFilteredIncomes(_unitOfWork.Incomes.AsQueryable(), userId, dashboardFilter);
 
-            var expenseCategories = expenses.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
+            var expenseCategories = expenses.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Sum(y => y.Amount));
 
             var userExpenses = expenses.GroupBy(x => x.Paidby).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
-            var incomeCategories = incomes.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Count());
+            var incomeCategories = incomes.GroupBy(x => x.Category.Name).ToDictionary(x => x.Key, x => x.Sum(y => y.Amount));
 
             var incomeSources =  incomes.GroupBy(x => x.Source).ToDictionary(x => x.Key, x => x.Sum(y=>y.Amount));
 
